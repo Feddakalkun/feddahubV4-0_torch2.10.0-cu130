@@ -142,25 +142,78 @@ def _save_runtime_settings(values: Dict[str, Any]) -> None:
 
 
 class FoldersRequest(BaseModel):
-    extra_models_path: Optional[str] = None
-    output_path: Optional[str] = None
+    extra_models_path: str = ""
+    output_path: str = ""
+    input_path: str = ""
+
+
+def _folder_defaults() -> Dict[str, str]:
+    """What each folder is when the user has not chosen one."""
+    return {
+        "extra_models_path": "",
+        "output_path": str(ROOT_DIR / "ComfyUI" / "output"),
+        "input_path": str(ROOT_DIR / "ComfyUI" / "input"),
+    }
+
+
+def _check_folder(label: str, raw_value: str, needs_write: bool) -> str:
+    """Validate one path, or raise with something the user can act on.
+
+    Checked on the way in rather than on the way out. A bad path saved here
+    does not fail until a generate reaches for it, by which point the error
+    surfaces as a broken render rather than as a folder someone mistyped.
+    """
+    value = (raw_value or "").strip().strip('"')
+    if not value:
+        return ""
+    path = Path(value)
+    if not path.exists():
+        raise HTTPException(status_code=400, detail=f"{label}: {value} does not exist")
+    if not path.is_dir():
+        raise HTTPException(status_code=400, detail=f"{label}: {value} is not a folder")
+    if needs_write:
+        probe = path / ".fedda_write_test"
+        try:
+            probe.write_text("", encoding="utf-8")
+            probe.unlink()
+        except OSError:
+            raise HTTPException(status_code=400,
+                                detail=f"{label}: cannot write to {value}")
+    return str(path)
 
 
 @app.get("/api/settings/folders")
 async def get_folders() -> Dict[str, Any]:
     settings = _runtime_settings()
+    defaults = _folder_defaults()
     return {
-        "extra_models_path": settings.get("extra_models_path", ""),
-        "output_path": settings.get("output_path", ""),
-        "install_root": str(ROOT_DIR),
+        "success": True,
+        "paths": {key: str(settings.get(key) or "").strip() for key in defaults},
+        "defaults": defaults,
+        # Every one of these is read at startup, so nothing changes until
+        # FEDDA restarts. The dialog says so rather than implying otherwise.
+        "requires_restart": True,
     }
 
 
 @app.post("/api/settings/folders")
 async def set_folders(req: FoldersRequest) -> Dict[str, Any]:
-    values = {k: v for k, v in req.model_dump().items() if v is not None}
-    _save_runtime_settings(values)
-    return {"success": True, **values}
+    extra = _check_folder("Extra models", req.extra_models_path, needs_write=False)
+    output = _check_folder("Output", req.output_path, needs_write=True)
+    inp = _check_folder("Input", req.input_path, needs_write=True)
+
+    # An extra models tree that is really FEDDA's own is not an extra tree,
+    # and listing it twice would make ComfyUI resolve every model through two
+    # identical roots.
+    own_models = (ROOT_DIR / "ComfyUI" / "models").resolve()
+    if extra and Path(extra).resolve() == own_models:
+        raise HTTPException(
+            status_code=400,
+            detail="Extra models: that is FEDDA's own models folder, which is already used")
+
+    paths = {"extra_models_path": extra, "output_path": output, "input_path": inp}
+    _save_runtime_settings(paths)
+    return {"success": True, "paths": paths, "requires_restart": True}
 
 
 class SecretRequest(BaseModel):

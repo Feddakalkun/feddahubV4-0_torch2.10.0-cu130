@@ -37,10 +37,16 @@ async function fetchInstallState(): Promise<{
   installState: ModuleInstallState;
 }> {
   const response = await fetch('/api/modules/install-state');
-  const data = await response.json();
-  if (!data?.success) {
-    throw new Error(data?.error || 'Failed to load module install state');
+  // The HTTP status is the answer. This used to demand a `success: true`
+  // field in the body as well, and v4's backend does not send one - so the
+  // fetch succeeded, this check threw, no modules were recorded, and the
+  // whole card tree rendered "0 workflows" with nothing wrong anywhere
+  // else. Two answers to one question, which is a mistake this project has
+  // now made in three different places.
+  if (!response.ok) {
+    throw new Error(`Backend answered ${response.status} for the module list`);
   }
+  const data = await response.json();
   return {
     modules: Array.isArray(data.modules) ? data.modules : [],
     installState: {
