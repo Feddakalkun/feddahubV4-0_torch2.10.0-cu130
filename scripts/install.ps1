@@ -794,7 +794,7 @@ if (Test-Path $SrcLoras) {
     Copy-Item -Path "$SrcLoras\*" -Destination $DstLoras -Recurse -Force
     Write-Step "Bundled LoRAs (Emmy, Zana) installed." "Green"
 } else {
-    Write-Step "No bundled LoRAs found (download_loras.bat later)." "Yellow"
+    Write-Step "No bundled LoRAs - add them in the app, or point Settings at a folder you already have." "Gray"
 }
 
 
@@ -1003,14 +1003,20 @@ if ($SmokeExitCode -eq 0 -and $FrontendOk) {
     if (-not $FrontendOk)     { $InstallReport += "  - frontend/node_modules missing (see logs/npm_install.log)" }
 }
 
-# Sixty-two packs install now, so a report that does not mention them is
-# describing the smaller half of what happened.
+# Twenty packs install now and the number grows with every booster, so a
+# report that does not mention them describes the smaller half of what
+# happened. The counts come from sync_nodes.ps1, which does the work in its
+# own process and writes them down for exactly this reason.
 $InstallReport += ""
-$InstallReport += "Node packs:      $Installed installed, $Skipped already present, $Failed failed"
-if ($DepsFailed.Count) {
-    $InstallReport += "  Deps failed:   $($DepsFailed -join ', ')"
-    foreach ($w in $DepsWhy) { $InstallReport += "    $w" }
-    $InstallReport += "                 (those nodes may not load - run.bat repair retries them)"
+$NodeSyncFile = Join-Path $LogsDir "node_sync.txt"
+if (Test-Path $NodeSyncFile) {
+    $NodeLines = @(Get-Content $NodeSyncFile | Where-Object { $_.Trim() })
+    $InstallReport += "Node packs:      $($NodeLines[0])"
+    foreach ($extra in $NodeLines[1..($NodeLines.Count - 1)]) {
+        if ($extra) { $InstallReport += "                 $($extra.Trim())" }
+    }
+} else {
+    $InstallReport += "Node packs:      no report - sync_nodes.ps1 did not run"
 }
 
 # Which version they are on. "It does not work" cannot be answered without it.

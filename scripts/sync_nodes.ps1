@@ -205,9 +205,22 @@ foreach ($node in $Nodes) {
 Write-Host ""
 $color = "Green"
 if ($Failed -gt 0) { $color = "Red" } elseif ($Manual -gt 0) { $color = "Yellow" }
-Write-Host ("  Nodes: {0} installed, {1} updated, {2} already at pin, {3} manual, {4} failed" -f `
-            $Installed, $Updated, $Current, $Manual, $Failed) -ForegroundColor $color
+$Summary = "{0} installed, {1} updated, {2} already at pin, {3} manual, {4} failed" -f `
+           $Installed, $Updated, $Current, $Manual, $Failed
+Write-Host "  Nodes: $Summary" -ForegroundColor $color
 foreach ($n in $Notes) { Write-Host "    - $n" -ForegroundColor DarkYellow }
+
+# Written down as well as printed. This runs in its own powershell process,
+# so install.ps1 cannot see these counters - and its report said
+# "Node packs:  installed,  already present,  failed" with every number
+# missing until this file existed. update_logic wants the same line.
+try {
+    $LogDir = Join-Path $RepoRoot "logs"
+    if (-not (Test-Path $LogDir)) { New-Item -ItemType Directory -Force $LogDir | Out-Null }
+    $Report = $Summary
+    foreach ($n in $Notes) { $Report += "`n  - $n" }
+    Set-Content -Path (Join-Path $LogDir "node_sync.txt") -Value $Report -Encoding utf8
+} catch { }
 
 if ($Failed -gt 0) { exit 1 }
 exit 0
