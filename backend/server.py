@@ -23,6 +23,22 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+# This directory has to be on sys.path before the sibling imports below.
+#
+# Normally Python prepends a script's own directory and none of this is
+# needed - but the app runs on the embedded distribution, whose
+# python311._pth replaces sys.path outright and does not include it. So
+# `import descriptor` fails at startup with ModuleNotFoundError, the backend
+# never binds port 8000, and the UI loads with every module missing rather
+# than with an error that names the cause.
+#
+# v3 carried these three lines for the same reason. Writing this file fresh
+# lost them, and the in-process tests hid it by putting backend/ on the path
+# themselves - so it passed everywhere except where it runs.
+_backend_dir = os.path.dirname(os.path.abspath(__file__))
+if _backend_dir not in sys.path:
+    sys.path.insert(0, _backend_dir)
+
 import descriptor
 from logging_setup import setup_logging
 from lora_service import LoRAService
