@@ -95,7 +95,7 @@
     "class_type": "CLIPTextEncode",
     "inputs": {
       "text": [
-        "112",
+        "113",
         0
       ],
       "clip": [
@@ -357,24 +357,6 @@
       "title": "LotusSampler"
     }
   },
-  "112": {
-    "class_type": "Text Concatenate",
-    "inputs": {
-      "delimiter": ", ",
-      "clean_whitespace": "true",
-      "text_a": [
-        "113",
-        0
-      ],
-      "text_b": [
-        "114",
-        0
-      ]
-    },
-    "_meta": {
-      "title": "Text Concatenate"
-    }
-  },
   "113": {
     "class_type": "String Literal",
     "inputs": {
@@ -382,16 +364,6 @@
     },
     "_meta": {
       "title": "PROMPT"
-    }
-  },
-  "114": {
-    "class_type": "Load Styles CSV",
-    "inputs": {
-      "styles": "No Style",
-      "csv_file_path": "styles.csv"
-    },
-    "_meta": {
-      "title": "Load Styles CSV"
     }
   },
   "117": {

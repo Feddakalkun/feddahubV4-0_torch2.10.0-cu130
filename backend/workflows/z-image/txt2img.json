@@ -33,7 +33,7 @@
     "class_type": "CLIPTextEncode",
     "inputs": {
       "text": [
-        "32",
+        "33",
         0
       ],
       "clip": [
@@ -49,7 +49,7 @@
     "class_type": "CLIPTextEncode",
     "inputs": {
       "text": [
-        "35",
+        "34",
         0
       ],
       "clip": [
@@ -162,34 +162,6 @@
       "title": "AspectRatioImageSize"
     }
   },
-  "31": {
-    "class_type": "Load Styles CSV",
-    "inputs": {
-      "styles": "No Style",
-      "csv_file_path": "styles.csv"
-    },
-    "_meta": {
-      "title": "Load Styles CSV"
-    }
-  },
-  "32": {
-    "class_type": "Text Concatenate",
-    "inputs": {
-      "delimiter": ", ",
-      "clean_whitespace": "true",
-      "text_a": [
-        "33",
-        0
-      ],
-      "text_b": [
-        "31",
-        0
-      ]
-    },
-    "_meta": {
-      "title": "Text Concatenate"
-    }
-  },
   "33": {
     "class_type": "String Literal",
     "inputs": {
@@ -206,24 +178,6 @@
     },
     "_meta": {
       "title": "NEGATIVE PROMPT"
-    }
-  },
-  "35": {
-    "class_type": "Text Concatenate",
-    "inputs": {
-      "delimiter": ", ",
-      "clean_whitespace": "true",
-      "text_a": [
-        "34",
-        0
-      ],
-      "text_b": [
-        "31",
-        1
-      ]
-    },
-    "_meta": {
-      "title": "Text Concatenate"
     }
   },
   "126": {

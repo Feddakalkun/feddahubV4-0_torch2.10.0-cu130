@@ -108,15 +108,6 @@
     "pin_from": "fedda-v3"
   },
   {
-    "name": "ComfyUI-Styles_CSV_Loader",
-    "url": "https://github.com/theUpsider/ComfyUI-Styles_CSV_Loader.git",
-    "folder": "ComfyUI-Styles_CSV_Loader",
-    "note": "Load Styles CSV",
-    "pin": "255a4af7fcc818c756286c885483a1f97e4f1e9a",
-    "pin_source": "git",
-    "pin_from": "fedda-v3"
-  },
-  {
     "name": "comfyui_controlnet_aux",
     "url": "https://github.com/Fannovel16/comfyui_controlnet_aux.git",
     "folder": "comfyui_controlnet_aux",

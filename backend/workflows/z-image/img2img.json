@@ -3,7 +3,7 @@
     "class_type": "CLIPTextEncode",
     "inputs": {
       "text": [
-        "41",
+        "38",
         0
       ],
       "clip": [
@@ -37,47 +37,11 @@
       "title": "SaveImage"
     }
   },
-  "40": {
-    "class_type": "Text Concatenate",
-    "inputs": {
-      "delimiter": ", ",
-      "clean_whitespace": "true",
-      "text_a": [
-        "50",
-        0
-      ],
-      "text_b": [
-        "51",
-        0
-      ]
-    },
-    "_meta": {
-      "title": "Text Concatenate"
-    }
-  },
-  "41": {
-    "class_type": "Text Concatenate",
-    "inputs": {
-      "delimiter": ", ",
-      "clean_whitespace": "true",
-      "text_a": [
-        "38",
-        0
-      ],
-      "text_b": [
-        "51",
-        1
-      ]
-    },
-    "_meta": {
-      "title": "Text Concatenate"
-    }
-  },
   "42": {
     "class_type": "CLIPTextEncode",
     "inputs": {
       "text": [
-        "40",
+        "50",
         0
       ],
       "clip": [
@@ -185,16 +149,6 @@
     },
     "_meta": {
       "title": "POSITIVE PROMPT"
-    }
-  },
-  "51": {
-    "class_type": "Load Styles CSV",
-    "inputs": {
-      "styles": "No Style",
-      "csv_file_path": "styles.csv"
-    },
-    "_meta": {
-      "title": "Load Styles CSV"
     }
   },
   "52": {

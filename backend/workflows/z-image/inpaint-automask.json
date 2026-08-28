@@ -1,32 +1,4 @@
 {
-  "153": {
-    "class_type": "Load Styles CSV",
-    "inputs": {
-      "styles": "No Style",
-      "csv_file_path": "styles.csv"
-    },
-    "_meta": {
-      "title": "Load Styles CSV"
-    }
-  },
-  "155": {
-    "class_type": "Text Concatenate",
-    "inputs": {
-      "delimiter": ", ",
-      "clean_whitespace": "true",
-      "text_a": [
-        "165",
-        0
-      ],
-      "text_b": [
-        "153",
-        0
-      ]
-    },
-    "_meta": {
-      "title": "Text Concatenate"
-    }
-  },
   "156": {
     "class_type": "VAEEncode",
     "inputs": {
@@ -118,10 +90,7 @@
   "161": {
     "class_type": "CLIPTextEncode",
     "inputs": {
-      "text": [
-        "153",
-        1
-      ],
+      "text": "",
       "clip": [
         "167",
         0
@@ -242,7 +211,7 @@
     "class_type": "CLIPTextEncode",
     "inputs": {
       "text": [
-        "155",
+        "165",
         0
       ],
       "clip": [

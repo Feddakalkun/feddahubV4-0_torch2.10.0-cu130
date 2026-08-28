@@ -43,9 +43,7 @@
         "ComfyUI-Impact-Subpack",
         "ComfyUI-Manager",
         "ComfyUI-Studio-nodes",
-        "ComfyUI-Styles_CSV_Loader",
-        "rgthree-comfy",
-        "was-node-suite-comfyui"
+        "rgthree-comfy"
       ],
       "models": [
         "z_image_turbo_bf16.safetensors",
@@ -74,10 +72,8 @@
       "custom_nodes": [
         "comfy-image-saver",
         "ComfyUI-Inpaint-CropAndStitch",
-        "ComfyUI-Styles_CSV_Loader",
         "ComfyUI_LayerStyle_Advance",
-        "rgthree-comfy",
-        "was-node-suite-comfyui"
+        "rgthree-comfy"
       ],
       "models": [],
       "notes": "Repaint part of an image, by hand mask or by automatic person masking."
@@ -100,10 +96,8 @@
         "ComfyUI-Impact-Pack",
         "ComfyUI-KJNodes",
         "ComfyUI-Lotus",
-        "ComfyUI-Styles_CSV_Loader",
         "comfyui_controlnet_aux",
-        "rgthree-comfy",
-        "was-node-suite-comfyui"
+        "rgthree-comfy"
       ],
       "models": [],
       "notes": "Follow the shape of a reference image - pose, edges or depth - through the Z-Image ControlNet Union patch."
