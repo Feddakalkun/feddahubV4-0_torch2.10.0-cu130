@@ -555,12 +555,35 @@ echo [2/3] Running inner setup... >> "%INSTALL_LOG%"
 echo Inner installer starting - live output follows. No input required. >> "%INSTALL_LOG%"
 echo. >> "%INSTALL_LOG%"
 
-set "FEDDA_UNATTENDED=1"
-pushd "%APP_DIR%"
-call scripts\install.bat
-set "INNER_EXIT=%errorlevel%"
-popd
-set "FEDDA_UNATTENDED="
+:: An install that already passed its own self-test is left alone.
+set "SKIP_INNER=0"
+if exist "%APP_DIR%\logs\install_report.txt" (
+    findstr /R /C:"Smoke Test: *PASSED" "%APP_DIR%\logs\install_report.txt" >nul 2>&1
+    if not errorlevel 1 set "SKIP_INNER=1"
+)
+
+if "%SKIP_INNER%"=="1" (
+    echo   This install is already complete and passed its self-test.
+    echo   Skipping straight to the launcher - run.bat updates itself.
+    echo Inner setup skipped - install_report.txt already says PASSED >> "%INSTALL_LOG%"
+    set "INNER_EXIT=0"
+) else (
+    rem  rem, not ::, because this is inside a block: cmd runs a label there
+    rem  and prints "The system cannot find the drive specified". v3 learned
+    rem  this the same way and left the note in scripts\install.bat.
+    rem
+    rem  install.ps1 directly. v3 went through a middle layer whose own
+    rem  comment called it "the middle layer of three [that] says nothing to
+    rem  the user", and whose first 200 lines re-ran the GPU, Python, Git and
+    rem  Node checks this file has already printed above. v4 does not carry
+    rem  it, which is why this used to die on "is not recognized".
+    set "FEDDA_UNATTENDED=1"
+    pushd "%APP_DIR%"
+    powershell -NoProfile -ExecutionPolicy Bypass -File "%APP_DIR%\scripts\install.ps1" -Unattended
+    set "INNER_EXIT=!errorlevel!"
+    popd
+    set "FEDDA_UNATTENDED="
+)
 
 echo. >> "%INSTALL_LOG%"
 echo --- Inner installer finished (exit code %INNER_EXIT%) --- >> "%INSTALL_LOG%"
@@ -635,32 +658,14 @@ rem  people should never touch, reads as four things to understand.
 echo.
 echo   Finishing up...
 
-:: --- Generate log.md that contains the entire install log ---
-echo.
-echo [INFO] Generating log.md with the install log...
-(
-    echo # FEDDAKALKUN v4.0 - Installation Log
-    echo.
-    echo **Generated:** %date% %time%
-    echo **Install Root:** %INSTALL_ROOT%
-    echo **Target Repo:** %REPO_URL%
-    echo **Inner Installer Exit Code:** %INNER_EXIT%
-    echo.
-    echo ---
-    echo.
-    echo ## Complete Install Log
-    echo.
-    echo ```text
-    type "%INSTALL_LOG%"
-    echo ```
-    echo.
-    echo ---
-    echo.
-    echo *This file contains the entire output from the installation process.*
-) > "%INSTALL_ROOT%\log.md"
-
-echo [INFO] log.md created successfully at %INSTALL_ROOT%\log.md
-echo [INFO] log.md created successfully at %INSTALL_ROOT%\log.md >> "%INSTALL_LOG%"
+:: One log, not four. install.log already holds every line the inner
+:: installer printed, with both of its own files appended above; log.md was
+:: that same content wrapped in a code fence, and a failed install used to
+:: name three separate files to go and read.
+echo. >> "%INSTALL_LOG%"
+echo --- end of install, exit code %INNER_EXIT% --- >> "%INSTALL_LOG%"
+echo The two app-side files above are appended in full; the originals stay >> "%INSTALL_LOG%"
+echo at app\logs\install_report.txt and app\logs\install_fast_log.txt. >> "%INSTALL_LOG%"
 
 if "%INSTALL_OK%"=="0" goto FINISH_FAILED
 
@@ -681,7 +686,7 @@ echo   If something breaks:   run.bat repair
 echo.
 echo   ------------------------------------------------------------
 echo.
-echo   (Full log: log.md    Summary: app\logs\install_report.txt)
+echo   (Full log: logs\install.log)
 echo.
 echo   Press any key to close this window...
 pause
@@ -697,11 +702,10 @@ echo   Part of the installation failed, so FEDDA is not ready to
 echo   run yet. Starting it now would only show "ComfyUI is not
 echo   reachable" - the setup, not the app, is what needs fixing.
 echo.
-echo   What to look at, in order:
+echo   The log has everything - the summary, the self-test and every
+echo   step in full:
 echo.
-echo     app\logs\install_report.txt   the summary and the self-test
-echo     app\logs\install_fast_log.txt every step in full
-echo     log.md                        all of the above in one file
+echo     logs\install.log
 echo.
 echo   The most common cause is a dropped connection during the
 echo   PyTorch download, which is several gigabytes. Running this
