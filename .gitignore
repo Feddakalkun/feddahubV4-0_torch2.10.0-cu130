@@ -1,0 +1,82 @@
+# This repository is public. The installer clones it over plain https, so
+# anything committed here is published to everyone who ever runs FEDDA.
+# Personal notes, keys and per-install state live outside it - in ..\brain -
+# and the rules below are what keep them there.
+
+# Node / frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.tmp/
+npm-debug.log*
+*.local
+dist/
+build/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Runtime / heavy folders. The installer builds all of this; none of it is
+# source, and a single model file is larger than the whole repository.
+ComfyUI/
+python_embeded/
+venv/
+git/
+git_embeded/
+node_embeded/
+node-v*-win-x64/
+ollama_embeded/
+cache/
+logs/
+output/
+temp/
+input/
+models/
+checkpoints/
+loras/
+*.safetensors
+*.ckpt
+*.pth
+*.gguf
+
+# Python generated files
+__pycache__/
+*.pyc
+
+# Local runtime state. runtime_settings.json holds the folder paths this
+# particular user pointed FEDDA at - their drive layout, by definition.
+.last_node_update
+.gitconfig
+config/runtime_settings.json
+
+# Node signatures read off whichever ComfyUI is running here. Generated,
+# machine-specific, and several megabytes.
+config/object_info.cache.json
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.code-workspace
+
+# Local installer/test targets
+install/
+*.log
+
+# Workflow edit backups
+*.bak
+
+# Internal notes, plans and handovers. A handover written for the next agent
+# is a handover published to everyone - these belong in ..\brain, never here.
+docs/
+CHANGELOG-INTERIM.md
+HANDOFF.md
+HANDOFF-*.md
+BREADCRUMBS.md

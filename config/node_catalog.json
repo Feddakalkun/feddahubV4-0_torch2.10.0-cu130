@@ -1,0 +1,561 @@
+[
+  {
+    "name": "comfyui-various",
+    "url": "https://github.com/jamesWalker55/comfyui-various.git",
+    "folder": "comfyui-various",
+    "note": "JWImageContrast — used by V2/KLEIN-NSFW-EDIT",
+    "pin": "ddf36c68c5fd6715b35b5c8c9b63e2eef8043bad",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-Pixaroma",
+    "url": "https://github.com/pixaroma/ComfyUI-Pixaroma.git",
+    "folder": "ComfyUI-Pixaroma",
+    "note": "PixaromaCompare — before/after compare, needed by klein-inpaint. Vendored: installed here without git, so the url is provenance only.",
+    "pin": "818855ad05d31c41d9401aee72fa75b631b4e903",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "comfyui-itools",
+    "url": "https://github.com/MohammadAboulEla/ComfyUI-iTools.git",
+    "folder": "comfyui-itools",
+    "note": "iToolsCompareImage — used by V2/KLEIN-9B-FACESWAP. Vendored: installed here without git, so the url is provenance only.",
+    "pin": "ebe75a158b8c19d69a5e4e24c1f25085babda5b4",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "WhatDreamsCost-ComfyUI",
+    "url": "https://github.com/WhatDreamsCost/WhatDreamsCost-ComfyUI.git",
+    "folder": "WhatDreamsCost-ComfyUI",
+    "note": "LoadAudioUI — audio-conditioned video (LTX 2.3 audio+image2video)",
+    "pin": "a3c809c8b593a74c2ddcd6c1f83ad85ebebe3c64",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
+    "name": "ComfyUI-Manager",
+    "url": "https://github.com/Comfy-Org/ComfyUI-Manager.git",
+    "folder": "ComfyUI-Manager",
+    "note": "Essential: Node manager, auto-install, model downloader",
+    "core": true,
+    "pin": "f39cbd56fecae0b27a446c0cd450cd591f3a8bea",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "rgthree-comfy",
+    "url": "https://github.com/rgthree/rgthree-comfy.git",
+    "folder": "rgthree-comfy",
+    "note": "Power Lora Loader, Image Comparer — used in all z-image workflows",
+    "core": false,
+    "pin": "13b4399c00b5ef5a97b1b6800fc1185874740f5d",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-VideoHelperSuite",
+    "url": "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git",
+    "folder": "ComfyUI-VideoHelperSuite",
+    "note": "VHS_VideoCombine, ImageBatch — all video workflows",
+    "core": true,
+    "pin": "4ee72c065db22c9d96c2427954dc69e7b908444b",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "was-node-suite-comfyui",
+    "url": "https://github.com/WASasquatch/was-node-suite-comfyui.git",
+    "folder": "was-node-suite-comfyui",
+    "note": "Text Concatenate, Text Multiline, image utilities — widely used",
+    "core": true,
+    "pin": "ea935d1044ae5a26efa54ebeb18fe9020af49a45",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI_essentials",
+    "url": "https://github.com/cubiq/ComfyUI_essentials.git",
+    "folder": "ComfyUI_essentials",
+    "note": "Essential image resize, mask, utility nodes",
+    "core": true,
+    "pin": "9d9f4bedfc9f0321c19faf71855e228c93bd0dc9",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-Easy-Use",
+    "url": "https://github.com/yolain/ComfyUI-Easy-Use.git",
+    "folder": "ComfyUI-Easy-Use",
+    "note": "easy showAnything, easy int — common UI helpers",
+    "core": true,
+    "pin": "4de1ab3b66e48da916b6f263bacd001df53a2720",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-Custom-Scripts",
+    "url": "https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git",
+    "folder": "ComfyUI-Custom-Scripts",
+    "note": "ShowText|pysssss — debug display, workflow utilities",
+    "core": true,
+    "pin": "609f3afaa74b2f88ef9ce8d939626065e3247469",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-Studio-nodes",
+    "url": "https://github.com/comfyuistudio/ComfyUI-Studio-nodes.git",
+    "folder": "ComfyUI-Studio-nodes",
+    "note": "Aspect Ratio Image Size, HuggingFaceDownloader",
+    "core": true,
+    "pin": "bf2033a57c9add688b7bbcb97def54423bd8ca99",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "Derfuu_ComfyUI_ModdedNodes",
+    "url": "https://github.com/Derfuu/Derfuu_ComfyUI_ModdedNodes.git",
+    "folder": "Derfuu_ComfyUI_ModdedNodes",
+    "note": "DF_Int_to_Float",
+    "pin": "d0905bed31249f2bd0814c67585cf4fe3c77c015",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-DonutNodes",
+    "url": "https://github.com/DonutsDelivery/ComfyUI-DonutNodes.git",
+    "folder": "ComfyUI-DonutNodes",
+    "note": "Donut Detailer",
+    "core": false,
+    "pin": "e461d83480550727727f8ea180a2139005d5edef",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "comfyui_controlnet_aux",
+    "url": "https://github.com/Fannovel16/comfyui_controlnet_aux.git",
+    "folder": "comfyui_controlnet_aux",
+    "note": "CannyEdgePreprocessor, DWPreprocessor, HEDPreprocessor",
+    "pin": "e8b689a513c3e6b63edc44066560ca5919c0576e",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-Impact-Pack",
+    "url": "https://github.com/ltdrdata/ComfyUI-Impact-Pack.git",
+    "folder": "ComfyUI-Impact-Pack",
+    "note": "FaceDetailer, SEGS tools, ImpactSwitch",
+    "pin": "429d0159ad429e64d2b3916e6e7be9c22d025c3c",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-Impact-Subpack",
+    "url": "https://github.com/ltdrdata/ComfyUI-Impact-Subpack.git",
+    "folder": "ComfyUI-Impact-Subpack",
+    "note": "UltralyticsDetectorProvider",
+    "pin": "50c7b71a6a224734cc9b21963c6d1926816a97f1",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-Styles_CSV_Loader",
+    "url": "https://github.com/theUpsider/ComfyUI-Styles_CSV_Loader.git",
+    "folder": "ComfyUI-Styles_CSV_Loader",
+    "note": "Load Styles CSV",
+    "pin": "255a4af7fcc818c756286c885483a1f97e4f1e9a",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI_LayerStyle",
+    "url": "https://github.com/chflame163/ComfyUI_LayerStyle.git",
+    "folder": "ComfyUI_LayerStyle",
+    "note": "LayerStyle basic nodes",
+    "skip_req_update": true,
+    "pin": "557d882e184c7b702208cc7805659b10dfa06c59",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-KJNodes",
+    "url": "https://github.com/kijai/ComfyUI-KJNodes.git",
+    "folder": "ComfyUI-KJNodes",
+    "note": "KJNodes utilities",
+    "core": true,
+    "pin": "3f20054214fec9f9234fd3841ae6f1e4287948f6",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
+    "name": "ComfyUI-WanVideoWrapper",
+    "url": "https://github.com/kijai/ComfyUI-WanVideoWrapper.git",
+    "folder": "ComfyUI-WanVideoWrapper",
+    "note": "WAN video wrapper nodes for Steady Dancer and WAN video pipelines",
+    "pin": "088128b224242e110d3906c6750e9a3a348a659b",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
+    "name": "ComfyUI-WanAnimatePreprocess",
+    "url": "https://github.com/kijai/ComfyUI-WanAnimatePreprocess.git",
+    "folder": "ComfyUI-WanAnimatePreprocess",
+    "note": "WAN animate preprocess nodes for pose/detection preprocessing",
+    "pin": "0e0b6a2a555625acf4d4aefb780e27d06937132f",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-SeedVR2_VideoUpscaler",
+    "url": "https://github.com/numz/ComfyUI-SeedVR2_VideoUpscaler.git",
+    "folder": "ComfyUI-SeedVR2_VideoUpscaler",
+    "note": "Video Upscaling",
+    "core": false,
+    "pin": "4490bd1f482e026674543386bb2a4d176da245b9",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI_UltimateSDUpscale",
+    "url": "https://github.com/ssitu/ComfyUI_UltimateSDUpscale.git",
+    "folder": "ComfyUI_UltimateSDUpscale",
+    "note": "Ultimate SD Upscale",
+    "core": false,
+    "pin": "a5547db9e1d07d3318bb21e9e9c474f4c1e9c8df",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-Inpaint-CropAndStitch",
+    "url": "https://github.com/lquesada/ComfyUI-Inpaint-CropAndStitch.git",
+    "folder": "ComfyUI-Inpaint-CropAndStitch",
+    "note": "InpaintCropImproved + InpaintStitchImproved. See https://github.com/lquesada/ComfyUI-Inpaint-CropAndStitch",
+    "pin": "606e2b4fd83fc44e1f0b403e1f076501db8c3749",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "comfyui-inpaint-nodes",
+    "url": "https://github.com/Acly/comfyui-inpaint-nodes.git",
+    "folder": "comfyui-inpaint-nodes",
+    "note": "Fooocus inpaint/outpaint nodes: INPAINT_LoadFooocusInpaint, INPAINT_ApplyFooocusInpaint, INPAINT_VAEEncodeInpaintConditioning, INPAINT_MaskedFill, INPAINT_MaskedBlur. Needed by sdxl_outpaint; distinct from ComfyUI-Inpaint-CropAndStitch.",
+    "pin": "d4a318f00fffbd269418057f869e9bc912832229",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-Frame-Interpolation",
+    "url": "https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git",
+    "folder": "ComfyUI-Frame-Interpolation",
+    "note": "RIFE VFI",
+    "pin": "26545cc2dd95bc3d27f056016300673bdeee78f5",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI_LayerStyle_Advance",
+    "url": "https://github.com/chflame163/ComfyUI_LayerStyle_Advance.git",
+    "folder": "ComfyUI_LayerStyle_Advance",
+    "note": "LayerStyle Advance features (provides LayerMask: PersonMaskUltra V2). See https://github.com/chflame163/ComfyUI_LayerStyle_Advance , https://docs.getsalt.ai/md/ComfyUI_LayerStyle/Nodes/LayerMask:%20PersonMaskUltra%20V2/ and https://comfy.icu/node/LayerMask-PersonMaskUltra-V2",
+    "skip_req_update": true,
+    "pin": "7b678b401a38307a4a7e99ef6630bd48f9cecedb",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "comfy-image-saver",
+    "url": "https://github.com/giriss/comfy-image-saver.git",
+    "folder": "comfy-image-saver",
+    "note": "Enhanced image saver",
+    "core": true,
+    "pin": "c6223965d45871d1ff2931b6ac9518a13947c920",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
+    "name": "ComfyUI-Lotus",
+    "url": "https://github.com/kijai/ComfyUI-Lotus.git",
+    "folder": "ComfyUI-Lotus",
+    "note": "Lotus nodes",
+    "pin": "07719d3195b9a31839e3c6c4875a9eb9d6b1734c",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
+    "name": "ComfyUI_Searge_LLM",
+    "url": "https://github.com/SeargeDP/ComfyUI_Searge_LLM.git",
+    "folder": "ComfyUI_Searge_LLM",
+    "note": "LLM integrations for prompts",
+    "core": true,
+    "skip_req_update": true,
+    "pin": "241d4c8d8243515cf19cab2d2ee051745fc5f592",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
+    "name": "mikey_nodes",
+    "url": "https://github.com/bash-j/mikey_nodes.git",
+    "folder": "mikey_nodes",
+    "note": "Mikey nodes — text, style, and utility nodes",
+    "pin": "a5aa9cf637c4aa83fb369230e1cd728f4f56a8de",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-Image-Selector",
+    "url": "https://github.com/SLAPaper/ComfyUI-Image-Selector.git",
+    "folder": "ComfyUI-Image-Selector",
+    "note": "Image selector node — pick one image from a batch",
+    "pin": "058846b177626a226590d355a342ae8f364591ac",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-LTXVideo",
+    "url": "https://github.com/Lightricks/ComfyUI-LTXVideo.git",
+    "folder": "ComfyUI-LTXVideo",
+    "note": "LTX Video nodes — LTXVImgToVideoConditionOnly, LTXICLoRALoaderModelOnly, LTXAddVideoICLoRAGuide",
+    "pin": "15d09abb5a187a8dcaea2fc31fe51ee96e6c9d0d",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
+    "name": "ComfyMath",
+    "url": "https://github.com/evanspearman/ComfyMath.git",
+    "folder": "ComfyMath",
+    "note": "Math expression nodes — ComfyMathExpression, CM_FloatToInt",
+    "pin": "c01177221c31b8e5fbc062778fc8254aeb541638",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
+    "name": "comfy_mtb",
+    "url": "https://github.com/melMass/comfy_mtb.git",
+    "folder": "comfy_mtb",
+    "note": "Animation-oriented nodes — MTB batch, interpolation, face tools",
+    "pin": "b35b5d8a17c0d59e80a8b3627b679c2c1003d04f",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "CRT-Nodes",
+    "url": "https://github.com/PGCRT/CRT-Nodes.git",
+    "folder": "CRT-Nodes",
+    "note": "CRT collection — 102 utility nodes for ComfyUI",
+    "pin": "1211a7b174ed9af0436e339b8a9ad80a41cfdb00",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-AutoCropFaces",
+    "url": "https://github.com/liusida/ComfyUI-AutoCropFaces.git",
+    "folder": "ComfyUI-AutoCropFaces",
+    "note": "Auto face crop nodes for portrait prep workflows",
+    "pin": "b2139db9a8ffb4707832106a58f519bbd04e6118",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
+    "name": "ComfyUI-AdvancedLivePortrait",
+    "url": "https://github.com/PowerHouseMan/ComfyUI-AdvancedLivePortrait.git",
+    "folder": "ComfyUI-AdvancedLivePortrait",
+    "note": "Advanced LivePortrait workflow nodes",
+    "pin": "3bba732915e22f18af0d221b9c5c282990181f1b",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-MVAdapter",
+    "url": "https://github.com/huanngzh/ComfyUI-MVAdapter.git",
+    "folder": "ComfyUI-MVAdapter",
+    "note": "MVAdapter nodes for multi-view adapter workflows",
+    "pin": "9d6d8afeff135d81a31f16dde5291d8b40dbb0a4",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI_IPAdapter_plus",
+    "url": "https://github.com/cubiq/ComfyUI_IPAdapter_plus.git",
+    "folder": "ComfyUI_IPAdapter_plus",
+    "note": "IPAdapter+ nodes for style and image conditioning",
+    "pin": "a0f451a5113cf9becb0847b92884cb10cbdec0ef",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI_InstantID",
+    "url": "https://github.com/cubiq/ComfyUI_InstantID.git",
+    "folder": "ComfyUI_InstantID",
+    "note": "InstantID nodes for identity-preserving generation",
+    "pin": "72495e806bc2ab9c41581e15ccaa1bcf83c477e8",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-qwenmultiangle",
+    "url": "https://github.com/jtydhr88/ComfyUI-qwenmultiangle.git",
+    "folder": "ComfyUI-qwenmultiangle",
+    "note": "Qwen multi-angle nodes for character angle consistency workflows",
+    "pin": "93efd354a002f9c6add7e948663cf459528242da",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-Florence2",
+    "url": "https://github.com/kijai/ComfyUI-Florence2.git",
+    "folder": "ComfyUI-Florence2",
+    "note": "Florence2 grounding nodes: DownloadAndLoadFlorence2Model, Florence2Run",
+    "pin": "9ece3de914214c5f581d725167bc9d0eeb0d1120",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-segment-anything-2",
+    "url": "https://github.com/kijai/ComfyUI-segment-anything-2.git",
+    "folder": "ComfyUI-segment-anything-2",
+    "note": "SAM2 segmentation nodes: DownloadAndLoadSAM2Model, Sam2Segmentation, Florence2toCoordinates",
+    "pin": "0c35fff5f382803e2310103357b5e985f5437f32",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-Qwen-TTS",
+    "url": "https://github.com/flybirdxx/ComfyUI-Qwen-TTS.git",
+    "folder": "ComfyUI-Qwen-TTS",
+    "note": "Qwen TTS nodes for local text-to-speech and voice design",
+    "pin": "05f307a44c41afcdd568b836e04cea8b4f18b3f7",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "VibeVoice-ComfyUI",
+    "url": "https://github.com/Enemyx-net/VibeVoice-ComfyUI.git",
+    "folder": "VibeVoice-ComfyUI",
+    "note": "VibeVoice nodes for natural single/multi-speaker speech generation",
+    "pin": "b0a8efc23c9d902d7ebd8fe3f79515a23d343bc2",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI_Comfyroll_CustomNodes",
+    "url": "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes.git",
+    "folder": "ComfyUI_Comfyroll_CustomNodes",
+    "note": "Comfyroll utility nodes used by several audio and control workflows",
+    "pin": "d78b780ae43fcf8c6b7c6505e6ffb4584281ceca",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
+    "name": "audio-separation-nodes-comfyui",
+    "url": "https://github.com/christian-byrne/audio-separation-nodes-comfyui.git",
+    "folder": "audio-separation-nodes-comfyui",
+    "note": "Audio crop and separation nodes used in transcription and voice workflows",
+    "pin": "ac339561973f0c1e56db2f9d40f11b0fddda6763",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-F5-TTS",
+    "url": "https://github.com/niknah/ComfyUI-F5-TTS.git",
+    "folder": "ComfyUI-F5-TTS",
+    "note": "F5-TTS local voice synthesis and cloning nodes",
+    "pin": "a28b6d5ff9185a3383f6e8e9036f786015fc6651",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-Whisper",
+    "url": "https://github.com/yuvraj108c/ComfyUI-Whisper.git",
+    "folder": "ComfyUI-Whisper",
+    "note": "Whisper transcription nodes for mic/audio to text",
+    "pin": "006a709848259ed3d69e2f9fcfd7a75f6c860ddd",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
+    "name": "ComfyUI-Chatterbox",
+    "url": "https://github.com/wildminder/ComfyUI-Chatterbox.git",
+    "folder": "ComfyUI-Chatterbox",
+    "note": "Chatterbox TTS nodes for expressive local voice generation",
+    "pin": "f0300cf84ee1b8fc9cbd38cb68cb3bace1895063",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-FishAudioS2",
+    "url": "https://github.com/Saganaki22/ComfyUI-FishAudioS2.git",
+    "folder": "ComfyUI-FishAudioS2",
+    "note": "Fish Audio S2-Pro TTS — voice clone, multi-speaker, text-to-speech",
+    "pin": "521f33fe79c081da314dc905ce399c62edb24749",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-GGUF",
+    "url": "https://github.com/city96/ComfyUI-GGUF.git",
+    "folder": "ComfyUI-GGUF",
+    "note": "UnetLoaderGGUF — loads quantized GGUF model files (required for SCAIL-2 and other GGUF models)",
+    "core": true,
+    "pin": "6ea2651e7df66d7585f6ffee804b20e92fb38b8a",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
+    "name": "ComfyLiterals",
+    "url": "https://github.com/M1kep/ComfyLiterals.git",
+    "folder": "ComfyLiterals",
+    "note": "PrimitiveInt, JsonExtractString, StringReplace — primitive pass-through and JSON utility nodes (required for Ideogram workflow)",
+    "pin": "bdddb08ca82d90d75d97b1d437a652e0284a32ac",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
+    "name": "ComfyUI_tinyterraNodes",
+    "url": "https://github.com/TinyTerra/ComfyUI_tinyterraNodes.git",
+    "folder": "ComfyUI_tinyterraNodes",
+    "note": "TT_PipeNodes pipeline bus, TT_Sampler, TT_Seed — workflow organization and pipe-passing nodes",
+    "pin": "15411635b1d49794372e730091654521e3155dce",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "cg-use-everywhere",
+    "url": "https://github.com/chrisgoringe/cg-use-everywhere.git",
+    "folder": "cg-use-everywhere",
+    "note": "Anything Everywhere, Prompt Everywhere, Seed Everywhere — broadcast outputs to all matching inputs without explicit wires",
+    "pin": "50ae9f8c5d8b9538589663c90a15d4067a02969c",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI_Sonic",
+    "url": "https://github.com/smthemex/ComfyUI_Sonic.git",
+    "folder": "ComfyUI_Sonic",
+    "note": "Sonic lipsync nodes",
+    "pin": "9a3c1efa379a7a33518a1ce7392fbb187de880a2",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
+    "name": "comfyui-reactor-node",
+    "url": "https://codeberg.org/Gourieff/comfyui-reactor-node.git",
+    "folder": "comfyui-reactor-node",
+    "note": "ReActor face swap/restore (GitHub repo removed - Codeberg is the maintained home)",
+    "pin": "2add1139d491fefff2d3a60e52b6b2b6d5d09e5d",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-MiniMaxH3-Director",
+    "url": "https://github.com/seesee75-commits/ComfyUI-MiniMaxH3-Director.git",
+    "folder": "ComfyUI-MiniMaxH3-Director",
+    "core": true,
+    "note": "MiniMaxH3DirectorCS - the storyboard timeline node behind the Director page. Core because the page is on the front page.",
+    "pin": "84863236288ca387c291acffdbfee5b77d1a77a5",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  }
+]

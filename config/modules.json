@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "_note": "custom_nodes on every module is DERIVED by scripts/require_nodes.py --modules from that module's own workflows. Do not hand-edit it; the edit will be overwritten, and hand-keeping this list is exactly how v3 ended up installing sixty packs to use thirty-eight.",
+  "modules": [
+    {
+      "id": "core-shell",
+      "label": "Core Shell",
+      "pack": "core",
+      "area": "core",
+      "enabled": true,
+      "tabs": [
+        "home",
+        "gallery",
+        "settings"
+      ],
+      "workflows": [],
+      "custom_nodes": [
+        "ComfyUI-Manager",
+        "ComfyUI-Studio-nodes"
+      ],
+      "models": [],
+      "notes": "The app itself: landing page, gallery, folders and keys. Ships no workflow, so it needs no node pack of its own beyond the two the app cannot work without."
+    },
+    {
+      "id": "z-image-core",
+      "label": "Z-Image Core",
+      "pack": "core",
+      "area": "image",
+      "enabled": true,
+      "tabs": [
+        "image",
+        "z-image-txt2img"
+      ],
+      "workflows": [
+        "z-image/txt2img.json"
+      ],
+      "custom_nodes": [
+        "comfy-image-saver",
+        "ComfyUI-Impact-Pack",
+        "ComfyUI-Impact-Subpack",
+        "ComfyUI-Manager",
+        "ComfyUI-Studio-nodes",
+        "ComfyUI-Styles_CSV_Loader",
+        "rgthree-comfy",
+        "was-node-suite-comfyui"
+      ],
+      "models": [
+        "z_image_turbo_bf16.safetensors",
+        "z-image-vae.safetensors",
+        "qwen_3_4b.safetensors",
+        "bbox/face_yolov8m.pt",
+        "sam_vit_b_01ec64.pth"
+      ],
+      "notes": "Z-Image Turbo text-to-image with LoRA support and face detailing. The smallest thing that generates a picture."
+    }
+  ]
+}

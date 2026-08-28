@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "default_profile": "core",
+  "_note": "A profile names PACKS, not modules. v3 listed modules explicitly here and the list drifted: modules.json held sixteen, the full profile named ten, and six shipped in neither. Naming the pack instead means a module joins a profile by declaring what it is, in one place.",
+  "profiles": {
+    "core": {
+      "label": "FEDDA Core Pack",
+      "description": "The app and Z-Image text-to-image. Everything the program needs to generate a picture, and nothing else.",
+      "packs": ["core"]
+    },
+    "full": {
+      "label": "FEDDA Full Studio",
+      "description": "The core pack plus every booster module installed on this machine.",
+      "packs": ["core", "booster"]
+    }
+  }
+}

@@ -1,0 +1,332 @@
+{
+  "3": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": 578871965745351,
+      "steps": 9,
+      "cfg": 1,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 1,
+      "model": [
+        "11",
+        0
+      ],
+      "positive": [
+        "6",
+        0
+      ],
+      "negative": [
+        "7",
+        0
+      ],
+      "latent_image": [
+        "13",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "6": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": [
+        "32",
+        0
+      ],
+      "clip": [
+        "18",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "CLIP Text Encode (Positive Prompt)"
+    }
+  },
+  "7": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": [
+        "35",
+        0
+      ],
+      "clip": [
+        "18",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "CLIP Text Encode (Negative Prompt)"
+    }
+  },
+  "8": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "3",
+        0
+      ],
+      "vae": [
+        "17",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecode"
+    }
+  },
+  "9": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "IMAGE/ZIMAGE/0",
+      "images": [
+        "181",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "SaveImage"
+    }
+  },
+  "11": {
+    "class_type": "ModelSamplingAuraFlow",
+    "inputs": {
+      "shift": 3,
+      "model": [
+        "126",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ModelSamplingAuraFlow"
+    }
+  },
+  "13": {
+    "class_type": "EmptySD3LatentImage",
+    "inputs": {
+      "width": [
+        "30",
+        0
+      ],
+      "height": [
+        "30",
+        1
+      ],
+      "batch_size": 1
+    },
+    "_meta": {
+      "title": "EmptySD3LatentImage"
+    }
+  },
+  "16": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "z_image_turbo_bf16.safetensors",
+      "weight_dtype": "default"
+    },
+    "_meta": {
+      "title": "UNETLoader"
+    }
+  },
+  "17": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "z-image-vae.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "18": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen_3_4b.safetensors",
+      "type": "lumina2",
+      "device": "default"
+    },
+    "_meta": {
+      "title": "CLIPLoader"
+    }
+  },
+  "30": {
+    "class_type": "AspectRatioImageSize",
+    "inputs": {
+      "width": 1920,
+      "height": 1088,
+      "aspect_ratio": "3:2",
+      "direction": "Vertical"
+    },
+    "_meta": {
+      "title": "AspectRatioImageSize"
+    }
+  },
+  "31": {
+    "class_type": "Load Styles CSV",
+    "inputs": {
+      "styles": "No Style",
+      "csv_file_path": "styles.csv"
+    },
+    "_meta": {
+      "title": "Load Styles CSV"
+    }
+  },
+  "32": {
+    "class_type": "Text Concatenate",
+    "inputs": {
+      "delimiter": ", ",
+      "clean_whitespace": "true",
+      "text_a": [
+        "33",
+        0
+      ],
+      "text_b": [
+        "31",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Text Concatenate"
+    }
+  },
+  "33": {
+    "class_type": "String Literal",
+    "inputs": {
+      "string": "Breathtaking Award-winningreliastic woman on a horse in leather viking clothes acnient ruins, hills, cinematic"
+    },
+    "_meta": {
+      "title": "POSITIVE PROMPT"
+    }
+  },
+  "34": {
+    "class_type": "String Literal",
+    "inputs": {
+      "string": ""
+    },
+    "_meta": {
+      "title": "NEGATIVE PROMPT"
+    }
+  },
+  "35": {
+    "class_type": "Text Concatenate",
+    "inputs": {
+      "delimiter": ", ",
+      "clean_whitespace": "true",
+      "text_a": [
+        "34",
+        0
+      ],
+      "text_b": [
+        "31",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "Text Concatenate"
+    }
+  },
+  "126": {
+    "class_type": "Power Lora Loader (rgthree)",
+    "inputs": {
+      "model": [
+        "16",
+        0
+      ],
+      "clip": [
+        "18",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  },
+  "179": {
+    "class_type": "UltralyticsDetectorProvider",
+    "inputs": {
+      "model_name": "bbox/face_yolov8m.pt"
+    },
+    "_meta": {
+      "title": "UltralyticsDetectorProvider"
+    }
+  },
+  "180": {
+    "class_type": "SAMLoader",
+    "inputs": {
+      "model_name": "sam_vit_b_01ec64.pth",
+      "device_mode": "AUTO"
+    },
+    "_meta": {
+      "title": "SAMLoader"
+    }
+  },
+  "181": {
+    "class_type": "FaceDetailer",
+    "inputs": {
+      "guide_size": 1152,
+      "guide_size_for": true,
+      "max_size": 1152,
+      "seed": 314,
+      "steps": 9,
+      "cfg": 1,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 0.44000000000000006,
+      "feather": 4,
+      "noise_mask": "enabled",
+      "force_inpaint": false,
+      "bbox_threshold": 0.5,
+      "bbox_dilation": 8,
+      "bbox_crop_factor": 1.5,
+      "sam_detection_hint": "center-1",
+      "sam_dilation": 0,
+      "sam_threshold": 0.93,
+      "sam_bbox_expansion": 0,
+      "sam_mask_hint_threshold": 0.7,
+      "sam_mask_hint_use_negative": "False",
+      "drop_size": 10,
+      "wildcard": "",
+      "cycle": 1,
+      "inpaint_model": false,
+      "noise_mask_feather": 2,
+      "tiled_encode": false,
+      "tiled_decode": false,
+      "image": [
+        "8",
+        0
+      ],
+      "model": [
+        "11",
+        0
+      ],
+      "clip": [
+        "18",
+        0
+      ],
+      "vae": [
+        "17",
+        0
+      ],
+      "positive": [
+        "6",
+        0
+      ],
+      "negative": [
+        "7",
+        0
+      ],
+      "bbox_detector": [
+        "179",
+        0
+      ],
+      "sam_model_opt": [
+        "180",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "FaceDetailer (Output)"
+    }
+  }
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "name": "comfy-image-saver",
+    "url": "https://github.com/giriss/comfy-image-saver.git",
+    "folder": "comfy-image-saver",
+    "note": "Enhanced image saver",
+    "pin": "c6223965d45871d1ff2931b6ac9518a13947c920",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
+    "name": "ComfyUI-Impact-Pack",
+    "url": "https://github.com/ltdrdata/ComfyUI-Impact-Pack.git",
+    "folder": "ComfyUI-Impact-Pack",
+    "note": "FaceDetailer, SEGS tools, ImpactSwitch",
+    "pin": "429d0159ad429e64d2b3916e6e7be9c22d025c3c",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-Impact-Subpack",
+    "url": "https://github.com/ltdrdata/ComfyUI-Impact-Subpack.git",
+    "folder": "ComfyUI-Impact-Subpack",
+    "note": "UltralyticsDetectorProvider",
+    "pin": "50c7b71a6a224734cc9b21963c6d1926816a97f1",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-Manager",
+    "url": "https://github.com/Comfy-Org/ComfyUI-Manager.git",
+    "folder": "ComfyUI-Manager",
+    "note": "Essential: Node manager, auto-install, model downloader",
+    "pin": "f39cbd56fecae0b27a446c0cd450cd591f3a8bea",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-Studio-nodes",
+    "url": "https://github.com/comfyuistudio/ComfyUI-Studio-nodes.git",
+    "folder": "ComfyUI-Studio-nodes",
+    "note": "Aspect Ratio Image Size, HuggingFaceDownloader",
+    "pin": "bf2033a57c9add688b7bbcb97def54423bd8ca99",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-Styles_CSV_Loader",
+    "url": "https://github.com/theUpsider/ComfyUI-Styles_CSV_Loader.git",
+    "folder": "ComfyUI-Styles_CSV_Loader",
+    "note": "Load Styles CSV",
+    "pin": "255a4af7fcc818c756286c885483a1f97e4f1e9a",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "rgthree-comfy",
+    "url": "https://github.com/rgthree/rgthree-comfy.git",
+    "folder": "rgthree-comfy",
+    "note": "Power Lora Loader, Image Comparer — used in all z-image workflows",
+    "pin": "13b4399c00b5ef5a97b1b6800fc1185874740f5d",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "was-node-suite-comfyui",
+    "url": "https://github.com/WASasquatch/was-node-suite-comfyui.git",
+    "folder": "was-node-suite-comfyui",
+    "note": "Text Concatenate, Text Multiline, image utilities — widely used",
+    "pin": "ea935d1044ae5a26efa54ebeb18fe9020af49a45",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  }
+]
