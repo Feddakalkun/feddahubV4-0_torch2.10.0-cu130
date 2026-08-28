@@ -63,10 +63,16 @@ function Set-NodeToPin {
         # Some servers refuse to serve an arbitrary sha. Pay for the history.
         $r = Invoke-Git @("-C", $Dir, "fetch", "-q", "origin")
         if ($r.Code -ne 0) { return $r }
-        return Invoke-Git @("-C", $Dir, "checkout", "-q", $Pin)
+        $r = Invoke-Git @("-C", $Dir, "checkout", "-q", $Pin)
+    } else {
+        $r = Invoke-Git @("-C", $Dir, "checkout", "-q", "FETCH_HEAD")
     }
-    $r = Invoke-Git @("-C", $Dir, "checkout", "-q", "FETCH_HEAD")
     if ($r.Code -ne 0) { return $r }
+
+    # Both paths land here. This used to sit only after the shallow
+    # checkout, so a pack that needed the full-history fallback - the only
+    # reason that branch exists - got no submodules at all, installed
+    # looking fine and failed when ComfyUI imported it.
     return Invoke-Git @("-C", $Dir, "submodule", "update", "--init", "--recursive", "--depth", "1")
 }
 
@@ -87,10 +93,61 @@ function Install-NodeRequirements {
     }
 }
 
+# Sixty identical lines with no position in them is several minutes of not
+# knowing how far along you are. A bar answers where; the estimate answers
+# how much longer, which is the part somebody watching actually wants. The
+# catalog holds 60 packs and the full profile installs boosters, so this is
+# not a one-workflow concern.
+#
+# The estimate counts only packs that did network work. Most of an update is
+# folders already on their pin, which finish in a local rev-parse; letting
+# those into the average would predict a finish that has already happened.
+#
+# The rate is measured off disk, because git reports nothing usable about
+# bytes. Each folder is sized once it is there and added to a running total,
+# which makes it the throughput of the whole step - clones and the pip
+# wheels that follow them alike - and the number that actually predicts the
+# finish rather than the network at its best.
+function Show-NodeProgress {
+    param([int] $Done, [int] $Total, [int] $Worked, [string] $Name,
+          [System.Diagnostics.Stopwatch] $Clock, [double] $Bytes = 0)
+
+    $filled = [int](20 * $Done / [Math]::Max($Total, 1))
+    $bar = ("#" * $filled) + ("-" * (20 - $filled))
+    $el = $Clock.Elapsed
+
+    # Blank rather than a wrong number until three packs have really done
+    # something. Timings are lumpy - rgthree clones in three seconds,
+    # ComfyUI-Manager takes twenty - so the first estimates are noise.
+    $eta = "   --:--"
+    if ($Worked -ge 3 -and $el.TotalSeconds -gt 0) {
+        $per = $el.TotalSeconds / $Worked
+        $left = [TimeSpan]::FromSeconds($per * ($Total - $Done))
+        $eta = "ETA {0:00}:{1:00}" -f [int]$left.TotalMinutes, $left.Seconds
+    }
+
+    # Padded to the same width when there is nothing to report, so the name
+    # column does not jump about between lines.
+    $rate = "          "
+    if ($Bytes -gt 0 -and $el.TotalSeconds -gt 1) {
+        $rate = "{0,5:N1} MB/s" -f (($Bytes / 1MB) / $el.TotalSeconds)
+    }
+
+    Write-Host ("   [{0,2}/{1}] {2} {3:mm\:ss} {4} {5}  {6}" -f `
+                $Done, $Total, $bar, $el, $eta, $rate, $Name) -ForegroundColor Gray
+}
+
 Write-Host ""
 Write-Host "  Custom nodes -> $($Nodes.Count) pinned pack(s)" -ForegroundColor Cyan
 
+$Index = 0
+$Worked = 0
+$Total = $Nodes.Count
+$Clock = [System.Diagnostics.Stopwatch]::StartNew()
+$SeenBytes = 0.0
+
 foreach ($node in $Nodes) {
+    $Index++
     $dir = Join-Path $CustomNodes $node.folder
     $pin = "$($node.pin)"
 
@@ -124,7 +181,10 @@ foreach ($node in $Nodes) {
         continue
     }
 
-    Write-Host "   -> $($node.folder) $verb $($pin.Substring(0, 12))" -ForegroundColor Gray
+    $Worked++
+    Show-NodeProgress -Done $Index -Total $Total -Worked $Worked `
+        -Name "$($node.folder) $verb $($pin.Substring(0, 12))" `
+        -Clock $Clock -Bytes $SeenBytes
     $r = Set-NodeToPin -Dir $dir -Url $node.url -Pin $pin
     if ($r.Code -ne 0) {
         Write-Host "      FAILED" -ForegroundColor Red
@@ -134,6 +194,10 @@ foreach ($node in $Nodes) {
         $Failed++
         continue
     }
+    try {
+        $SeenBytes += (Get-ChildItem $dir -Recurse -File -Force -ErrorAction SilentlyContinue |
+                       Measure-Object Length -Sum).Sum
+    } catch { }
     Install-NodeRequirements -Dir $dir -Name $node.folder
     if ($have) { $Updated++ } else { $Installed++ }
 }

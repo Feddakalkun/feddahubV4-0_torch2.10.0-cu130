@@ -669,7 +669,11 @@ $Deps = @(
     "deepdiff", "matplotlib", "scipy", "scikit-image", "scikit-learn",
     "timm", "colour-science", "blend-modes", "loguru",
     "ultralytics", "opencv-python-headless", "dill",
-    "fastapi", "uvicorn[standard]", "python-multipart",
+    # The backend's own stack. `requests` is imported directly by
+    # server.py, model_downloader.py and lora_service.py; it used to arrive
+    # only as a dependency of huggingface-hub and yt-dlp, which works right
+    # up until one of them drops it.
+    "fastapi", "uvicorn[standard]", "python-multipart", "requests",
     "browser-cookie3"
 )
 Venv-Pip "install $($Deps -join ' ')"
@@ -868,6 +872,30 @@ for lib in ['transformers', 'safetensors', 'numpy', 'PIL']:
         print(f'  {lib}: OK')
     except:
         ok = False; print(f'  {lib}: FAILED')
+
+# The backend has its own stack, and an install whose backend cannot start
+# is not a working install. Checking only torch passed one anyway.
+for lib in ['fastapi', 'uvicorn', 'requests', 'pydantic']:
+    try:
+        __import__(lib)
+        print(f'  {lib}: OK')
+    except:
+        ok = False; print(f'  {lib}: FAILED - the backend will not start')
+
+# Compiled, not imported. Importing it would build the app and read the
+# several-megabyte object_info cache; compiling catches a file that arrived
+# broken, which is the failure a smoke test is for.
+import os, py_compile
+_server = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                       'backend', 'server.py')
+if not os.path.isfile(_server):
+    ok = False; print('  backend/server.py: MISSING')
+else:
+    try:
+        py_compile.compile(_server, doraise=True)
+        print('  backend/server.py: OK')
+    except Exception as exc:
+        ok = False; print(f'  backend/server.py: FAILED {exc}')
 
 sys.exit(0 if ok else 1)
 "@

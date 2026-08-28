@@ -337,8 +337,6 @@ function Test-FeddaTouched {
     return $false
 }
 
-$NeedNodes = Test-FeddaTouched @("config/nodes.json", "config/modules.json",
-                                 "scripts/module_nodes.ps1")
 $NeedPip = Test-FeddaTouched @("scripts/install.ps1", "scripts/update_logic.ps1",
                                "*requirements*.txt")
 $NeedFrontend = Test-FeddaTouched @("frontend/package.json",
@@ -351,7 +349,6 @@ if ($FeddaRepair) {
         Write-Host "`n  Code is already current." -ForegroundColor Green
     } else {
         $Skipped = @()
-        if (-not $NeedNodes)    { $Skipped += "custom nodes" }
         if (-not $NeedPip)      { $Skipped += "python deps" }
         if (-not $NeedFrontend) { $Skipped += "frontend deps" }
         Write-Host ("`n  {0} file(s) changed. Skipping: {1}" -f $Changed.Count,
@@ -360,255 +357,33 @@ if ($FeddaRepair) {
     }
 }
 
-$NodesConfigFile = Join-Path $RootPath "config\nodes.json"
-if (-not (Test-Path $NodesConfigFile)) {
-    Write-Host "  [ERROR] config/nodes.json not found!" -ForegroundColor Red
-    exit 1
-}
-
-$ModuleNodeScript = Join-Path $RootPath "scripts\module_nodes.ps1"
-if (Test-Path $ModuleNodeScript) {
-    . $ModuleNodeScript
-    $NodesConfig = Get-FeddaNodeConfig -RootPath $RootPath -Logger { param($Message, $Color) Write-Host "  $Message" -ForegroundColor $Color }
-} else {
-    Write-Host "  [WARNING] Module node helper missing; using config/nodes.json directly." -ForegroundColor Yellow
-    $NodesConfig = Get-Content $NodesConfigFile -Raw | ConvertFrom-Json
-}
-
-if (-not (Test-Path $CustomNodesDir)) {
-    New-Item -ItemType Directory -Path $CustomNodesDir -Force | Out-Null
-}
-
-# Two brakes answering different questions. $NeedNodes asks whether this update
-# changed the node set at all; the weekly marker asks whether the packs have been
-# pulled recently regardless. Either saying no is enough to skip the walk.
-$NodeUpdateMarker = Join-Path $RootPath ".last_node_update"
-$NeedNodeUpdate = $NeedNodes
-if (-not $NeedNodes) {
-    Write-Host "`n[1/3] Custom nodes unchanged by this update" -ForegroundColor Green
-}
-
-if ($NeedNodeUpdate -and (Test-Path $NodeUpdateMarker)) {
-    $LastUpdate = (Get-Item $NodeUpdateMarker).LastWriteTime
-    $DaysSince = ((Get-Date) - $LastUpdate).TotalDays
-    if ($DaysSince -lt 7) {
-        $NeedNodeUpdate = $false
-        $DaysLeft = [math]::Ceiling(7 - $DaysSince)
-        Write-Host "`n[1/3] Custom nodes up to date (next check in ${DaysLeft}d)" -ForegroundColor Green
-    }
-}
-
-$InstalledCount = 0
-$UpdatedCount = 0
-$SkippedCount = 0
-$FailedCount = 0
-
-function Sync-NodeSubmodules {
-    param([string]$NodeDir)
-    $GitmodulesFile = Join-Path $NodeDir ".gitmodules"
-    if (Test-Path $GitmodulesFile) {
-        try {
-            Set-Location $NodeDir
-            $ErrorActionPreference = "Continue"
-            & $GitExe submodule update --init --recursive 2>&1 | Out-Null
-            $ErrorActionPreference = "Stop"
-            Set-Location $RootPath
-        } catch {
-            Set-Location $RootPath
-        }
-    }
-}
-
-# Always check for missing nodes
-$HasMissing = $false
-foreach ($Node in $NodesConfig) {
-    if ($Node.local -eq $true) { continue }
-    $NodeDir_Check = Join-Path $CustomNodesDir $Node.folder
-    if (-not (Test-Path $NodeDir_Check)) { $HasMissing = $true; break }
-}
-
-# Always force-update nodes that ship new model architectures regularly
-$CriticalNodes = @("ComfyUI-LTXVideo", "RES4LYF", "ComfyUI-KJNodes")
-foreach ($CritNode in $CriticalNodes) {
-    $CritDir = Join-Path $CustomNodesDir $CritNode
-    if (Test-Path $CritDir) {
-        try {
-            Set-Location $CritDir
-            $ErrorActionPreference = "Continue"
-            & $GitExe pull 2>&1 | Out-Null
-            $ErrorActionPreference = "Stop"
-            Set-Location $RootPath
-            Sync-NodeSubmodules -NodeDir $CritDir
-        } catch {
-            Set-Location $RootPath
-        }
-    }
-}
-
-if ($NeedNodeUpdate -or $HasMissing) {
-    if ($NeedNodeUpdate) {
-        Write-Host "`n[1/3] Syncing custom nodes from config/nodes.json..." -ForegroundColor Yellow
-    } else {
-        Write-Host "`n[1/3] Installing missing custom nodes..." -ForegroundColor Yellow
-    }
-
-    foreach ($Node in $NodesConfig) {
-        if ($Node.local -eq $true) {
-            Write-Host "  [$($Node.name)] Local node - skipped" -ForegroundColor Gray
-            continue
-        }
-
-        $NodeDir_Install = Join-Path $CustomNodesDir $Node.folder
-
-        if (-not (Test-Path $NodeDir_Install)) {
-            # Clone missing node. A local vendored copy still wins, but the repo
-            # no longer ships one - those packs belong to their authors and two
-            # carried no licence to redistribute.
-            $VendorDir = Join-Path $RootPath "vendor\custom_nodes\$($Node.folder)"
-            if (Test-Path $VendorDir) {
-                Write-Host "  [$($Node.name)] Installing from vendored copy..." -ForegroundColor White
-                Copy-Item -Recurse -Force $VendorDir $NodeDir_Install
-                $InstalledCount++
-                Write-Host "  [$($Node.name)] Installed OK (vendored)" -ForegroundColor Green
-                $ReqFile = Join-Path $NodeDir_Install "requirements.txt"
-                # Through Invoke-Pip like every other pip call here. Called
-                # directly it answered a failed build inside one node's
-                # requirements with a PowerShell stack trace naming this
-                # file and line, printed between two node names.
-                if (Test-Path $ReqFile) {
-                    Invoke-Pip -PyExe $PyExe -Label $Node.name `
-                        -PipArgs @("-m","pip","install","-r","$ReqFile","--no-warn-script-location","--quiet") | Out-Null
-                }
-                continue
-            }
-            Write-Host "  [$($Node.name)] Installing..." -ForegroundColor White
-            try {
-                $ErrorActionPreference = "Continue"
-                & $GitExe clone --depth 1 $Node.url "$NodeDir_Install" 2>&1 | Out-Null
-                $ErrorActionPreference = "Stop"
-                if ($LASTEXITCODE -eq 0) {
-                    $InstalledCount++
-                    Write-Host "  [$($Node.name)] Installed OK" -ForegroundColor Green
-                    Sync-NodeSubmodules -NodeDir $NodeDir_Install
-
-                    $ReqFile = Join-Path $NodeDir_Install "requirements.txt"
-                    if (Test-Path $ReqFile) {
-                        Write-Host "  [$($Node.name)] Installing dependencies..." -ForegroundColor Gray
-                        Write-Host "    (this can take a LONG time for heavy nodes like LayerStyle_Advance - mediapipe, onnxruntime, transformers etc.)" -ForegroundColor DarkGray
-                        $SkipPkgs = @('^\s*insightface','^\s*byaldi','^\s*nano-graphrag','^\s*kaleido','^\s*qwen-vl-utils','^\s*fastparquet','^\s*llama-cpp-python','^\s*llama_cpp_python')
-                        $ReqContent = Get-Content $ReqFile
-                        $Filtered = $ReqContent
-                        foreach ($p in $SkipPkgs) { $Filtered = $Filtered | Where-Object { $_ -notmatch $p } }
-                        $TmpReq = Join-Path $NodeDir_Install "_req_filtered.txt"
-                        Set-Content -Path $TmpReq -Value $Filtered
-                        $ErrorActionPreference = "Continue"
-                        Invoke-Pip -PyExe $PyExe -PipArgs @("-m","pip","install","-r","$TmpReq","--no-warn-script-location")
-                        $ErrorActionPreference = "Stop"
-                        Remove-Item $TmpReq -Force -ErrorAction SilentlyContinue
-                    }
-
-                    Invoke-NodeDependencyRepair -NodeDir $NodeDir_Install -NodeName $Node.name -PyExe $PyExe
-                } else {
-                    Write-Host "  [$($Node.name)] Clone failed!" -ForegroundColor Red
-                    $FailedCount++
-                }
-            }
-            catch {
-                Write-Host "  [$($Node.name)] Error: $_" -ForegroundColor Red
-                $FailedCount++
-            }
-        }
-        elseif ($NeedNodeUpdate) {
-            # Update existing node
-            Write-Host "  [$($Node.name)] Updating..." -ForegroundColor Gray
-            try {
-                Set-Location $NodeDir_Install
-                & $GitExe pull 2>&1 | Out-Null
-                if ($LASTEXITCODE -ne 0) {
-                    Write-Host "  [$($Node.name)] Git pull failed (non-fatal)" -ForegroundColor Yellow
-                }
-                $UpdatedCount++
-                Set-Location $RootPath
-                Sync-NodeSubmodules -NodeDir $NodeDir_Install
-            }
-            catch {
-                Write-Host "  [$($Node.name)] Update failed (non-fatal): $_" -ForegroundColor Yellow
-                Set-Location $RootPath
-            }
-
-            # Hardcoded list of nodes whose pip re-check on update is extremely slow
-            # (torch/transformers already installed via ComfyUI — re-resolving costs minutes for nothing)
-            $HeavyNodes = @('ComfyUI_LayerStyle', 'ComfyUI_LayerStyle_Advance', 'ComfyUI-Impact-Pack', 'ComfyUI-Impact-Subpack', 'comfy_mtb')
-            $skipDeps = ($Node.skip_req_update -eq $true) -or ($HeavyNodes -contains $Node.folder)
-
-            $ReqFile = Join-Path $NodeDir_Install "requirements.txt"
-            if ((Test-Path $ReqFile) -and (-not $skipDeps)) {
-                Write-Host ("  [{0}] dependencies . . . " -f $Node.name) -NoNewline -ForegroundColor Gray
-                $SkipPkgs = @('^\s*insightface','^\s*byaldi','^\s*nano-graphrag','^\s*kaleido','^\s*qwen-vl-utils','^\s*fastparquet')
-                $ReqContent = Get-Content $ReqFile
-                $Filtered = $ReqContent
-                foreach ($p in $SkipPkgs) { $Filtered = $Filtered | Where-Object { $_ -notmatch $p } }
-                $TmpReq = Join-Path $NodeDir_Install "_req_filtered.txt"
-                Set-Content -Path $TmpReq -Value $Filtered
-                $ErrorActionPreference = "Continue"
-                $PipCode = Invoke-Pip -PyExe $PyExe -Label $Node.name `
-                    -PipArgs @("-m","pip","install","-q","-r","$TmpReq","--no-warn-script-location")
-                $ErrorActionPreference = "Stop"
-                if ($PipCode -eq 0) {
-                    Write-Host "OK" -ForegroundColor DarkGray
-                } else {
-                    Write-Host "FAILED - see logs\update_pip.log" -ForegroundColor Yellow
-                    $script:PipFailures += $Node.name
-                }
-                Remove-Item $TmpReq -Force -ErrorAction SilentlyContinue
-            } elseif ($skipDeps) {
-                Write-Host "  [$($Node.name)] Deps skipped (heavy node - already satisfied)" -ForegroundColor DarkGray
-            }
-
-            # Skipped for heavy nodes, whose deps are already satisfied.
-            if (-not $skipDeps) {
-                Invoke-NodeDependencyRepair -NodeDir $NodeDir_Install -NodeName $Node.name -PyExe $PyExe
-            }
-        }
-        else {
-            $SkippedCount++
-        }
-    }
-
-    if ($NeedNodeUpdate) {
-        "Updated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" | Out-File $NodeUpdateMarker -Force
-    }
-
-    $Parts = @()
-    if ($InstalledCount -gt 0) { $Parts += "$InstalledCount installed" }
-    if ($UpdatedCount -gt 0)  { $Parts += "$UpdatedCount updated" }
-    if ($SkippedCount -gt 0)  { $Parts += "$SkippedCount up to date" }
-    if ($FailedCount -gt 0)   { $Parts += "$FailedCount failed" }
-    Write-Host "`n  Summary: $($Parts -join ', ')" -ForegroundColor Cyan
-}
-
-$WanAnimatePatch = Join-Path $RootPath "scripts\patch_wan_animate_preprocess.ps1"
-if (Test-Path $WanAnimatePatch) {
-    Write-Host "  Applying WanAnimate preprocess compatibility patch..." -ForegroundColor Gray
-    & powershell -ExecutionPolicy Bypass -File "$WanAnimatePatch" -RootPath "$RootPath"
-}
-
-$LtxVideoPatch = Join-Path $RootPath "scripts\patch_ltxvideo_kornia.ps1"
-if (Test-Path $LtxVideoPatch) {
-    Write-Host "  Applying LTXVideo Kornia compatibility patch..." -ForegroundColor Gray
-    & powershell -ExecutionPolicy Bypass -File "$LtxVideoPatch" -RootPath "$RootPath"
-}
-
-$KJNodesPatch = Join-Path $RootPath "scripts\patch_kjnodes_ltx_audio_vae.ps1"
-if (Test-Path $KJNodesPatch) {
-    Write-Host "  Applying KJNodes LTX audio VAE compatibility patch..." -ForegroundColor Gray
-    & powershell -ExecutionPolicy Bypass -File "$KJNodesPatch" -RootPath "$RootPath"
-}
-
-$HFRetryPatch = Join-Path $RootPath "scripts\patch_hfdownloader_retry.ps1"
-if (Test-Path $HFRetryPatch) {
-    Write-Host "  Applying HuggingFace downloader resume-on-drop patch..." -ForegroundColor Gray
-    & powershell -ExecutionPolicy Bypass -File "$HFRetryPatch" -RootPath "$RootPath"
+# config/nodes.json is derived by scripts/require_nodes.py from the workflows
+# this install actually ships, and every pack in it carries a commit taken
+# from an install known to work. sync_nodes.ps1 puts each folder on exactly
+# that commit - the same call, with the same meaning, that install.ps1 step 4
+# makes. One operation for both, deliberately.
+#
+# It runs unconditionally, and that is the point. What stood here was v3's
+# `if (-not (Test-Path $NodeDir)) { clone } else { skip }`: a pack installed
+# once was never touched again, so a fix upstream reached nobody who had
+# already run the installer. Nothing brakes it now - a folder already on its
+# pin costs one local `git rev-parse` and is skipped inside the script, which
+# is cheap enough that guessing is not worth the risk of guessing wrong.
+#
+# Gone with it: the weekly .last_node_update marker, and the $CriticalNodes
+# list that force-pulled three packs to HEAD on every update. Both existed
+# because v3 cloned at HEAD and had to keep pulling. Pinned, "check again in
+# seven days" answers a question nobody asks - the folder either matches the
+# pin or it does not - and pulling to HEAD is the drift pinning prevents.
+Write-Host "`n[1/3] Custom nodes" -ForegroundColor Yellow
+$SyncNodes = Join-Path $RootPath "scripts\sync_nodes.ps1"
+& powershell -NoProfile -ExecutionPolicy Bypass -File $SyncNodes `
+    -ComfyDir $ComfyDir -VenvPython $PyExe
+if ($LASTEXITCODE -ne 0) {
+    # Not fatal, for the same reason as at install time: a failed pack means
+    # the workflows using it will not open and the report above names it, but
+    # the python deps and the frontend are still worth finishing.
+    Write-Host "  One or more node packs failed - see the report above" -ForegroundColor Yellow
 }
 
 # ============================================================================
