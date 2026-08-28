@@ -40,6 +40,7 @@ if _backend_dir not in sys.path:
     sys.path.insert(0, _backend_dir)
 
 import descriptor
+import model_links
 from logging_setup import setup_logging
 from lora_service import LoRAService
 from model_downloader import ModelDownloader
@@ -306,26 +307,130 @@ async def workflow_schema(workflow_id: str) -> Dict[str, Any]:
     return descriptor.describe_workflow(workflow_id, mapping, graph, OBJECT_INFO)
 
 
+def _workflow_models(workflow_id: str) -> List[Dict[str, Any]]:
+    """Every model this workflow needs, and where each one already is.
+
+    Two sources, unioned by filename. `modules.json` names the files a module
+    needs and `model_downloader` holds their URLs; a graph may also declare
+    its own downloads inline through a HuggingFaceDownloader node. Today the
+    first supplies everything and the second is empty for all six workflows -
+    which is why reading only the graph, as the first version of this did,
+    reported nothing to download while the wire was saturated.
+    """
+    extra = str(_runtime_settings().get("extra_models_path") or "")
+    mapping = workflow_service.load_mapping().get(workflow_id)
+    if not mapping:
+        return []
+    path = workflow_service.get_workflow_path(mapping.get("filename", ""))
+    if not path:
+        return []
+    graph = model_links.load_graph(path)
+
+    files: List[Dict[str, Any]] = []
+    seen = set()
+
+    for item in model_links.models_from_graph(graph):
+        name = item["filename"]
+        seen.add(name.lower())
+        spec = model_downloader.zimage_core_specs.get(name)
+        # Not every spec places its file by folder: some carry a
+        # root_relative_path instead, and reading relative_dir off those
+        # raises rather than falling back.
+        folder = item["folder"]
+        if spec and spec.get("relative_dir"):
+            folder = str(spec["relative_dir"]).replace("\\", "/")
+
+        # The spec knows the exact folder, so ask there first and only walk
+        # the tree for files it does not place.
+        found = (model_links.find_existing_model(folder, name, ROOT_DIR, extra)
+                 if folder else None)
+        if found is None:
+            found = model_links.find_anywhere(name, ROOT_DIR, extra)
+
+        files.append({
+            "filename": name,
+            "folder": folder,
+            "url": str(spec["url"]) if spec else "",
+            "path": (str(model_downloader._dest_path_for_spec(spec, name))
+                     if spec else ""),
+            "exists": found is not None,
+            "size_bytes": found.stat().st_size if found else 0,
+            # Named by the workflow with nowhere to fetch it from. Reported
+            # rather than dropped: a model the app cannot get is something
+            # the user has to know about, not something to hide. Several are
+            # fetched by the node pack itself on first use.
+            **({} if spec else {"no_source": True}),
+        })
+
+    # A graph may also declare downloads inline through a
+    # HuggingFaceDownloader node. None of the six do today.
+    for item in model_links.parse_download_links(graph, ROOT_DIR, extra):
+        if item["filename"].lower() not in seen:
+            files.append(item)
+            seen.add(item["filename"].lower())
+
+    return files
+
+
 @app.get("/api/workflow/model-status/{workflow_id}")
 async def workflow_model_status(workflow_id: str) -> Dict[str, Any]:
-    """Which of this workflow's models are already on disk.
+    """Which of this workflow's models this machine already has.
 
-    `model_downloader` answers it, and it looks in the user's own library as
-    well as the install's tree - the fix that stopped a machine with the models
-    already attached from refusing to generate and re-downloading them.
+    Read off the graph rather than from a list in modules.json: the
+    HuggingFaceDownloader node carries the URLs, so a workflow states its own
+    requirements and adopting one does not mean maintaining an inventory
+    beside it.
+
+    "Already has" means anywhere ComfyUI will look, which includes the folder
+    Settings points at. Asking only about our own tree is what once made an
+    install with the models already attached refuse to generate and start
+    re-downloading twenty gigabytes it had.
     """
-    module = module_service.module_for_workflow(workflow_id) or {}
-    required = module.get("models") or []
-    if not required:
-        return {"ready": True, "files": []}
-    return model_downloader.ensure_zimage_core_models(required)
+    files = _workflow_models(workflow_id)
+    return {"files": files, "ready": all(f["exists"] for f in files)}
+
+
+@app.get("/api/workflow/download-live-progress/{workflow_id}")
+async def workflow_download_live_progress(workflow_id: str) -> Dict[str, Any]:
+    """Bytes on disk against bytes expected, polled while a download runs.
+
+    This is what the banner draws. Without it the transfer ran at full speed
+    with nothing on screen at all - the endpoint the UI polls simply was not
+    there, and a 404 every two seconds looks exactly like an idle app.
+    """
+    token = str(_runtime_settings().get("hf_token") or "").strip()
+    return {"files": model_links.live_progress(_workflow_models(workflow_id), token)}
 
 
 @app.post("/api/workflow/download-models/{workflow_id}")
 async def workflow_download_models(workflow_id: str) -> Dict[str, Any]:
-    module = module_service.module_for_workflow(workflow_id) or {}
-    required = module.get("models") or []
-    return model_downloader.ensure_zimage_core_models(required)
+    """Fetch everything missing, without running the workflow."""
+    files = _workflow_models(workflow_id)
+    if not files:
+        raise HTTPException(status_code=404,
+                            detail=f"No models declared by '{workflow_id}'")
+
+    token = str(_runtime_settings().get("hf_token") or "").strip()
+    started, already = [], []
+    for item in files:
+        if item["exists"]:
+            already.append(item["filename"])
+            continue
+        if not item.get("url"):
+            continue  # named by the module, but nothing knows where to get it
+        # The token goes only to Hugging Face. Sending it to a mirror or a
+        # CDN would hand someone else the user's credential.
+        headers = ({"Authorization": f"Bearer {token}"}
+                   if token and "huggingface.co" in item["url"] else None)
+        dest = Path(item["path"])
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        model_downloader.start_url_download(
+            item["url"], dest, item["filename"], headers=headers)
+        started.append(item["filename"])
+
+    logger.info("download %s: %d starting, %d already here",
+                workflow_id, len(started), len(already))
+    return {"success": True, "started": started, "already_present": already}
 
 
 @app.get("/api/models/status/{filename}")
