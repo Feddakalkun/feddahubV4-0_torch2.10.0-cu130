@@ -9,6 +9,33 @@
     "pin_from": "comfyuistudio-v362"
   },
   {
+    "name": "ComfyUI-Custom-Scripts",
+    "url": "https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git",
+    "folder": "ComfyUI-Custom-Scripts",
+    "note": "ShowText|pysssss — debug display, workflow utilities",
+    "pin": "609f3afaa74b2f88ef9ce8d939626065e3247469",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-DonutNodes",
+    "url": "https://github.com/DonutsDelivery/ComfyUI-DonutNodes.git",
+    "folder": "ComfyUI-DonutNodes",
+    "note": "Donut Detailer",
+    "pin": "e461d83480550727727f8ea180a2139005d5edef",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-Easy-Use",
+    "url": "https://github.com/yolain/ComfyUI-Easy-Use.git",
+    "folder": "ComfyUI-Easy-Use",
+    "note": "easy showAnything, easy int — common UI helpers",
+    "pin": "4de1ab3b66e48da916b6f263bacd001df53a2720",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
     "name": "ComfyUI-Impact-Pack",
     "url": "https://github.com/ltdrdata/ComfyUI-Impact-Pack.git",
     "folder": "ComfyUI-Impact-Pack",
@@ -27,11 +54,47 @@
     "pin_from": "fedda-v3"
   },
   {
+    "name": "ComfyUI-Inpaint-CropAndStitch",
+    "url": "https://github.com/lquesada/ComfyUI-Inpaint-CropAndStitch.git",
+    "folder": "ComfyUI-Inpaint-CropAndStitch",
+    "note": "InpaintCropImproved + InpaintStitchImproved. See https://github.com/lquesada/ComfyUI-Inpaint-CropAndStitch",
+    "pin": "606e2b4fd83fc44e1f0b403e1f076501db8c3749",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-KJNodes",
+    "url": "https://github.com/kijai/ComfyUI-KJNodes.git",
+    "folder": "ComfyUI-KJNodes",
+    "note": "KJNodes utilities",
+    "pin": "3f20054214fec9f9234fd3841ae6f1e4287948f6",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
+    "name": "ComfyUI-Lotus",
+    "url": "https://github.com/kijai/ComfyUI-Lotus.git",
+    "folder": "ComfyUI-Lotus",
+    "note": "Lotus nodes",
+    "pin": "07719d3195b9a31839e3c6c4875a9eb9d6b1734c",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
     "name": "ComfyUI-Manager",
     "url": "https://github.com/Comfy-Org/ComfyUI-Manager.git",
     "folder": "ComfyUI-Manager",
     "note": "Essential: Node manager, auto-install, model downloader",
     "pin": "f39cbd56fecae0b27a446c0cd450cd591f3a8bea",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-SeedVR2_VideoUpscaler",
+    "url": "https://github.com/numz/ComfyUI-SeedVR2_VideoUpscaler.git",
+    "folder": "ComfyUI-SeedVR2_VideoUpscaler",
+    "note": "Video Upscaling",
+    "pin": "4490bd1f482e026674543386bb2a4d176da245b9",
     "pin_source": "git",
     "pin_from": "fedda-v3"
   },
@@ -50,6 +113,52 @@
     "folder": "ComfyUI-Styles_CSV_Loader",
     "note": "Load Styles CSV",
     "pin": "255a4af7fcc818c756286c885483a1f97e4f1e9a",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "comfyui_controlnet_aux",
+    "url": "https://github.com/Fannovel16/comfyui_controlnet_aux.git",
+    "folder": "comfyui_controlnet_aux",
+    "note": "CannyEdgePreprocessor, DWPreprocessor, HEDPreprocessor",
+    "pin": "e8b689a513c3e6b63edc44066560ca5919c0576e",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI_essentials",
+    "url": "https://github.com/cubiq/ComfyUI_essentials.git",
+    "folder": "ComfyUI_essentials",
+    "note": "Essential image resize, mask, utility nodes",
+    "pin": "9d9f4bedfc9f0321c19faf71855e228c93bd0dc9",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI_LayerStyle_Advance",
+    "url": "https://github.com/chflame163/ComfyUI_LayerStyle_Advance.git",
+    "folder": "ComfyUI_LayerStyle_Advance",
+    "note": "LayerStyle Advance features (provides LayerMask: PersonMaskUltra V2). See https://github.com/chflame163/ComfyUI_LayerStyle_Advance , https://docs.getsalt.ai/md/ComfyUI_LayerStyle/Nodes/LayerMask:%20PersonMaskUltra%20V2/ and https://comfy.icu/node/LayerMask-PersonMaskUltra-V2",
+    "skip_req_update": true,
+    "pin": "7b678b401a38307a4a7e99ef6630bd48f9cecedb",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI_UltimateSDUpscale",
+    "url": "https://github.com/ssitu/ComfyUI_UltimateSDUpscale.git",
+    "folder": "ComfyUI_UltimateSDUpscale",
+    "note": "Ultimate SD Upscale",
+    "pin": "a5547db9e1d07d3318bb21e9e9c474f4c1e9c8df",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
+    "name": "Derfuu_ComfyUI_ModdedNodes",
+    "url": "https://github.com/Derfuu/Derfuu_ComfyUI_ModdedNodes.git",
+    "folder": "Derfuu_ComfyUI_ModdedNodes",
+    "note": "DF_Int_to_Float",
+    "pin": "d0905bed31249f2bd0814c67585cf4fe3c77c015",
     "pin_source": "git",
     "pin_from": "fedda-v3"
   },

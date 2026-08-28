@@ -1,6 +1,7 @@
 {
   "version": 1,
   "_note": "custom_nodes on every module is DERIVED by scripts/require_nodes.py --modules from that module's own workflows. Do not hand-edit it; the edit will be overwritten, and hand-keeping this list is exactly how v3 ended up installing sixty packs to use thirty-eight.",
+  "_workflows": "The `workflows` field holds graph FILES, relative to backend/workflows - require_nodes.py walks them to derive the packs above. Which workflow id belongs to which module is stated in config/workflow_api.json instead, by its `module` field.",
   "modules": [
     {
       "id": "core-shell",
@@ -29,10 +30,12 @@
       "enabled": true,
       "tabs": [
         "image",
-        "z-image-txt2img"
+        "z-image-txt2img",
+        "z-image-img2img"
       ],
       "workflows": [
-        "z-image/txt2img.json"
+        "z-image/txt2img.json",
+        "z-image/img2img.json"
       ],
       "custom_nodes": [
         "comfy-image-saver",
@@ -51,7 +54,89 @@
         "bbox/face_yolov8m.pt",
         "sam_vit_b_01ec64.pth"
       ],
-      "notes": "Z-Image Turbo text-to-image with LoRA support and face detailing. The smallest thing that generates a picture."
+      "notes": "Text to image and image to image on Z-Image Turbo, with LoRAs and a face pass. The smallest thing that generates a picture."
+    },
+    {
+      "id": "z-image-inpaint",
+      "label": "Z-Image Inpainting",
+      "pack": "booster",
+      "area": "image",
+      "enabled": true,
+      "tabs": [
+        "image",
+        "z-image-inpaint",
+        "z-image-inpaint-automask"
+      ],
+      "workflows": [
+        "z-image/inpaint.json",
+        "z-image/inpaint-automask.json"
+      ],
+      "custom_nodes": [
+        "comfy-image-saver",
+        "ComfyUI-Inpaint-CropAndStitch",
+        "ComfyUI-Styles_CSV_Loader",
+        "ComfyUI_LayerStyle_Advance",
+        "rgthree-comfy",
+        "was-node-suite-comfyui"
+      ],
+      "models": [],
+      "notes": "Repaint part of an image, by hand mask or by automatic person masking."
+    },
+    {
+      "id": "z-image-control",
+      "label": "Z-Image ControlNet",
+      "pack": "booster",
+      "area": "image",
+      "enabled": true,
+      "tabs": [
+        "image",
+        "z-image-controlnet"
+      ],
+      "workflows": [
+        "z-image/controlnet.json"
+      ],
+      "custom_nodes": [
+        "comfy-image-saver",
+        "ComfyUI-Impact-Pack",
+        "ComfyUI-KJNodes",
+        "ComfyUI-Lotus",
+        "ComfyUI-Styles_CSV_Loader",
+        "comfyui_controlnet_aux",
+        "rgthree-comfy",
+        "was-node-suite-comfyui"
+      ],
+      "models": [],
+      "notes": "Follow the shape of a reference image - pose, edges or depth - through the Z-Image ControlNet Union patch."
+    },
+    {
+      "id": "z-image-detailed",
+      "label": "Z-Image Detailed",
+      "pack": "booster",
+      "area": "image",
+      "enabled": true,
+      "tabs": [
+        "image",
+        "z-image-detailed"
+      ],
+      "workflows": [
+        "z-image/detailed.json"
+      ],
+      "custom_nodes": [
+        "comfy-image-saver",
+        "ComfyUI-Custom-Scripts",
+        "ComfyUI-DonutNodes",
+        "ComfyUI-Easy-Use",
+        "ComfyUI-Impact-Pack",
+        "ComfyUI-Impact-Subpack",
+        "ComfyUI-SeedVR2_VideoUpscaler",
+        "ComfyUI_essentials",
+        "ComfyUI_UltimateSDUpscale",
+        "Derfuu_ComfyUI_ModdedNodes",
+        "rgthree-comfy",
+        "was-node-suite-comfyui"
+      ],
+      "models": [],
+      "notes": "Text to image followed by a tiled UltimateSDUpscale pass."
     }
   ]
 }

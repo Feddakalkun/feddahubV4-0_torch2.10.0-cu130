@@ -1,0 +1,1929 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;1,14..32,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ──────────────────────────────────────────
+   Design Tokens
+────────────────────────────────────────── */
+/*  The palette lives here now.
+ *
+ *  Every Tailwind colour class in the app - `bg-zinc-900`, `text-white/55`,
+ *  `border-violet-500/25`, all three thousand of them - resolves to one of
+ *  these instead of a fixed hex. Nothing in the components changed; what the
+ *  names point at did.
+ *
+ *  Channels rather than hex because Tailwind's `<alpha-value>` needs
+ *  `rgb(R G B / A)` for the slash-opacity syntax to keep working.
+ *
+ *  These defaults are Tailwind's own values, so this file describes the look
+ *  the app already had. A theme below overrides a handful of them.
+ */
+:root {
+  /* Neutrals. These two carry most of the interface: 1590 uses of
+     white and 286 of black, nearly all of them at some opacity. A
+     theme that changes nothing else can change the entire feel by
+     moving these. */
+  --c-white: 255 255 255;
+  --c-black: 0 0 0;
+
+  /* zinc */
+  --c-zinc-50: 250 250 250;
+  --c-zinc-100: 244 244 245;
+  --c-zinc-200: 228 228 231;
+  --c-zinc-300: 212 212 216;
+  --c-zinc-400: 161 161 170;
+  --c-zinc-500: 113 113 122;
+  --c-zinc-600: 82 82 91;
+  --c-zinc-700: 63 63 70;
+  --c-zinc-800: 39 39 42;
+  --c-zinc-900: 24 24 27;
+  --c-zinc-950: 9 9 11;
+
+  /* slate */
+  --c-slate-50: 248 250 252;
+  --c-slate-100: 241 245 249;
+  --c-slate-200: 226 232 240;
+  --c-slate-300: 203 213 225;
+  --c-slate-400: 148 163 184;
+  --c-slate-500: 100 116 139;
+  --c-slate-600: 71 85 105;
+  --c-slate-700: 51 65 85;
+  --c-slate-800: 30 41 59;
+  --c-slate-900: 15 23 42;
+  --c-slate-950: 2 6 23;
+
+  /* violet */
+  --c-violet-50: 245 243 255;
+  --c-violet-100: 237 233 254;
+  --c-violet-200: 221 214 254;
+  --c-violet-300: 196 181 253;
+  --c-violet-400: 167 139 250;
+  --c-violet-500: 139 92 246;
+  --c-violet-600: 124 58 237;
+  --c-violet-700: 109 40 217;
+  --c-violet-800: 91 33 182;
+  --c-violet-900: 76 29 149;
+  --c-violet-950: 46 16 101;
+
+  /* emerald */
+  --c-emerald-50: 236 253 245;
+  --c-emerald-100: 209 250 229;
+  --c-emerald-200: 167 243 208;
+  --c-emerald-300: 110 231 183;
+  --c-emerald-400: 52 211 153;
+  --c-emerald-500: 16 185 129;
+  --c-emerald-600: 5 150 105;
+  --c-emerald-700: 4 120 87;
+  --c-emerald-800: 6 95 70;
+  --c-emerald-900: 6 78 59;
+  --c-emerald-950: 2 44 34;
+
+  /* amber */
+  --c-amber-50: 255 251 235;
+  --c-amber-100: 254 243 199;
+  --c-amber-200: 253 230 138;
+  --c-amber-300: 252 211 77;
+  --c-amber-400: 251 191 36;
+  --c-amber-500: 245 158 11;
+  --c-amber-600: 217 119 6;
+  --c-amber-700: 180 83 9;
+  --c-amber-800: 146 64 14;
+  --c-amber-900: 120 53 15;
+  --c-amber-950: 69 26 3;
+
+  /* cyan */
+  --c-cyan-50: 236 254 255;
+  --c-cyan-100: 207 250 254;
+  --c-cyan-200: 165 243 252;
+  --c-cyan-300: 103 232 249;
+  --c-cyan-400: 34 211 238;
+  --c-cyan-500: 6 182 212;
+  --c-cyan-600: 8 145 178;
+  --c-cyan-700: 14 116 144;
+  --c-cyan-800: 21 94 117;
+  --c-cyan-900: 22 78 99;
+  --c-cyan-950: 8 51 68;
+
+  /* red */
+  --c-red-50: 254 242 242;
+  --c-red-100: 254 226 226;
+  --c-red-200: 254 202 202;
+  --c-red-300: 252 165 165;
+  --c-red-400: 248 113 113;
+  --c-red-500: 239 68 68;
+  --c-red-600: 220 38 38;
+  --c-red-700: 185 28 28;
+  --c-red-800: 153 27 27;
+  --c-red-900: 127 29 29;
+  --c-red-950: 69 10 10;
+
+  /* sky */
+  --c-sky-50: 240 249 255;
+  --c-sky-100: 224 242 254;
+  --c-sky-200: 186 230 253;
+  --c-sky-300: 125 211 252;
+  --c-sky-400: 56 189 248;
+  --c-sky-500: 14 165 233;
+  --c-sky-600: 2 132 199;
+  --c-sky-700: 3 105 161;
+  --c-sky-800: 7 89 133;
+  --c-sky-900: 12 74 110;
+  --c-sky-950: 8 47 73;
+
+  /* rose */
+  --c-rose-50: 255 241 242;
+  --c-rose-100: 255 228 230;
+  --c-rose-200: 254 205 211;
+  --c-rose-300: 253 164 175;
+  --c-rose-400: 251 113 133;
+  --c-rose-500: 244 63 94;
+  --c-rose-600: 225 29 72;
+  --c-rose-700: 190 18 60;
+  --c-rose-800: 159 18 57;
+  --c-rose-900: 136 19 55;
+  --c-rose-950: 76 5 25;
+
+  /* blue */
+  --c-blue-50: 239 246 255;
+  --c-blue-100: 219 234 254;
+  --c-blue-200: 191 219 254;
+  --c-blue-300: 147 197 253;
+  --c-blue-400: 96 165 250;
+  --c-blue-500: 59 130 246;
+  --c-blue-600: 37 99 235;
+  --c-blue-700: 29 78 216;
+  --c-blue-800: 30 64 175;
+  --c-blue-900: 30 58 138;
+  --c-blue-950: 23 37 84;
+
+  /* purple */
+  --c-purple-50: 250 245 255;
+  --c-purple-100: 243 232 255;
+  --c-purple-200: 233 213 255;
+  --c-purple-300: 216 180 254;
+  --c-purple-400: 192 132 252;
+  --c-purple-500: 168 85 247;
+  --c-purple-600: 147 51 234;
+  --c-purple-700: 126 34 206;
+  --c-purple-800: 107 33 168;
+  --c-purple-900: 88 28 135;
+  --c-purple-950: 59 7 100;
+
+  /* pink */
+  --c-pink-50: 253 242 248;
+  --c-pink-100: 252 231 243;
+  --c-pink-200: 251 207 232;
+  --c-pink-300: 249 168 212;
+  --c-pink-400: 244 114 182;
+  --c-pink-500: 236 72 153;
+  --c-pink-600: 219 39 119;
+  --c-pink-700: 190 24 93;
+  --c-pink-800: 157 23 77;
+  --c-pink-900: 131 24 67;
+  --c-pink-950: 80 7 36;
+
+  /* fuchsia */
+  --c-fuchsia-50: 253 244 255;
+  --c-fuchsia-100: 250 232 255;
+  --c-fuchsia-200: 245 208 254;
+  --c-fuchsia-300: 240 171 252;
+  --c-fuchsia-400: 232 121 249;
+  --c-fuchsia-500: 217 70 239;
+  --c-fuchsia-600: 192 38 211;
+  --c-fuchsia-700: 162 28 175;
+  --c-fuchsia-800: 134 25 143;
+  --c-fuchsia-900: 112 26 117;
+  --c-fuchsia-950: 74 4 78;
+
+  --accent-primary: #ffffff;
+  --bg-app:     #050506;
+  --bg-main:    #050506;
+  --bg-sidebar: #07080d;
+  --studio-left-pane-width: 560px;
+  --studio-results-max-width: 980px;
+}
+
+@media (max-width: 1700px) {
+  :root {
+    --studio-left-pane-width: 500px;
+    --studio-results-max-width: 900px;
+  }
+}
+
+@media (max-width: 1400px) {
+  :root {
+    --studio-left-pane-width: 440px;
+    --studio-results-max-width: 780px;
+  }
+}
+
+/* ──────────────────────────────────────────
+   Native dropdowns
+────────────────────────────────────────── */
+/*
+ * A <select> takes whatever classes it is given, but the list it opens is drawn
+ * by the browser and inherits none of them. On a dark page that meant white
+ * panels with pale grey text on them - the app's own text colour against the
+ * platform's own background, which is unreadable in a way no component author
+ * would notice, because it only appears while the menu is open.
+ *
+ * Set here rather than on seventeen call sites, and on `option` as well as
+ * `select`, since the two are painted separately.
+ */
+select {
+  background-color: #14141b;
+  color: rgb(var(--c-white) / 0.85);
+}
+
+select option {
+  background-color: #14141b;
+  color: rgb(var(--c-white) / 0.85);
+}
+
+select option:checked,
+select option:hover {
+  background-color: #23232e;
+  color: rgb(var(--c-white));
+}
+
+/* ──────────────────────────────────────────
+   Theme utility classes
+────────────────────────────────────────── */
+.theme-bg-app     { background-color: var(--bg-app);     transition: background-color 0.5s ease; }
+.theme-bg-main    { background-color: var(--bg-main);    transition: background-color 0.5s ease; }
+.theme-bg-sidebar { background-color: var(--bg-sidebar); transition: background-color 0.5s ease; }
+
+/* Active sidebar item */
+.theme-active-tab {
+  background: #ffffff;
+  color: #000000;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shine sweep on active tab */
+.theme-active-tab::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+  animation: tab-shine 3.5s ease-in-out infinite;
+}
+
+@keyframes tab-shine {
+  0%   { left: -100%; }
+  30%  { left: 120%; }
+  100% { left: 120%; }
+}
+
+/* ──────────────────────────────────────────
+   Reset
+────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--bg-app);
+  color: #ffffff;
+  overflow: hidden;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+}
+
+/* ──────────────────────────────────────────
+   Custom scrollbar
+────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.16); }
+
+.custom-scrollbar::-webkit-scrollbar       { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.28); }
+
+/* ──────────────────────────────────────────
+   Animations
+────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes slide-in-left {
+  from { transform: translateX(-10px); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(200,200,255,0.2); }
+  50%       { box-shadow: 0 0 22px rgba(200,200,255,0.45); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+@keyframes progress-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
+
+.animate-fade-in        { animation: fade-in        0.3s ease-out; }
+.animate-slide-up       { animation: slide-up       0.4s ease-out; }
+.animate-slide-in-left  { animation: slide-in-left  0.25s ease-out; }
+.animate-glow-pulse     { animation: glow-pulse     2s ease-in-out infinite; }
+.animate-progress-pulse { animation: progress-pulse 1.5s ease-in-out infinite; }
+
+.animate-shimmer {
+  background: linear-gradient(90deg,
+    rgba(255,255,255,0.03) 0%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.03) 100%
+  );
+  background-size: 200% auto;
+  animation: shimmer 1.8s linear infinite;
+}
+
+/* ──────────────────────────────────────────
+   Glassmorphism utility
+────────────────────────────────────────── */
+.glass-panel {
+  background:     rgba(14, 14, 22, 0.75);
+  backdrop-filter: blur(14px);
+  border:         1px solid rgba(255,255,255,0.06);
+}
+
+/* ──────────────────────────────────────────
+   Tooltip
+────────────────────────────────────────── */
+.tooltip-trigger { position: relative; }
+
+.tooltip-trigger:hover .tooltip-content {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+.tooltip-content {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: rgba(8, 8, 16, 0.96);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #cbd5e1;
+  font-size: 11px;
+  padding: 5px 9px;
+  border-radius: 7px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* Minimal v14 helper classes needed for the new home UI */
+.v14-kicker {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.v14-icon-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #d1d8e8;
+  background: rgba(255, 255, 255, 0.04);
+  transition: all 0.2s ease;
+}
+
+.v14-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+/* Shared workflow workbench — header on top, full-width output strip, controls below */
+.workflow-shell {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #050506;
+}
+
+.workflow-control-pane {
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(12,13,18,0.96), rgba(5,6,10,1));
+}
+
+.workflow-output-strip {
+  flex: 0 0 auto;
+  min-width: 0;
+  max-height: 42vh;
+  overflow-y: auto;
+  padding: 10px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: #05060a;
+}
+
+.workflow-output-strip {
+  position: relative;
+}
+
+/* Collapsed: strip shrinks to just its toggle instead of reserving up to 42vh. */
+.workflow-output-strip-collapsed {
+  max-height: none;
+  padding: 2px 20px;
+}
+
+.workflow-output-toggle {
+  position: absolute;
+  top: 4px;
+  right: 12px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 6px;
+  background: rgba(0,0,0,0.55);
+  color: rgba(255,255,255,0.45);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: color .15s, border-color .15s;
+}
+.workflow-output-toggle:hover {
+  color: rgba(255,255,255,0.85);
+  border-color: rgba(255,255,255,0.25);
+}
+
+/* When collapsed the toggle is the only content, so let it sit inline. */
+.workflow-output-strip-collapsed .workflow-output-toggle {
+  position: static;
+  margin-left: auto;
+  display: flex;
+}
+.workflow-output-strip-collapsed {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.workflow-output-strip > aside {
+  width: 100%;
+  max-width: none;
+  border-left: 0;
+}
+
+/* Tame tall media inside the top strip */
+.workflow-output-strip img,
+.workflow-output-strip video {
+  max-height: 32vh;
+}
+
+.workflow-header {
+  min-height: 86px;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.18);
+}
+
+.workflow-header-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(226,232,240,0.78);
+  background: rgba(255,255,255,0.045);
+}
+
+.workflow-eyebrow,
+.workflow-section-title,
+.fedda-kicker {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: rgba(148,163,184,0.82);
+}
+
+.workflow-title {
+  margin-top: 3px;
+  font-size: 17px;
+  line-height: 1.2;
+  font-weight: 760;
+  letter-spacing: 0;
+  color: rgba(255,255,255,0.94);
+}
+
+.workflow-description {
+  margin-top: 4px;
+  max-width: 680px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: rgba(148,163,184,0.8);
+}
+
+.workflow-status-pill {
+  min-width: 68px;
+  height: 28px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-width: 1px;
+  border-style: solid;
+  padding: 0 10px;
+  font-size: 10px;
+  font-weight: 750;
+  text-transform: uppercase;
+}
+
+.workflow-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.workflow-shell-preview {
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.18);
+  padding: 12px 20px;
+}
+
+.workflow-preview-bar {
+  display: grid;
+  gap: 8px;
+}
+
+.workflow-preview-bar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.workflow-preview-bar-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 0;
+  background: transparent;
+  color: rgba(212,212,216,0.42);
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition: color 0.16s ease;
+}
+
+.workflow-preview-bar-toggle:hover {
+  color: rgba(244,244,245,0.76);
+}
+
+.workflow-preview-bar-count {
+  color: rgba(161,161,170,0.42);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 8px;
+}
+
+.workflow-preview-bar-empty {
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.02);
+  padding: 10px 12px;
+  color: rgba(161,161,170,0.56);
+  font-size: 11px;
+}
+
+.workflow-preview-bar-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.workflow-preview-thumb {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  background: rgba(0,0,0,0.42);
+  transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.workflow-preview-thumb:hover {
+  border-color: rgba(255,255,255,0.34);
+  transform: translateY(-1px);
+}
+
+.workflow-preview-thumb.is-selected {
+  border-color: rgba(244,244,245,0.58);
+  box-shadow: 0 0 0 1px rgba(244,244,245,0.16);
+}
+
+.workflow-preview-thumb.is-live {
+  border-color: rgba(52,211,153,0.46);
+  box-shadow: 0 0 0 1px rgba(52,211,153,0.12);
+}
+
+.workflow-preview-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.workflow-preview-thumb:hover img {
+  transform: scale(1.035);
+  opacity: 0.82;
+}
+
+.workflow-preview-thumb-action {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  background: rgba(0,0,0,0.68);
+  color: rgba(255,255,255,0.82);
+  opacity: 0;
+  transition: opacity 0.16s ease;
+}
+
+.workflow-preview-thumb:hover .workflow-preview-thumb-action {
+  opacity: 1;
+}
+
+.workflow-preview-thumb-live {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border-radius: 5px;
+  background: rgba(52,211,153,0.88);
+  padding: 2px 4px;
+  color: #020403;
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.workflow-section {
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.025);
+  padding: 14px;
+}
+
+.workflow-section + .workflow-section,
+.workflow-section + .workflow-divider,
+.workflow-divider + .workflow-section {
+  margin-top: 14px;
+}
+
+.workflow-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.workflow-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  margin: 16px 0;
+}
+
+.fedda-surface-panel {
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.025);
+}
+
+.fedda-btn-ghost,
+.fedda-btn-soft-cyan,
+.fedda-btn-soft-emerald {
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+  color: rgba(226,232,240,0.82);
+  transition: background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+
+.fedda-btn-ghost:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.18);
+  color: white;
+}
+
+.fedda-btn-soft-cyan {
+  border-color: rgba(34,211,238,0.28);
+  background: rgba(8,145,178,0.14);
+  color: rgb(165,243,252);
+}
+
+.fedda-btn-soft-emerald {
+  border-color: rgba(52,211,153,0.28);
+  background: rgba(5,150,105,0.14);
+  color: rgb(167,243,208);
+}
+
+.workflow-workbench-v16 {
+  height: 100%;
+  overflow-y: auto;
+  background: #050506;
+  color: rgba(255,255,255,0.92);
+}
+
+.workflow-workbench-inner {
+  width: 100%;
+  margin: 0 auto;
+  padding: 18px 24px 28px;
+}
+
+.workflow-workbench-header {
+  min-height: 72px;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 0 16px;
+}
+
+.workflow-status-neutral {
+  border-color: rgba(212,212,216,0.20);
+  background: rgba(255,255,255,0.05);
+  color: rgba(244,244,245,0.82);
+}
+
+.workflow-status-ready {
+  border-color: rgba(212,212,216,0.18);
+  background: rgba(255,255,255,0.04);
+  color: rgba(244,244,245,0.78);
+}
+
+.workflow-status-setup {
+  border-color: rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.025);
+  color: rgba(161,161,170,0.82);
+}
+
+.workflow-workbench-preview {
+  margin-bottom: 16px;
+}
+
+.workflow-workbench-body {
+  display: grid;
+  gap: 14px;
+}
+
+.workflow-preview-strip {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) 92px;
+  gap: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.025);
+  padding: 10px;
+}
+
+.workflow-preview-main {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(220px, 360px) minmax(0, 1fr);
+  gap: 10px;
+  align-items: stretch;
+}
+
+.workflow-preview-title-row {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  background: rgba(0,0,0,0.28);
+  padding: 12px;
+}
+
+.workflow-preview-title-row h2 {
+  margin-top: 4px;
+  font-size: 15px;
+  font-weight: 720;
+  letter-spacing: 0;
+  color: rgba(255,255,255,0.9);
+}
+
+.workflow-preview-kicker {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(161,161,170,0.76);
+}
+
+.workflow-preview-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.workflow-preview-actions button {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+  color: rgba(244,244,245,0.75);
+}
+
+.workflow-preview-actions button:hover {
+  background: rgba(255,255,255,0.08);
+  color: white;
+}
+
+.workflow-preview-stage {
+  height: 190px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  background: #000;
+}
+
+.workflow-preview-empty,
+.workflow-preview-history-empty {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: rgba(161,161,170,0.58);
+  font-size: 12px;
+}
+
+.workflow-preview-history {
+  min-width: 0;
+  height: 190px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 28px;
+  gap: 6px;
+  overflow-y: auto;
+  align-content: start;
+}
+
+.workflow-preview-history button {
+  min-width: 0;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.09);
+  background: rgba(255,255,255,0.03);
+  color: rgba(212,212,216,0.72);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 10px;
+}
+
+.workflow-preview-history button:hover,
+.workflow-preview-history button.is-active {
+  border-color: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.08);
+  color: white;
+}
+
+.workflow-cockpit {
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.085);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.018));
+  padding: 10px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.035);
+}
+
+.cockpit-toolbar {
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  background: rgba(0,0,0,0.16);
+  padding: 4px 6px 4px 9px;
+}
+
+/* Memory has no header of its own - just two controls parked on the right. */
+.cockpit-toolbar.is-compact {
+  min-height: 0;
+  border: 0;
+  background: none;
+  padding: 0;
+  justify-content: flex-end;
+}
+
+.cockpit-toolbar-title {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(212,212,216,0.42);
+}
+
+.cockpit-toolbar-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cockpit-toolbar-actions button {
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 7px;
+  background: rgba(255,255,255,0.035);
+  padding: 0 9px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(244,244,245,0.62);
+}
+
+.cockpit-toolbar-actions button:hover:not(:disabled) {
+  border-color: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.07);
+  color: white;
+}
+
+.cockpit-toolbar-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.36;
+}
+
+.cockpit-toolbar-actions button.is-saved {
+  border-color: rgba(255,255,255,0.20);
+  background: rgba(244,244,245,0.86);
+  color: #050506;
+}
+
+.cockpit-toolbar-actions button.is-error {
+  border-color: rgba(248,113,113,0.28);
+  background: rgba(248,113,113,0.10);
+  color: rgba(254,202,202,0.94);
+}
+
+/* One column, stated explicitly. It was relying on the implicit grid, so any
+   child carrying a grid-column span silently turned it into a two-column
+   layout. */
+.workflow-cockpit-stack {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+.cockpit-control-grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 1.35fr) minmax(170px, 0.65fr) minmax(170px, 0.65fr) minmax(220px, 0.9fr);
+  gap: 8px;
+  align-items: stretch;
+}
+
+.cockpit-control-grid .cockpit-panel {
+  min-width: 0;
+}
+
+/* Scoped: the span is for the 4-column control grid. Unscoped it also applied
+   to the panel now sitting directly in the cockpit stack, which forced that
+   single-column grid to create a second column and reflowed the whole page. */
+.cockpit-control-grid .cockpit-negative-panel {
+  grid-column: span 2;
+}
+
+.cockpit-size-panel {
+  grid-row: span 2;
+}
+
+.cockpit-panel {
+  border: 1px solid rgba(255,255,255,0.075);
+  border-radius: 8px;
+  background: rgba(0,0,0,0.18);
+  padding: 7px;
+}
+
+.cockpit-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 7px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(212,212,216,0.52);
+}
+
+.cockpit-panel-head span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cockpit-muted {
+  margin-bottom: 8px;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.025);
+  padding: 8px 10px;
+  font-size: 11px;
+  color: rgba(212,212,216,0.46);
+}
+
+.cockpit-preset-panel {
+  display: grid;
+  gap: 7px;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  background: rgba(0,0,0,0.14);
+  padding: 8px;
+}
+
+.cockpit-preset-group {
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
+}
+
+.cockpit-preset-label {
+  padding-top: 6px;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(212,212,216,0.38);
+}
+
+.cockpit-preset-chips {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cockpit-preset-chips button {
+  min-height: 25px;
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 7px;
+  background: rgba(255,255,255,0.035);
+  padding: 0 9px;
+  font-size: 10px;
+  font-weight: 800;
+  color: rgba(244,244,245,0.68);
+  transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
+}
+
+.cockpit-preset-chips button:hover {
+  border-color: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.075);
+  color: white;
+}
+
+.cockpit-lora-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.cockpit-add-lora {
+  margin-top: 9px;
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  padding: 0 10px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(244,244,245,0.76);
+}
+
+.cockpit-add-lora:hover:not(:disabled) {
+  border-color: rgba(255,255,255,0.20);
+  background: rgba(255,255,255,0.075);
+  color: white;
+}
+
+.cockpit-add-lora:disabled {
+  cursor: not-allowed;
+  opacity: 0.36;
+}
+
+.cockpit-aspect-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.cockpit-aspect-grid button,
+.cockpit-seed-row button {
+  min-height: 26px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.025);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: rgba(244,244,245,0.50);
+}
+
+.cockpit-aspect-grid button:hover,
+.cockpit-seed-row button:hover,
+.cockpit-aspect-grid button.is-active,
+.cockpit-seed-row button.is-active {
+  border-color: rgba(255,255,255,0.22);
+  background: rgba(244,244,245,0.88);
+  color: #050506;
+}
+
+.cockpit-number-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.cockpit-number-grid label {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+}
+
+.cockpit-number-grid span {
+  font-size: 9px;
+  font-weight: 800;
+  color: rgba(212,212,216,0.34);
+}
+
+.cockpit-number-grid input,
+.cockpit-seed-row input {
+  min-width: 0;
+  width: 100%;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  background: rgba(0,0,0,0.34);
+  padding: 6px 8px;
+  font-size: 11px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: rgba(244,244,245,0.66);
+  outline: none;
+}
+
+.cockpit-number-grid input:focus,
+.cockpit-seed-row input:focus,
+.cockpit-negative:focus {
+  border-color: rgba(255,255,255,0.18);
+}
+
+.cockpit-range {
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  appearance: none;
+  outline: none;
+  accent-color: #d4d4d8;
+  cursor: pointer;
+}
+
+.cockpit-seed-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 34px;
+  gap: 6px;
+}
+
+.cockpit-collapse {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgba(212,212,216,0.54);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.cockpit-collapse:hover {
+  color: rgba(244,244,245,0.82);
+}
+
+.cockpit-negative {
+  width: 100%;
+  min-height: 66px;
+  margin-top: 6px;
+  resize: vertical;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  background: rgba(0,0,0,0.34);
+  padding: 8px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: rgba(244,244,245,0.58);
+  outline: none;
+}
+
+.workflow-cockpit-missing {
+  border: 1px solid rgba(245,158,11,0.24);
+  border-radius: 8px;
+  background: rgba(245,158,11,0.08);
+  padding: 10px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: rgba(253,230,138,0.86);
+}
+
+.cockpit-memory-row {
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  border: 1px solid rgba(255,255,255,0.065);
+  border-radius: 8px;
+  background: rgba(0,0,0,0.18);
+  padding: 4px 6px 4px 8px;
+}
+
+.cockpit-memory-row span {
+  min-width: 0;
+  flex: 1 1 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  color: rgba(212,212,216,0.46);
+}
+
+.cockpit-memory-row button {
+  min-height: 26px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 7px;
+  background: rgba(255,255,255,0.045);
+  padding: 0 10px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: rgba(244,244,245,0.62);
+}
+
+.cockpit-memory-row button:hover:not(:disabled) {
+  border-color: rgba(255,255,255,0.20);
+  background: rgba(255,255,255,0.08);
+  color: white;
+}
+
+.cockpit-memory-row button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.cockpit-memory-row button.is-saved {
+  border-color: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.08);
+  color: rgba(244,244,245,0.86);
+}
+
+.cockpit-memory-row button.is-error {
+  border-color: rgba(248,113,113,0.30);
+  background: rgba(248,113,113,0.09);
+  color: rgba(252,165,165,0.92);
+}
+
+.cockpit-memory-drawer {
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.065);
+  border-radius: 8px;
+  background: rgba(0,0,0,0.22);
+  padding: 9px;
+}
+
+.cockpit-memory-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: rgba(212,212,216,0.54);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.cockpit-memory-drawer-head button {
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 7px;
+  background: rgba(255,255,255,0.035);
+  padding: 0 8px;
+  color: rgba(244,244,245,0.54);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.cockpit-memory-empty {
+  border: 1px dashed rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 10px;
+  color: rgba(212,212,216,0.40);
+  font-size: 11px;
+}
+
+.cockpit-memory-empty.is-error {
+  border-color: rgba(248,113,113,0.24);
+  background: rgba(248,113,113,0.07);
+  color: rgba(252,165,165,0.86);
+}
+
+.cockpit-memory-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.cockpit-memory-item {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 30px;
+  gap: 8px;
+  align-items: start;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.025);
+  padding: 8px;
+}
+
+.cockpit-memory-item-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.cockpit-memory-item-title span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: rgba(244,244,245,0.72);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.cockpit-memory-item-title small {
+  flex-shrink: 0;
+  color: rgba(212,212,216,0.34);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cockpit-memory-item p {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: 4px;
+  color: rgba(212,212,216,0.44);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.cockpit-memory-item > button {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 7px;
+  background: rgba(0,0,0,0.22);
+  color: rgba(244,244,245,0.34);
+}
+
+.cockpit-memory-item > button:hover {
+  border-color: rgba(248,113,113,0.30);
+  background: rgba(248,113,113,0.08);
+  color: rgba(252,165,165,0.92);
+}
+
+.workflow-cockpit-generate {
+  min-height: 48px;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 8px;
+  background: rgba(244,244,245,0.92);
+  color: #050506;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  transition: transform 0.16s ease, background-color 0.16s ease, opacity 0.16s ease;
+}
+
+.workflow-cockpit-generate:hover:not(.is-disabled) {
+  background: white;
+}
+
+.workflow-cockpit-generate:active:not(.is-disabled) {
+  transform: scale(0.99);
+}
+
+.workflow-cockpit-generate.is-disabled {
+  cursor: not-allowed;
+  border-color: rgba(255,255,255,0.055);
+  background: rgba(255,255,255,0.035);
+  color: rgba(244,244,245,0.20);
+}
+
+.cockpit-upload-row {
+  min-width: 0;
+}
+
+/* Input left, live output right - see the source and the result together
+   instead of scrolling between them. No image input means the preview takes
+   the whole row. */
+.cockpit-io-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+  align-items: stretch;
+}
+
+.cockpit-io-row.is-single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Hold the row to a steady height. The live preview allows a 620px image and
+   the source slot fills whatever it is given, so once either had content the
+   row grew tall enough to push the prompt and Generate off screen - the exact
+   problem moving the preview up here was meant to solve. */
+.cockpit-io-row > * {
+  max-height: 340px;
+  /* Equal boxes: without this each column sizes to its own content and they
+     end up a few px apart, which reads as sloppy next to each other. */
+  height: 100%;
+}
+
+/* Every column is a panel with the same padding, so their contents start on the
+   same line. */
+.cockpit-io-row > .cockpit-panel {
+  display: flex;
+  flex-direction: column;
+  /* Floor as well as ceiling: min-height:0 on the child lets it collapse to
+     almost nothing when the panel has no content yet. */
+  min-height: 264px;
+}
+
+.cockpit-io-row > .cockpit-panel > *:last-child {
+  flex: 1;
+  min-height: 0;
+}
+
+.cockpit-io-row .cockpit-panel > div {
+  max-height: 340px;
+}
+
+.cockpit-io-row img {
+  max-height: 316px;
+  object-fit: contain;
+}
+
+.cockpit-io-row .cockpit-upload-row,
+.cockpit-io-row .workflow-upload-drop,
+.cockpit-io-row .workflow-upload-preview {
+  height: 100%;
+}
+
+/* With a mask brush there is a second child under the preview, and the rules
+   above give the preview the row's whole height - so the button overflowed and
+   landed on top of the prompt mode toggle below. Here the row is a column: the
+   preview takes what is left, the button keeps its own line. Scoped to the
+   modifier so every upload page without a brush keeps the layout it had. */
+.cockpit-io-row .cockpit-upload-row.has-mask-brush {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+
+.cockpit-io-row .cockpit-upload-row.has-mask-brush .workflow-upload-preview,
+.cockpit-io-row .cockpit-upload-row.has-mask-brush .workflow-upload-drop {
+  height: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* The thumbnail-plus-filename strip was built for a short bar. In the tall
+   side-by-side box the source image fills it, matching the live preview
+   opposite, with the filename as a caption rather than centred text.
+   Scoped to the preview only - the empty drop button keeps its flex centring. */
+.cockpit-io-row .workflow-upload-preview {
+  display: block;
+  padding: 0;
+}
+
+.cockpit-io-row .workflow-upload-preview img {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.cockpit-io-row .workflow-upload-preview span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 6px 8px;
+  font-size: 10px;
+  text-align: center;
+  background: linear-gradient(to top, rgba(0,0,0,0.75), transparent);
+}
+
+@media (max-width: 1100px) {
+  .cockpit-io-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.workflow-upload-drop,
+.workflow-upload-preview {
+  width: 100%;
+  border: 1px dashed rgba(255,255,255,0.12);
+  border-radius: 8px;
+  background: rgba(0,0,0,0.24);
+  color: rgba(244,244,245,0.55);
+}
+
+.workflow-upload-drop {
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.workflow-upload-drop small {
+  display: inline;
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(212,212,216,0.34);
+}
+
+.workflow-upload-drop:hover,
+.workflow-upload-preview:hover {
+  border-color: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.04);
+  color: rgba(244,244,245,0.82);
+}
+
+.workflow-upload-preview {
+  position: relative;
+  overflow: hidden;
+  min-height: 54px;
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 6px;
+}
+
+.workflow-upload-preview img {
+  width: 68px;
+  height: 48px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: rgba(0,0,0,0.35);
+}
+
+.workflow-upload-preview span {
+  position: static;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: rgba(244,244,245,0.68);
+}
+
+@media (max-width: 900px) {
+  .workflow-workbench-inner {
+    padding: 12px 12px 24px;
+  }
+
+  .workflow-workbench-header {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  .workflow-preview-strip,
+  .workflow-preview-main {
+    grid-template-columns: 1fr;
+  }
+
+  .workflow-preview-history {
+    height: auto;
+    grid-template-columns: repeat(6, minmax(36px, 1fr));
+  }
+}
+
+@media (max-width: 1100px) {
+  .cockpit-control-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cockpit-size-panel,
+  .cockpit-negative-panel {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .workflow-output-strip {
+    max-height: 34vh;
+    padding: 8px 12px;
+  }
+
+  .workflow-header {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  .workflow-status-pill {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .cockpit-lora-grid,
+  .cockpit-control-grid,
+  .cockpit-memory-list {
+    grid-template-columns: 1fr;
+  }
+
+  .cockpit-memory-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .cockpit-memory-row span {
+    white-space: normal;
+  }
+
+  .cockpit-preset-group {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .cockpit-preset-label {
+    padding-top: 0;
+  }
+}
+
+
+/* ──────────────────────────────────────────
+   Shared form controls for external-API pages (Venice, Grok, etc.)
+────────────────────────────────────────── */
+.fedda-input {
+  background: rgba(0, 0, 0, 0.40);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  outline: none;
+  transition: border-color 0.16s ease;
+}
+
+.fedda-input::placeholder {
+  color: rgba(255, 255, 255, 0.28);
+}
+
+/* v15 minimal distribution navigation */
+.v15-home-btn {
+  min-height: 32px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: rgba(226,232,240,0.82);
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 650;
+  transition: background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+
+.v15-home-btn:hover {
+  border-color: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.09);
+  color: #fff;
+}
+
+/* Edit workflows inherit the source image's size - a note where the ratio
+   chips would otherwise sit. */
+.cockpit-size-locked {
+  padding: 6px 2px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(212,212,216,0.28);
+}
+
+/* Generate turns into Cancel while a job runs. */
+.workflow-cockpit-generate.is-cancel {
+  border-color: rgba(248,113,113,0.35);
+  background: rgba(248,113,113,0.10);
+  color: rgba(252,165,165,0.95);
+}
+.workflow-cockpit-generate.is-cancel:hover {
+  border-color: rgba(248,113,113,0.55);
+  background: rgba(248,113,113,0.18);
+}
+
+/* GenerateButton in its cancel state. */
+.workflow-cancel-btn {
+  border-color: rgba(248,113,113,0.35) !important;
+  background: rgba(248,113,113,0.10) !important;
+  color: rgba(252,165,165,0.95) !important;
+}
+.workflow-cancel-btn:hover {
+  border-color: rgba(248,113,113,0.55) !important;
+  background: rgba(248,113,113,0.18) !important;
+}
+
+/*
+  Preview and prompt as a pair on workflows with no image input.
+  Before this the preview took the full 1540px row and the prompt sat below it,
+  so two half-empty blocks pushed the settings off screen. Below 1100px they
+  stack again - two columns there leaves the prompt box too narrow to type in.
+*/
+.cockpit-pair {
+  display: grid;
+  gap: 1rem;
+  align-items: start;
+}
+
+@media (min-width: 1100px) {
+  .cockpit-pair {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+/* Image-input workflows keep the old vertical flow; the upload row already
+   pairs input and output, so the prompt joining them would make three. */
+.cockpit-stack-plain {
+  display: contents;
+}
+
+/*
+  Preview beside the controls, not on top of them.
+
+  The control pane stacked preview -> download banner -> scrolling body, and the
+  preview band had no height cap, so on Head Swap the two source images sat
+  below the fold for the whole run: you could not see what you fed in while it
+  was being processed. Above 1100px the preview becomes its own column and the
+  body scrolls next to it. Every page using WorkflowShell inherits this.
+
+  The download banner keeps the full width - it is a status line about the
+  page, not part of either column.
+*/
+@media (min-width: 1100px) {
+  .workflow-control-pane:has(> .workflow-shell-preview) {
+    display: grid;
+    grid-template-columns: minmax(0, 30rem) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    align-content: start;
+  }
+
+  .workflow-control-pane > .workflow-shell-preview {
+    grid-column: 1;
+    grid-row: 2;
+    border-bottom: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    overflow-y: auto;
+    min-height: 0;
+  }
+
+  .workflow-control-pane:has(> .workflow-shell-preview) > .workflow-download-banner {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .workflow-control-pane:has(> .workflow-shell-preview) > .workflow-scroll {
+    grid-column: 2;
+    grid-row: 2;
+  }
+}

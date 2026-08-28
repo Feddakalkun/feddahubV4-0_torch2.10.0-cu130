@@ -1,0 +1,273 @@
+{
+  "130": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "z-image-vae.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "131": {
+    "class_type": "Load Styles CSV",
+    "inputs": {
+      "styles": "No Style",
+      "csv_file_path": "styles.csv"
+    },
+    "_meta": {
+      "title": "Load Styles CSV"
+    }
+  },
+  "133": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": [
+        "135",
+        0
+      ],
+      "clip": [
+        "146",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "CLIP Text Encode (Positive Prompt)"
+    }
+  },
+  "135": {
+    "class_type": "Text Concatenate",
+    "inputs": {
+      "delimiter": ", ",
+      "clean_whitespace": "true",
+      "text_a": [
+        "151",
+        0
+      ],
+      "text_b": [
+        "131",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Text Concatenate"
+    }
+  },
+  "137": {
+    "class_type": "VAEEncode",
+    "inputs": {
+      "pixels": [
+        "141",
+        1
+      ],
+      "vae": [
+        "130",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEEncode"
+    }
+  },
+  "138": {
+    "class_type": "SetLatentNoiseMask",
+    "inputs": {
+      "samples": [
+        "137",
+        0
+      ],
+      "mask": [
+        "141",
+        2
+      ]
+    },
+    "_meta": {
+      "title": "SetLatentNoiseMask"
+    }
+  },
+  "139": {
+    "class_type": "InpaintStitchImproved",
+    "inputs": {
+      "stitcher": [
+        "141",
+        0
+      ],
+      "inpainted_image": [
+        "140",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "InpaintStitchImproved"
+    }
+  },
+  "140": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "152",
+        0
+      ],
+      "vae": [
+        "130",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecode"
+    }
+  },
+  "141": {
+    "class_type": "InpaintCropImproved",
+    "inputs": {
+      "downscale_algorithm": "bilinear",
+      "upscale_algorithm": "bicubic",
+      "preresize": true,
+      "preresize_mode": "ensure minimum and maximum resolution",
+      "preresize_min_width": 2000,
+      "preresize_min_height": 2000,
+      "preresize_max_width": 4000,
+      "preresize_max_height": 4000,
+      "mask_fill_holes": true,
+      "mask_expand_pixels": 0,
+      "mask_invert": false,
+      "mask_blend_pixels": 32,
+      "mask_hipass_filter": 0.1,
+      "extend_for_outpainting": false,
+      "extend_up_factor": 1,
+      "extend_down_factor": 1,
+      "extend_left_factor": 1,
+      "extend_right_factor": 1,
+      "context_from_mask_extend_factor": 1.2,
+      "output_resize_to_target_size": true,
+      "output_target_width": 1024,
+      "output_target_height": 1024,
+      "output_padding": "32",
+      "device_mode": "cpu (compatible)",
+      "image": [
+        "148",
+        0
+      ],
+      "mask": [
+        "148",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "InpaintCropImproved"
+    }
+  },
+  "143": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": [
+        "131",
+        1
+      ],
+      "clip": [
+        "146",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "CLIP Text Encode (Negative Prompt)"
+    }
+  },
+  "144": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "IMAGE/WAN22/0",
+      "images": [
+        "139",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "SaveImage"
+    }
+  },
+  "146": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen_3_4b.safetensors",
+      "type": "lumina2",
+      "device": "default"
+    },
+    "_meta": {
+      "title": "CLIPLoader"
+    }
+  },
+  "148": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "clipspace-mask-201118.5.png"
+    },
+    "_meta": {
+      "title": "IMAGE + MASK"
+    }
+  },
+  "149": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "z_image_turbo_bf16.safetensors",
+      "weight_dtype": "default"
+    },
+    "_meta": {
+      "title": "LOW"
+    }
+  },
+  "150": {
+    "class_type": "Power Lora Loader (rgthree)",
+    "inputs": {
+      "model": [
+        "149",
+        0
+      ],
+      "clip": [
+        "146",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  },
+  "151": {
+    "class_type": "String Literal",
+    "inputs": {
+      "string": "WOMAN WINK"
+    },
+    "_meta": {
+      "title": "String Literal"
+    }
+  },
+  "152": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": 957007243601810,
+      "steps": 6,
+      "cfg": 1,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 0.77,
+      "model": [
+        "150",
+        0
+      ],
+      "positive": [
+        "133",
+        0
+      ],
+      "negative": [
+        "143",
+        0
+      ],
+      "latent_image": [
+        "138",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "KSampler"
+    }
+  }
+}

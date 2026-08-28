@@ -1,0 +1,584 @@
+{
+  "954": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "\nblurry, low quality, pixelated, oversaturated, cartoon, anime, painting, drawing, sketch, 3D render, plastic skin, fake looking, overexposed, underexposed, bad lighting, bad anatomy, deformed hands, extra fingers, missing fingers, bad proportions, distorted face, asymmetrical face, double chin, bad makeup, smudged makeup, unfocused eyes, crossed eyes, bad hair, greasy hair, dirty hair, wrinkled clothes, cheap looking outfit, visible underwear, nudity, nsfw, inappropriate, bad DJ equipment, floating objects, text overlays, watermarks, signatures, logos, duplicated elements, cluttered composition, bad crowd, empty background, daytime lighting, indoor setting, amateur photography",
+      "clip": [
+        "964",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "CLIPTextEncode"
+    }
+  },
+  "955": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "z-image-vae.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "956": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen_3_4b.safetensors",
+      "type": "lumina2",
+      "device": "default"
+    },
+    "_meta": {
+      "title": "CLIPLoader"
+    }
+  },
+  "957": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "z_image_turbo_bf16.safetensors",
+      "weight_dtype": "default"
+    },
+    "_meta": {
+      "title": "UNETLoader"
+    }
+  },
+  "958": {
+    "class_type": "ModelSamplingAuraFlow",
+    "inputs": {
+      "shift": 3,
+      "model": [
+        "957",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ModelSamplingAuraFlow"
+    }
+  },
+  "959": {
+    "class_type": "UltralyticsDetectorProvider",
+    "inputs": {
+      "model_name": "bbox/face_yolov8m.pt"
+    },
+    "_meta": {
+      "title": "Gesicht"
+    }
+  },
+  "960": {
+    "class_type": "Donut Detailer",
+    "inputs": {
+      "Scale_in": 1,
+      "Weight_in": 0,
+      "Bias_in": 0,
+      "Scale_out0": 1,
+      "Weight_out0": 0,
+      "Bias_out0": 1,
+      "Scale_out2": 1,
+      "Weight_out2": 0,
+      "Bias_out2": 1,
+      "model": [
+        "958",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Detailer"
+    }
+  },
+  "961": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "979",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "SaveImage"
+    }
+  },
+  "964": {
+    "class_type": "Power Lora Loader (rgthree)",
+    "inputs": {
+      "model": [
+        "960",
+        0
+      ],
+      "clip": [
+        "956",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  },
+  "965": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": [
+        "966",
+        0
+      ],
+      "clip": [
+        "964",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "CLIPTextEncode"
+    }
+  },
+  "966": {
+    "class_type": "Text Concatenate",
+    "inputs": {
+      "delimiter": ", ",
+      "clean_whitespace": "true",
+      "text_a": [
+        "967",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Text Concatenate"
+    }
+  },
+  "967": {
+    "class_type": "String Literal",
+    "inputs": {
+      "string": "Professional instagram influencer in mini bikini in a luxury mansion , pool bg, sexy posing"
+    },
+    "_meta": {
+      "title": "PROMPT"
+    }
+  },
+  "969": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "970",
+        0
+      ],
+      "vae": [
+        "955",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecode"
+    }
+  },
+  "970": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": 123,
+      "steps": 8,
+      "cfg": 1,
+      "sampler_name": "res_multistep",
+      "scheduler": "simple",
+      "denoise": 1,
+      "model": [
+        "964",
+        0
+      ],
+      "positive": [
+        "965",
+        0
+      ],
+      "negative": [
+        "954",
+        0
+      ],
+      "latent_image": [
+        "972",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "971": {
+    "class_type": "UltimateSDUpscale",
+    "inputs": {
+      "upscale_by": 1.25,
+      "seed": 124,
+      "steps": 8,
+      "cfg": 1,
+      "sampler_name": "res_multistep",
+      "scheduler": "simple",
+      "denoise": 0.14,
+      "mode_type": "Linear",
+      "tile_width": 1024,
+      "tile_height": 1024,
+      "mask_blur": 8,
+      "tile_padding": 32,
+      "seam_fix_mode": "None",
+      "seam_fix_denoise": 1,
+      "seam_fix_width": 64,
+      "seam_fix_mask_blur": 8,
+      "seam_fix_padding": 16,
+      "force_uniform_tiles": true,
+      "tiled_decode": false,
+      "batch_size": 1,
+      "image": [
+        "969",
+        0
+      ],
+      "model": [
+        "964",
+        0
+      ],
+      "positive": [
+        "965",
+        0
+      ],
+      "negative": [
+        "954",
+        0
+      ],
+      "vae": [
+        "955",
+        0
+      ],
+      "upscale_model": [
+        "978",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "UltimateSDUpscale"
+    }
+  },
+  "972": {
+    "class_type": "SDXL Empty Latent Image (rgthree)",
+    "inputs": {
+      "dimensions": " 832 x 1216  (portrait)",
+      "clip_scale": 1,
+      "batch_size": 1
+    },
+    "_meta": {
+      "title": "Resolution"
+    }
+  },
+  "973": {
+    "class_type": "SAMLoader",
+    "inputs": {
+      "model_name": "sam_vit_b_01ec64.pth",
+      "device_mode": "Prefer GPU"
+    },
+    "_meta": {
+      "title": "SAMLoader"
+    }
+  },
+  "974": {
+    "class_type": "SeedVR2LoadDiTModel",
+    "inputs": {
+      "model": "seedvr2_ema_7b_sharp_fp16.safetensors",
+      "device": "cuda:0",
+      "blocks_to_swap": 0,
+      "swap_io_components": false,
+      "offload_device": "none",
+      "cache_model": false,
+      "attention_mode": "sdpa"
+    },
+    "_meta": {
+      "title": "SeedVR2LoadDiTModel"
+    }
+  },
+  "975": {
+    "class_type": "SeedVR2LoadVAEModel",
+    "inputs": {
+      "model": "ema_vae_fp16.safetensors",
+      "device": "cuda:0",
+      "encode_tiled": false,
+      "encode_tile_size": 1024,
+      "encode_tile_overlap": 128,
+      "decode_tiled": false,
+      "decode_tile_size": 1024,
+      "decode_tile_overlap": 128,
+      "tile_debug": "false",
+      "offload_device": "none",
+      "cache_model": false
+    },
+    "_meta": {
+      "title": "SeedVR2LoadVAEModel"
+    }
+  },
+  "976": {
+    "class_type": "easy cleanGpuUsed",
+    "inputs": {
+      "anything": [
+        "977",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "easy cleanGpuUsed"
+    }
+  },
+  "977": {
+    "class_type": "easy clearCacheAll",
+    "inputs": {
+      "anything": [
+        "990",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "easy clearCacheAll"
+    }
+  },
+  "978": {
+    "class_type": "UpscaleModelLoader",
+    "inputs": {
+      "model_name": "4x_foolhardy_Remacri.pth"
+    },
+    "_meta": {
+      "title": "UpscaleModelLoader"
+    }
+  },
+  "979": {
+    "class_type": "SeedVR2VideoUpscaler",
+    "inputs": {
+      "seed": 123,
+      "resolution": 2048,
+      "max_resolution": 2048,
+      "batch_size": 1,
+      "uniform_batch_size": false,
+      "color_correction": "lab",
+      "temporal_overlap": 0,
+      "prepend_frames": 0,
+      "input_noise_scale": 0,
+      "latent_noise_scale": 0,
+      "offload_device": "cpu",
+      "enable_debug": false,
+      "image": [
+        "976",
+        0
+      ],
+      "dit": [
+        "974",
+        0
+      ],
+      "vae": [
+        "975",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "SeedVR2VideoUpscaler"
+    }
+  },
+  "980": {
+    "class_type": "ImpactSEGSOrderedFilter",
+    "inputs": {
+      "target": "area(=w*h)",
+      "order": true,
+      "take_start": 0,
+      "take_count": 1,
+      "segs": [
+        "989",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ImpactSEGSOrderedFilter"
+    }
+  },
+  "981": {
+    "class_type": "SEGSToImageList",
+    "inputs": {
+      "segs": [
+        "980",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "SEGSToImageList"
+    }
+  },
+  "982": {
+    "class_type": "MathExpression|pysssss",
+    "inputs": {
+      "expression": "round(sqrt(c*(a/b)))",
+      "a": [
+        "985",
+        0
+      ],
+      "b": [
+        "985",
+        1
+      ],
+      "c": [
+        "987",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "MathExpression|pysssss"
+    }
+  },
+  "984": {
+    "class_type": "DF_Int_to_Float",
+    "inputs": {
+      "Value": [
+        "988",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "DF_Int_to_Float"
+    }
+  },
+  "985": {
+    "class_type": "GetImageSize+",
+    "inputs": {
+      "image": [
+        "981",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "GetImageSize+"
+    }
+  },
+  "986": {
+    "class_type": "MathExpression|pysssss",
+    "inputs": {
+      "expression": "round(sqrt(c*(b/a)))",
+      "a": [
+        "985",
+        0
+      ],
+      "b": [
+        "985",
+        1
+      ],
+      "c": [
+        "987",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "MathExpression|pysssss"
+    }
+  },
+  "987": {
+    "class_type": "Constant Number",
+    "inputs": {
+      "number_type": "integer",
+      "number": 1048576.0000000002
+    },
+    "_meta": {
+      "title": "Constant Number"
+    }
+  },
+  "988": {
+    "class_type": "MathExpression|pysssss",
+    "inputs": {
+      "expression": "max(a, b)",
+      "a": [
+        "986",
+        0
+      ],
+      "b": [
+        "982",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "MathExpression|pysssss"
+    }
+  },
+  "989": {
+    "class_type": "ImpactSimpleDetectorSEGS",
+    "inputs": {
+      "bbox_threshold": 0.3,
+      "bbox_dilation": 0,
+      "crop_factor": 1.5,
+      "drop_size": 10,
+      "sub_threshold": 0.3,
+      "sub_dilation": 0,
+      "sub_bbox_expansion": 0,
+      "sam_mask_hint_threshold": 0.3,
+      "post_dilation": 10,
+      "bbox_detector": [
+        "959",
+        0
+      ],
+      "image": [
+        "971",
+        0
+      ],
+      "sam_model_opt": [
+        "973",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ImpactSimpleDetectorSEGS"
+    }
+  },
+  "990": {
+    "class_type": "DetailerForEachDebug",
+    "inputs": {
+      "guide_size": [
+        "984",
+        0
+      ],
+      "guide_size_for": true,
+      "max_size": [
+        "984",
+        0
+      ],
+      "seed": 42,
+      "steps": 10,
+      "cfg": 1,
+      "sampler_name": "res_multistep",
+      "scheduler": "simple",
+      "denoise": 0.25,
+      "feather": 15,
+      "noise_mask": false,
+      "force_inpaint": false,
+      "wildcard": "",
+      "cycle": 1,
+      "inpaint_model": false,
+      "noise_mask_feather": 20,
+      "tiled_encode": false,
+      "tiled_decode": false,
+      "image": [
+        "971",
+        0
+      ],
+      "segs": [
+        "980",
+        0
+      ],
+      "model": [
+        "964",
+        0
+      ],
+      "clip": [
+        "964",
+        1
+      ],
+      "vae": [
+        "955",
+        0
+      ],
+      "positive": [
+        "965",
+        0
+      ],
+      "negative": [
+        "954",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "DetailerForEachDebug"
+    }
+  }
+}

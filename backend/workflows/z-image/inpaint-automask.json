@@ -1,0 +1,296 @@
+{
+  "153": {
+    "class_type": "Load Styles CSV",
+    "inputs": {
+      "styles": "No Style",
+      "csv_file_path": "styles.csv"
+    },
+    "_meta": {
+      "title": "Load Styles CSV"
+    }
+  },
+  "155": {
+    "class_type": "Text Concatenate",
+    "inputs": {
+      "delimiter": ", ",
+      "clean_whitespace": "true",
+      "text_a": [
+        "165",
+        0
+      ],
+      "text_b": [
+        "153",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Text Concatenate"
+    }
+  },
+  "156": {
+    "class_type": "VAEEncode",
+    "inputs": {
+      "pixels": [
+        "159",
+        1
+      ],
+      "vae": [
+        "168",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEEncode"
+    }
+  },
+  "157": {
+    "class_type": "SetLatentNoiseMask",
+    "inputs": {
+      "samples": [
+        "156",
+        0
+      ],
+      "mask": [
+        "159",
+        2
+      ]
+    },
+    "_meta": {
+      "title": "SetLatentNoiseMask"
+    }
+  },
+  "158": {
+    "class_type": "InpaintStitchImproved",
+    "inputs": {
+      "stitcher": [
+        "159",
+        0
+      ],
+      "inpainted_image": [
+        "172",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "InpaintStitchImproved"
+    }
+  },
+  "159": {
+    "class_type": "InpaintCropImproved",
+    "inputs": {
+      "downscale_algorithm": "bilinear",
+      "upscale_algorithm": "bicubic",
+      "preresize": true,
+      "preresize_mode": "ensure minimum and maximum resolution",
+      "preresize_min_width": 2000,
+      "preresize_min_height": 2000,
+      "preresize_max_width": 4000,
+      "preresize_max_height": 4000,
+      "mask_fill_holes": true,
+      "mask_expand_pixels": 0,
+      "mask_invert": false,
+      "mask_blend_pixels": 32,
+      "mask_hipass_filter": 0.1,
+      "extend_for_outpainting": false,
+      "extend_up_factor": 1,
+      "extend_down_factor": 1,
+      "extend_left_factor": 1,
+      "extend_right_factor": 1,
+      "context_from_mask_extend_factor": 1.2,
+      "output_resize_to_target_size": true,
+      "output_target_width": 1024,
+      "output_target_height": 1024,
+      "output_padding": "32",
+      "device_mode": "cpu (compatible)",
+      "image": [
+        "164",
+        0
+      ],
+      "mask": [
+        "173",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "InpaintCropImproved"
+    }
+  },
+  "161": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": [
+        "153",
+        1
+      ],
+      "clip": [
+        "167",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "CLIP Text Encode (Negative Prompt)"
+    }
+  },
+  "162": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "IMAGE/WAN22/0",
+      "images": [
+        "158",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "SaveImage"
+    }
+  },
+  "164": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "pose.png"
+    },
+    "_meta": {
+      "title": "IMAGE + MASK"
+    }
+  },
+  "165": {
+    "class_type": "String Literal",
+    "inputs": {
+      "string": "WOMAN WINK"
+    },
+    "_meta": {
+      "title": "String Literal"
+    }
+  },
+  "166": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "z_image_turbo_bf16.safetensors",
+      "weight_dtype": "default"
+    },
+    "_meta": {
+      "title": "LOW"
+    }
+  },
+  "167": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen_3_4b.safetensors",
+      "type": "lumina2",
+      "device": "default"
+    },
+    "_meta": {
+      "title": "CLIPLoader"
+    }
+  },
+  "168": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "z-image-vae.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "169": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": 957007243601810,
+      "steps": 6,
+      "cfg": 1,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 0.77,
+      "model": [
+        "170",
+        0
+      ],
+      "positive": [
+        "171",
+        0
+      ],
+      "negative": [
+        "161",
+        0
+      ],
+      "latent_image": [
+        "157",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "170": {
+    "class_type": "Power Lora Loader (rgthree)",
+    "inputs": {
+      "model": [
+        "166",
+        0
+      ],
+      "clip": [
+        "167",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  },
+  "171": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": [
+        "155",
+        0
+      ],
+      "clip": [
+        "167",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "CLIP Text Encode (Positive Prompt)"
+    }
+  },
+  "172": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "169",
+        0
+      ],
+      "vae": [
+        "168",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecode"
+    }
+  },
+  "173": {
+    "class_type": "LayerMask: PersonMaskUltra",
+    "inputs": {
+      "face": true,
+      "hair": true,
+      "body": false,
+      "clothes": false,
+      "accessories": false,
+      "background": false,
+      "confidence": 0.4,
+      "detail_range": 16,
+      "black_point": 0.01,
+      "white_point": 0.99,
+      "process_detail": false,
+      "images": [
+        "164",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LayerMask: PersonMaskUltra"
+    }
+  }
+}

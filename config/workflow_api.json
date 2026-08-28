@@ -1,0 +1,141 @@
+{
+  "_note": "Which node each control drives. This file says WHICH node and which input; the workflow graph says what value it holds now; object_info says what kind of control it is. All three are needed - see backend/descriptor.py. Adding a workflow to the UI is an entry here, not a page.",
+
+  "_source": "Every z-image/* graph is one group of the owner's canvas file 'Z IMAGE 6.json', converted with scripts/ui_to_api.py --all-groups --activate. The group is the unit: one canvas file carries seven switchable modes, and each becomes a workflow here.",
+
+  "z-image-txt2img": {
+    "name": "Z-Image Turbo",
+    "filename": "z-image/txt2img.json",
+    "module": "z-image-core",
+    "description": "Text to image on Z-Image Turbo, with LoRAs and a face pass.",
+    "inputs": {
+      "prompt":   { "node_id": "33",  "input_key": "string", "label": "Prompt" },
+      "negative": { "node_id": "34",  "input_key": "string", "label": "Negative Prompt" },
+      "width":    { "node_id": "30",  "input_key": "width",  "label": "Width" },
+      "height":   { "node_id": "30",  "input_key": "height", "label": "Height" },
+      "seed":     { "node_ids": ["3", "181"], "input_key": "seed", "label": "Seed" },
+      "steps":    { "node_id": "3",   "input_key": "steps",   "label": "Steps" },
+      "cfg":      { "node_id": "3",   "input_key": "cfg",     "label": "CFG Scale" },
+      "denoise":  { "node_id": "3",   "input_key": "denoise", "label": "Denoise" },
+      "style":    { "node_id": "31",  "input_key": "styles",  "label": "Style" },
+      "loras":    { "node_id": "126", "type": "loras",        "label": "LoRAs" }
+    }
+  },
+
+  "z-image-img2img": {
+    "name": "Z-Image Image to Image",
+    "filename": "z-image/img2img.json",
+    "module": "z-image-core",
+    "description": "Redraw an image you supply. Denoise decides how far it may stray.",
+    "inputs": {
+      "image":    { "node_id": "52",  "input_key": "image",  "label": "Source Image" },
+      "prompt":   { "node_id": "50",  "input_key": "string", "label": "Prompt" },
+      "negative": { "node_id": "38",  "input_key": "string", "label": "Negative Prompt" },
+      "style":    { "node_id": "51",  "input_key": "styles", "label": "Style" },
+      "seed":     { "node_id": "49",  "input_key": "seed",    "label": "Seed" },
+      "steps":    { "node_id": "49",  "input_key": "steps",   "label": "Steps" },
+      "cfg":      { "node_id": "49",  "input_key": "cfg",     "label": "CFG Scale" },
+      "denoise":  { "node_id": "49",  "input_key": "denoise", "label": "Denoise" },
+      "loras":    { "node_id": "127", "type": "loras",        "label": "LoRAs" }
+    }
+  },
+
+  "z-image-controlnet": {
+    "name": "Z-Image ControlNet",
+    "filename": "z-image/controlnet.json",
+    "module": "z-image-control",
+    "description": "Follow the shape of a reference image - pose, edges or depth.",
+    "_negative": "The graph feeds one Text Concatenate to both the positive and the negative slot, so there is no separate negative text to expose. Adding a control here would silently write into the positive prompt.",
+    "inputs": {
+      "image":            { "node_id": "99",  "input_key": "image",  "label": "Reference Image" },
+      "prompt":           { "node_id": "113", "input_key": "string", "label": "Prompt" },
+      "style":            { "node_id": "114", "input_key": "styles", "label": "Style" },
+      "control_mode":     {
+        "node_id": "117", "input_key": "select", "label": "Control Mode",
+        "_why": "An ImpactSwitch index. object_info calls it an INT, correctly, and a spinner from 1 to 999999 is useless for choosing between pose and depth - only whoever wired the switch knows what each position feeds. Hence the override; the values are node 117's input1..input5 in order.",
+        "control": "chips",
+        "choices": [
+          { "value": 1, "label": "Depth" },
+          { "value": 2, "label": "Pose" },
+          { "value": 3, "label": "Canny" },
+          { "value": 4, "label": "Canny Edge" },
+          { "value": 5, "label": "Soft Edge" }
+        ]
+      },
+      "control_strength": { "node_id": "101", "input_key": "strength", "label": "Control Strength" },
+      "width":            { "node_id": "86",  "input_key": "width",  "label": "Width" },
+      "height":           { "node_id": "86",  "input_key": "height", "label": "Height" },
+      "seed":             { "node_id": "83",  "input_key": "seed",    "label": "Seed" },
+      "steps":            { "node_id": "83",  "input_key": "steps",   "label": "Steps" },
+      "cfg":              { "node_id": "83",  "input_key": "cfg",     "label": "CFG Scale" },
+      "denoise":          { "node_id": "83",  "input_key": "denoise", "label": "Denoise" },
+      "loras":            { "node_id": "129", "type": "loras",        "label": "LoRAs" }
+    }
+  },
+
+  "z-image-inpaint": {
+    "name": "Z-Image Inpaint",
+    "filename": "z-image/inpaint.json",
+    "module": "z-image-inpaint",
+    "description": "Repaint the masked part of an image. Mask it in ComfyUI's editor first.",
+    "inputs": {
+      "image":   {
+        "node_id": "148", "input_key": "image", "label": "Image + Mask",
+        "_why": "LoadImage returns MASK as 1 - alpha, so this graph repaints wherever the uploaded PNG is transparent. Nothing about the node says that - the same class loads a plain image elsewhere - so the mapping declares it and the control offers a brush.",
+        "mask": true
+      },
+      "prompt":  { "node_id": "151", "input_key": "string", "label": "Prompt" },
+      "style":   { "node_id": "131", "input_key": "styles", "label": "Style" },
+      "seed":    { "node_id": "152", "input_key": "seed",    "label": "Seed" },
+      "steps":   { "node_id": "152", "input_key": "steps",   "label": "Steps" },
+      "cfg":     { "node_id": "152", "input_key": "cfg",     "label": "CFG Scale" },
+      "denoise": { "node_id": "152", "input_key": "denoise", "label": "Denoise" },
+      "loras":   { "node_id": "150", "type": "loras",        "label": "LoRAs" }
+    }
+  },
+
+  "z-image-inpaint-automask": {
+    "name": "Z-Image Inpaint (auto mask)",
+    "filename": "z-image/inpaint-automask.json",
+    "module": "z-image-inpaint",
+    "description": "Finds what to repaint by itself - pick the parts, no hand masking.",
+    "inputs": {
+      "image":            { "node_id": "164", "input_key": "image",  "label": "Image" },
+      "prompt":           { "node_id": "165", "input_key": "string", "label": "Prompt" },
+      "style":            { "node_id": "153", "input_key": "styles", "label": "Style" },
+      "mask_face":        { "node_id": "173", "input_key": "face",        "label": "Mask Face" },
+      "mask_hair":        { "node_id": "173", "input_key": "hair",        "label": "Mask Hair" },
+      "mask_body":        { "node_id": "173", "input_key": "body",        "label": "Mask Body" },
+      "mask_clothes":     { "node_id": "173", "input_key": "clothes",     "label": "Mask Clothes" },
+      "mask_accessories": { "node_id": "173", "input_key": "accessories", "label": "Mask Accessories" },
+      "mask_background":  { "node_id": "173", "input_key": "background",  "label": "Mask Background" },
+      "mask_confidence":  { "node_id": "173", "input_key": "confidence",  "label": "Mask Confidence" },
+      "seed":             { "node_id": "169", "input_key": "seed",    "label": "Seed" },
+      "steps":            { "node_id": "169", "input_key": "steps",   "label": "Steps" },
+      "cfg":              { "node_id": "169", "input_key": "cfg",     "label": "CFG Scale" },
+      "denoise":          { "node_id": "169", "input_key": "denoise", "label": "Denoise" },
+      "loras":            { "node_id": "170", "type": "loras",        "label": "LoRAs" }
+    }
+  },
+
+  "z-image-detailed": {
+    "name": "Z-Image Detailed",
+    "filename": "z-image/detailed.json",
+    "module": "z-image-detailed",
+    "description": "Text to image, then a tiled upscale pass over the result.",
+    "_size": "Size comes from the rgthree latent node's `dimensions` picker, which is one COMBO of preset resolutions rather than a width/height pair.",
+    "inputs": {
+      "prompt":          { "node_id": "967", "input_key": "string",     "label": "Prompt" },
+      "negative":        { "node_id": "954", "input_key": "text",       "label": "Negative Prompt" },
+      "dimensions":      { "node_id": "972", "input_key": "dimensions", "label": "Size" },
+      "seed":            { "node_id": "970", "input_key": "seed",       "label": "Seed" },
+      "steps":           { "node_id": "970", "input_key": "steps",      "label": "Steps" },
+      "cfg":             { "node_id": "970", "input_key": "cfg",        "label": "CFG Scale" },
+      "denoise":         { "node_id": "970", "input_key": "denoise",    "label": "Denoise" },
+      "upscale_by":      { "node_id": "971", "input_key": "upscale_by", "label": "Upscale By" },
+      "upscale_denoise": { "node_id": "971", "input_key": "denoise",    "label": "Upscale Denoise" },
+      "upscale_steps":   { "node_id": "971", "input_key": "steps",      "label": "Upscale Steps" },
+      "loras":           { "node_id": "964", "type": "loras",           "label": "LoRAs" }
+    }
+  }
+}
