@@ -34,7 +34,7 @@ $CustomNodes = Join-Path $ComfyDir "custom_nodes"
 if (-not (Test-Path $CustomNodes)) { New-Item -ItemType Directory -Force $CustomNodes | Out-Null }
 
 $Nodes = Get-Content $NodesJson -Raw -Encoding UTF8 | ConvertFrom-Json
-$Installed = 0; $Updated = 0; $Current = 0; $Failed = 0; $Manual = 0
+$Installed = 0; $Updated = 0; $Current = 0; $Failed = 0; $Manual = 0; $SetUp = 0
 $Notes = @()
 
 function Invoke-Git {
@@ -91,6 +91,61 @@ function Install-NodeRequirements {
         foreach ($w in $why) { Write-Host "      $("$w".Trim())" -ForegroundColor DarkYellow }
         $script:Notes += "$Name : requirements failed"
     }
+}
+
+function Invoke-NodeInstaller {
+    <# Run a pack's own install.py, which a git clone does not.
+
+       Two of the packs here ship one, and both use it to fetch model files
+       rather than code: Impact-Subpack downloads face_yolov8m.pt into
+       models/ultralytics/bbox, Impact-Pack downloads sam_vit_b_01ec64.pth
+       into models/sams. ComfyUI Manager runs these scripts as part of
+       installing; cloning and running pip does not, so the packs load and
+       then FaceDetailer's detector list is empty and the graph is rejected
+       before it starts. That is what the first v4 install hit.
+
+       A marker holding the pin records that it ran, so this repairs an
+       install that predates the fix and re-runs when the pin moves, without
+       spawning python for every pack on every update. The scripts themselves
+       check before downloading, so a second run is cheap either way.
+
+       COMFYUI_PATH and COMFYUI_MODEL_PATH are set explicitly. Both scripts
+       fall back to guessing from __file__ and warn while they do it, which is
+       right only while the pack sits inside ComfyUI's own tree. #>
+    param([string] $Dir, [string] $Name, [string] $Pin)
+
+    $Script = Join-Path $Dir "install.py"
+    if (-not (Test-Path $Script)) { return $false }
+    if (-not $VenvPython) { return $false }
+
+    $Marker = Join-Path $Dir ".fedda-setup"
+    if (Test-Path $Marker) {
+        $seen = (Get-Content $Marker -Raw -ErrorAction SilentlyContinue)
+        if ("$seen".Trim() -eq $Pin) { return $false }
+    }
+
+    Write-Host "        $Name : running its install.py" -ForegroundColor DarkGray
+    $Prev = Get-Location
+    $ErrorActionPreference = "Continue"
+    $env:COMFYUI_PATH = $ComfyDir
+    $env:COMFYUI_MODEL_PATH = Join-Path $ComfyDir "models"
+    Set-Location $Dir
+    $out = & $VenvPython "install.py" 2>&1 | Out-String
+    $code = $LASTEXITCODE
+    Set-Location $Prev
+    Remove-Item Env:\COMFYUI_PATH -ErrorAction SilentlyContinue
+    Remove-Item Env:\COMFYUI_MODEL_PATH -ErrorAction SilentlyContinue
+    $ErrorActionPreference = "Stop"
+
+    if ($code -eq 0) {
+        Set-Content -Path $Marker -Value $Pin -Encoding ascii
+        return $true
+    }
+    Write-Host "        $Name : install.py failed - its models may be missing" -ForegroundColor Yellow
+    $why = @($out -split "`n" | Where-Object { $_.Trim() } | Select-Object -Last 1)
+    foreach ($w in $why) { Write-Host "        $("$w".Trim())" -ForegroundColor DarkYellow }
+    $script:Notes += "$Name : install.py failed"
+    return $false
 }
 
 # Sixty identical lines with no position in them is several minutes of not
@@ -172,7 +227,15 @@ foreach ($node in $Nodes) {
         continue
     }
 
-    if ($have -and $have.StartsWith($pin)) { $Current++; continue }
+    if ($have -and $have.StartsWith($pin)) {
+        $Current++
+        # At the pin, but its install.py may never have run - which is exactly
+        # the install this fix exists to repair.
+        if (-not $DryRun) {
+            if (Invoke-NodeInstaller -Dir $dir -Name $node.folder -Pin $pin) { $SetUp++ }
+        }
+        continue
+    }
 
     $verb = "install"
     if ($have) { $verb = "update" }
@@ -199,6 +262,7 @@ foreach ($node in $Nodes) {
                        Measure-Object Length -Sum).Sum
     } catch { }
     Install-NodeRequirements -Dir $dir -Name $node.folder
+    if (Invoke-NodeInstaller -Dir $dir -Name $node.folder -Pin $pin) { $SetUp++ }
     if ($have) { $Updated++ } else { $Installed++ }
 }
 
@@ -207,6 +271,7 @@ $color = "Green"
 if ($Failed -gt 0) { $color = "Red" } elseif ($Manual -gt 0) { $color = "Yellow" }
 $Summary = "{0} installed, {1} updated, {2} already at pin, {3} manual, {4} failed" -f `
            $Installed, $Updated, $Current, $Manual, $Failed
+if ($SetUp -gt 0) { $Summary += "; $SetUp ran install.py" }
 Write-Host "  Nodes: $Summary" -ForegroundColor $color
 foreach ($n in $Notes) { Write-Host "    - $n" -ForegroundColor DarkYellow }
 
