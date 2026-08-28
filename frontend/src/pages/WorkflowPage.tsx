@@ -6,6 +6,7 @@ import { LoraPanel, type LoraEntry } from '../components/workflows/LoraPanel';
 import { useToast } from '../components/ui/Toast';
 import { useComfyExecution } from '../contexts/ComfyExecutionContext';
 import { BACKEND_API } from '../config/api';
+import { comfyService } from '../services/comfyService';
 import { cancelGeneration } from '../utils/cancelGeneration';
 import type { FieldValue, WorkflowField, WorkflowSchema } from '../types/workflow';
 
@@ -119,10 +120,19 @@ export const WorkflowPage = ({ workflowId }: WorkflowPageProps) => {
         params.loras = loras.filter((entry) => entry.name);
       }
 
+      // Our own socket's name goes with the request. ComfyUI addresses
+      // progress, previews and the finished filenames to whoever submitted the
+      // prompt, and the submitting party is the backend - so without this it
+      // sends them to a client_id nothing is listening on, and the page has no
+      // idea anything is happening until the status poll finds the file.
       const response = await fetch(`${BACKEND_API.BASE_URL}/api/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ workflow_id: workflowId, params }),
+        body: JSON.stringify({
+          workflow_id: workflowId,
+          params,
+          client_id: comfyService.clientId,
+        }),
       });
       const data = await response.json();
       if (!data.success) throw new Error(data.detail || 'The backend refused the graph');

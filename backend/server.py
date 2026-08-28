@@ -443,6 +443,19 @@ async def model_status(filename: str) -> Dict[str, Any]:
 class GenerateRequest(BaseModel):
     workflow_id: str
     params: Dict[str, Any] = {}
+    # Whose websocket should hear about this run.
+    #
+    # ComfyUI addresses its execution messages - progress, previews, and the
+    # `executed` event carrying the finished filenames - to the client_id that
+    # submitted the prompt. This used to be hardcoded to "fedda_v4", a name no
+    # socket was ever registered under, so every one of those messages was
+    # delivered to nobody: no progress bar, no live preview, and a Recent
+    # Generations strip that stayed empty however many pictures were made.
+    #
+    # The browser opens its own socket as `fedda_web_...` and now sends that
+    # name here. The old constant remains the fallback, for a caller that has
+    # no socket of its own and does not need to be told anything.
+    client_id: str = "fedda_v4"
 
 
 @app.post("/api/generate")
@@ -463,7 +476,7 @@ async def generate(req: GenerateRequest) -> Dict[str, Any]:
     try:
         submit = requests.post(
             f"{COMFY_URL}/prompt",
-            json={"prompt": payload, "client_id": "fedda_v4"},
+            json={"prompt": payload, "client_id": req.client_id},
             timeout=20,
         )
     except requests.RequestException as exc:
