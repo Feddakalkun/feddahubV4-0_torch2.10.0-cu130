@@ -9,12 +9,12 @@ $BackendPy = Join-Path $RootPath "backend\server.py"
 $FrontDir  = Join-Path $RootPath "frontend"
 $LogDir    = Join-Path $RootPath "logs"
 
-$Host.UI.RawUI.WindowTitle = "FEDDA Hub v3.0"
+$Host.UI.RawUI.WindowTitle = "FEDDA Hub v4.0"
 try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 } catch {}
 
 Write-Host ""
 Write-Host "  ============================================================" -ForegroundColor Cyan
-Write-Host "    FEDDA Hub v3.0  -  single-window launcher" -ForegroundColor Cyan
+Write-Host "    FEDDA Hub v4.0  -  single-window launcher" -ForegroundColor Cyan
 Write-Host "  ============================================================" -ForegroundColor Cyan
 Write-Host ""
 

@@ -42,6 +42,14 @@ loras/
 *.pth
 *.gguf
 
+# The package resolver install.ps1 fetches into the install root. 42 MB of
+# binaries, untracked and unignored, which meant `git stash push -u` swept
+# them into a stash on the first update - so every update stashed them again
+# and the tool they pin package installs on vanished from the tree.
+uv.exe
+uvw.exe
+uvx.exe
+
 # Python generated files
 __pycache__/
 *.pyc

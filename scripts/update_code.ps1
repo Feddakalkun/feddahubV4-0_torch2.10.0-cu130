@@ -1,5 +1,6 @@
 # ============================================================================
-# FEDDA Code Update - Fast, minimal, pulls latest code from GitHub
+# FEDDA Code Update - Fast, minimal, pulls the latest code from `origin`,
+# whichever source that is: the domain mirror, GitHub, or a local clone.
 # Used by auto-update in run.bat - focused on speed
 # For full maintenance (custom nodes, deps), see update_logic.ps1
 # ============================================================================
@@ -82,7 +83,7 @@ $env:GIT_CONFIG_GLOBAL = Join-Path $RootPath ".gitconfig"
 # ============================================================================
 if (-not (Test-Path (Join-Path $RootPath ".git"))) {
     if (-not $SilentMode) {
-        Write-Host "`n  Initializing git from GitHub..." -ForegroundColor Yellow
+        Write-Host "`n  Initializing git from the update source..." -ForegroundColor Yellow
     }
     & $GitExe init
     & $GitExe remote add origin $(Get-FeddaMirrors)[0]
@@ -92,7 +93,7 @@ if (-not (Test-Path (Join-Path $RootPath ".git"))) {
 # 2. PULL LATEST CODE
 # ============================================================================
 if (-not $SilentMode) {
-    Write-Host "`n  Pulling latest code from GitHub..." -ForegroundColor Yellow
+    Write-Host "`n  Pulling the latest code..." -ForegroundColor Yellow
     # Stash local changes to protect uncommitted work (including new files like workflows)
     $hasChanges = & $GitExe status --porcelain 2>$null
     if ($hasChanges) {
