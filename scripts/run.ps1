@@ -225,11 +225,11 @@ $Services = @(
     @{ Tag = "BACK";  Color = "Green";   Out = Join-Path $LogDir "backend_live.log";  Err = Join-Path $LogDir "backend_live.err.log" },
     @{ Tag = "VITE";  Color = "Cyan";    Out = Join-Path $LogDir "frontend_live.log"; Err = Join-Path $LogDir "frontend_live.err.log" }
 )
-foreach ($s in $Services) {
-    Remove-Item $s.Out, $s.Err -ErrorAction SilentlyContinue
-    New-Item -ItemType File -Path $s.Out -Force | Out-Null
-    New-Item -ItemType File -Path $s.Err -Force | Out-Null
-}
+# The files themselves are truncated further down, after stale services are
+# killed. Doing it here threw six IOExceptions on every start where the last
+# session's ComfyUI, backend and Vite were still holding their own logs open -
+# which is exactly the case this launcher already knows how to clean up, fifty
+# lines later.
 
 $ComfyProc   = $null
 $BackendProc = $null
@@ -293,6 +293,39 @@ foreach ($StalePort in 8199, 8000) {
             taskkill /F /T /PID $Proc.Id 2>$null | Out-Null
         } elseif ($Proc) {
             Write-Host "  [WARN] Port $StalePort is held by $($Proc.ProcessName) (PID $($Proc.Id)) - not a FEDDA process, leaving it. Startup may fail." -ForegroundColor Yellow
+        }
+    }
+}
+
+# Now that nothing is holding them, start the logs empty. This has to happen
+# after the kill above and before the tails below: the tail jobs read with
+# -Tail 0, which only means "from the start" if the file is empty when they
+# attach.
+#
+# taskkill returns before Windows has necessarily released the handles, so a
+# lock can outlive the process by a moment. Retry briefly, and if a file still
+# will not budge, keep going - a log that appends is worth more than a
+# launcher that refuses to start.
+foreach ($s in $Services) {
+    foreach ($f in @($s.Out, $s.Err)) {
+        $cleared = $false
+        foreach ($attempt in 1..5) {
+            try {
+                # Clear-Content rather than Set-Content: the latter writes a
+                # UTF-8 BOM, so "empty" would be three bytes rather than none.
+                if (Test-Path -LiteralPath $f) {
+                    Clear-Content -LiteralPath $f -ErrorAction Stop
+                } else {
+                    New-Item -ItemType File -Path $f -Force -ErrorAction Stop | Out-Null
+                }
+                $cleared = $true
+                break
+            } catch {
+                Start-Sleep -Milliseconds 200
+            }
+        }
+        if (-not $cleared) {
+            Write-Host "  [WARN] Could not clear $(Split-Path $f -Leaf) - it stays held; this run appends to it." -ForegroundColor DarkYellow
         }
     }
 }
