@@ -41,6 +41,11 @@ OVERRIDES = ROOT / "config" / "node_overrides.json"
 NODES = ROOT / "config" / "nodes.json"
 MODULES = ROOT / "config" / "modules.json"
 CACHE = ROOT / "config" / "object_info.cache.json"
+# Signatures for nodes whose widgets are defined in JavaScript. They carry a
+# python_module, which is the only field this script needs, and they are
+# committed because the cache is generated per machine. Same file ui_to_api
+# merges for the widget names.
+EXTRA_SIGNATURES = ROOT / "config" / "node_signatures.extra.json"
 
 # Packs the app needs whatever workflows are installed. Manager is the user's
 # own way out when something is missing, and Studio-nodes carries
@@ -53,14 +58,28 @@ def object_info(comfy: str | None) -> Dict[str, Any]:
     if comfy:
         try:
             with urllib.request.urlopen(f"{comfy}/object_info", timeout=60) as r:
-                info = json.loads(r.read().decode("utf-8", "ignore"))
+                info = _with_extra(json.loads(r.read().decode("utf-8", "ignore")))
             CACHE.write_text(json.dumps(info), encoding="utf-8")
             return info
         except (OSError, ValueError):
             pass
     if CACHE.exists():
-        return json.loads(CACHE.read_text(encoding="utf-8"))
+        return _with_extra(json.loads(CACHE.read_text(encoding="utf-8")))
     sys.exit("No object_info. Start ComfyUI once, or pass --comfy.")
+
+
+def _with_extra(info: Dict[str, Any]) -> Dict[str, Any]:
+    """Fill gaps from node_signatures.extra.json. A live answer always wins."""
+    if not EXTRA_SIGNATURES.exists():
+        return info
+    try:
+        extra = json.loads(EXTRA_SIGNATURES.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return info
+    for name, spec in extra.items():
+        if not name.startswith("_") and isinstance(spec, dict) and name not in info:
+            info[name] = spec
+    return info
 
 
 def load_overrides() -> Dict[str, str]:

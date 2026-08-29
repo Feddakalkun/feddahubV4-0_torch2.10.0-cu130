@@ -54,9 +54,13 @@ _SKIP_TYPES = {"object"}
 # `_is_file_slot`, which exists because `frame_rate` contains "frame".
 _FILE_HINTS = ("image", "audio", "video", "frame", "portrait", "mask")
 
+# Neither signal is enough alone, and both had to grow for MiniMax: its four
+# Pixaroma graphs save through PixaromaSaveMp4 and call their rate `fps`, so
+# they were reported as making pictures - which puts a video workflow behind
+# the wrong card and gives it an image preview.
 _VIDEO_NODES = re.compile(
-    r"videocombine|savevideo|savewebm|savewebp|createvideo|vhs_", re.I)
-_VIDEO_INPUTS = ("length", "frame_rate", "duration_frames", "num_frames")
+    r"videocombine|savevideo|savewebm|savewebp|createvideo|vhs_|savemp4", re.I)
+_VIDEO_INPUTS = ("length", "frame_rate", "fps", "duration_frames", "num_frames")
 
 
 # --------------------------------------------------------------- object_info

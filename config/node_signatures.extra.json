@@ -1,0 +1,115 @@
+{
+  "PixaromaDuration": {
+    "input": {
+      "required": {}
+    },
+    "python_module": "custom_nodes.ComfyUI-Pixaroma"
+  },
+  "PixaromaH3AudioSync": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "latent": [
+          "LATENT",
+          {}
+        ],
+        "audio_vae": [
+          "VAE",
+          {}
+        ],
+        "track": [
+          "AUDIO",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-Pixaroma"
+  },
+  "PixaromaLoadAudio": {
+    "input": {
+      "required": {},
+      "optional": {
+        "seconds": [
+          "FLOAT",
+          {
+            "forceInput": true
+          }
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-Pixaroma"
+  },
+  "PixaromaLoadImageMini": {
+    "input": {
+      "required": {
+        "image": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-Pixaroma"
+  },
+  "PixaromaLongestSide": {
+    "input": {
+      "required": {
+        "image": [
+          "IMAGE",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-Pixaroma"
+  },
+  "PixaromaPrompt": {
+    "input": {
+      "required": {},
+      "optional": {
+        "text_in": [
+          "STRING",
+          {
+            "forceInput": true
+          }
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-Pixaroma"
+  },
+  "PixaromaSaveMp4": {
+    "input": {
+      "required": {
+        "video_frames": [
+          "IMAGE",
+          {}
+        ],
+        "fps": [
+          "FLOAT",
+          {}
+        ],
+        "filename_prefix": [
+          "STRING",
+          {}
+        ],
+        "save_mode": [
+          [],
+          {}
+        ],
+        "trim_to_audio": [
+          "BOOLEAN",
+          {}
+        ]
+      },
+      "optional": {
+        "audio": [
+          "AUDIO",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-Pixaroma"
+  },
+  "_note": "Signatures for nodes whose widgets live in JavaScript, so object_info reports them as having almost no inputs even on an install that has the pack. Read out of the pack source with scratchpad/pixaroma_sig.py (AST, not executed). Merged OVER object_info.cache.json by ui_to_api.py, and committed because that cache is generated per machine and would lose them."
+}

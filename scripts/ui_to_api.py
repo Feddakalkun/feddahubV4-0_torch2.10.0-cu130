@@ -39,6 +39,10 @@ from typing import Any, Dict, List, Optional, Tuple
 
 ROOT = Path(__file__).resolve().parent.parent
 CACHE = ROOT / "config" / "object_info.cache.json"
+# Signatures for nodes whose widgets are defined in JavaScript. object_info
+# cannot report those even on an install that has the pack, so they are read
+# from the pack source and committed. Merged over whatever object_info gives.
+EXTRA_SIGNATURES = ROOT / "config" / "node_signatures.extra.json"
 
 # Widgets the canvas owns. They occupy a slot in widgets_values and correspond
 # to no input, so they have to be skipped while walking the list.
@@ -60,14 +64,36 @@ def load_object_info(comfy: Optional[str]) -> Dict[str, Any]:
             CACHE.parent.mkdir(exist_ok=True)
             CACHE.write_text(json.dumps(info), encoding="utf-8")
             print(f"  object_info: {len(info)} node types, cached")
-            return info
+            return _with_extra_signatures(info)
         except (OSError, ValueError) as exc:
             print(f"  object_info: {comfy} did not answer ({exc}); trying cache")
     if CACHE.exists():
         info = json.loads(CACHE.read_text(encoding="utf-8"))
         print(f"  object_info: {len(info)} node types, from cache")
-        return info
+        return _with_extra_signatures(info)
     sys.exit("No object_info. Start ComfyUI once, or pass --comfy.")
+
+
+def _with_extra_signatures(info: Dict[str, Any]) -> Dict[str, Any]:
+    """Add the hand-read signatures, without overwriting a real one."""
+    if not EXTRA_SIGNATURES.exists():
+        return info
+    try:
+        extra = json.loads(EXTRA_SIGNATURES.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return info
+    added = 0
+    for name, spec in extra.items():
+        if name.startswith("_") or not isinstance(spec, dict):
+            continue
+        # A live signature wins. These exist to fill a gap, not to
+        # override ComfyUI when it can actually answer.
+        if name not in info:
+            info[name] = spec
+            added += 1
+    if added:
+        print(f"  object_info: +{added} node type(s) from node_signatures.extra.json")
+    return info
 
 
 def widget_names(info: Dict[str, Any], class_type: str) -> List[str]:
@@ -84,8 +110,14 @@ def widget_names(info: Dict[str, Any], class_type: str) -> List[str]:
     for section in ("required", "optional"):
         for name, decl in (spec.get("input", {}).get(section) or {}).items():
             kind = decl[0] if isinstance(decl, list) and decl else decl
+            opts = decl[1] if isinstance(decl, list) and len(decl) > 1 and isinstance(decl[1], dict) else {}
             if isinstance(kind, str) and kind.isupper() and kind not in ("STRING", "INT", "FLOAT", "BOOLEAN", "COMBO"):
                 continue          # comes in over a link
+            if opts.get("forceInput"):
+                # Drawn as a socket, not a widget, so it takes no slot in
+                # widgets_values - and counting it shifts every value after
+                # it by one. PixaromaPrompt.text_in is a STRING with this set.
+                continue
             names.append(name)
             if name in UI_ONLY_AFTER:
                 names.append("control_after_generate")

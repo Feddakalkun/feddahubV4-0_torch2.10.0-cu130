@@ -627,5 +627,226 @@
         "label": "LoRAs"
       }
     }
+  },
+  "minimax-h3-first-frame": {
+    "name": "MiniMax H3 First Frame",
+    "filename": "minimax-h3/first-frame.json",
+    "module": "minimax-h3",
+    "description": "One image becomes the opening frame, and the clip grows from it.",
+    "inputs": {
+      "image": {
+        "node_id": "264",
+        "input_key": "image",
+        "label": "First Frame"
+      },
+      "prompt": {
+        "node_id": "272",
+        "input_key": "PromptState",
+        "label": "Prompt",
+        "encode": "pixaroma_prompt",
+        "_why": "Pixaroma draws its widgets in JavaScript and the browser packs them into a hidden JSON string at submit time, so the text arrives as PromptState rather than as a plain input. See backend/encoders.py."
+      },
+      "seed": {
+        "node_id": "265",
+        "input_key": "seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "265",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "cfg": {
+        "node_id": "265",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "denoise": {
+        "node_id": "265",
+        "input_key": "denoise",
+        "label": "Denoise"
+      },
+      "fps": {
+        "node_id": "270",
+        "input_key": "fps",
+        "label": "FPS"
+      },
+      "loras": {
+        "node_id": "316",
+        "type": "loras",
+        "label": "LoRAs"
+      }
+    }
+  },
+  "minimax-h3-fflf": {
+    "name": "MiniMax H3 First and Last Frame",
+    "filename": "minimax-h3/fflf.json",
+    "module": "minimax-h3",
+    "description": "Give it where to start and where to end; it makes the journey between.",
+    "inputs": {
+      "image": {
+        "node_id": "252",
+        "input_key": "image",
+        "label": "First Frame"
+      },
+      "image2": {
+        "node_id": "254",
+        "input_key": "image",
+        "label": "Last Frame"
+      },
+      "prompt": {
+        "node_id": "255",
+        "input_key": "PromptState",
+        "label": "Prompt",
+        "encode": "pixaroma_prompt",
+        "_why": "Pixaroma draws its widgets in JavaScript and the browser packs them into a hidden JSON string at submit time, so the text arrives as PromptState rather than as a plain input. See backend/encoders.py."
+      },
+      "seed": {
+        "node_id": "256",
+        "input_key": "seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "256",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "cfg": {
+        "node_id": "256",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "denoise": {
+        "node_id": "256",
+        "input_key": "denoise",
+        "label": "Denoise"
+      },
+      "fps": {
+        "node_id": "249",
+        "input_key": "fps",
+        "label": "FPS"
+      },
+      "loras": {
+        "node_id": "315",
+        "type": "loras",
+        "label": "LoRAs"
+      }
+    }
+  },
+  "minimax-h3-sing": {
+    "name": "MiniMax H3 Sing",
+    "filename": "minimax-h3/sing.json",
+    "module": "minimax-h3",
+    "description": "A portrait sings the track you give it, lips matched to the sound.",
+    "inputs": {
+      "image": {
+        "node_id": "210",
+        "input_key": "image",
+        "label": "Portrait"
+      },
+      "audio": {
+        "node_id": "214",
+        "input_key": "LoadAudioState",
+        "label": "Song",
+        "encode": "pixaroma_audio",
+        "accept": "audio",
+        "_why": "Same hidden-state pattern as the prompt: the chosen file arrives as LoadAudioState, a JSON string naming a file in ComfyUI's input folder - which is what /api/upload returns."
+      },
+      "prompt": {
+        "node_id": "212",
+        "input_key": "PromptState",
+        "label": "Prompt",
+        "encode": "pixaroma_prompt",
+        "_why": "Pixaroma draws its widgets in JavaScript and the browser packs them into a hidden JSON string at submit time, so the text arrives as PromptState rather than as a plain input. See backend/encoders.py."
+      },
+      "seed": {
+        "node_id": "219",
+        "input_key": "seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "219",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "cfg": {
+        "node_id": "219",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "denoise": {
+        "node_id": "219",
+        "input_key": "denoise",
+        "label": "Denoise"
+      },
+      "fps": {
+        "node_id": "220",
+        "input_key": "fps",
+        "label": "FPS"
+      },
+      "loras": {
+        "node_id": "318",
+        "type": "loras",
+        "label": "LoRAs"
+      }
+    }
+  },
+  "minimax-h3-speak": {
+    "name": "MiniMax H3 Speak",
+    "filename": "minimax-h3/speak.json",
+    "module": "minimax-h3",
+    "description": "A portrait speaks the recording you give it.",
+    "inputs": {
+      "image": {
+        "node_id": "228",
+        "input_key": "image",
+        "label": "Portrait"
+      },
+      "audio": {
+        "node_id": "231",
+        "input_key": "LoadAudioState",
+        "label": "Recording",
+        "encode": "pixaroma_audio",
+        "accept": "audio",
+        "_why": "Same hidden-state pattern as the prompt: the chosen file arrives as LoadAudioState, a JSON string naming a file in ComfyUI's input folder - which is what /api/upload returns."
+      },
+      "prompt": {
+        "node_id": "230",
+        "input_key": "PromptState",
+        "label": "Prompt",
+        "encode": "pixaroma_prompt",
+        "_why": "Pixaroma draws its widgets in JavaScript and the browser packs them into a hidden JSON string at submit time, so the text arrives as PromptState rather than as a plain input. See backend/encoders.py."
+      },
+      "seed": {
+        "node_id": "236",
+        "input_key": "seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "236",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "cfg": {
+        "node_id": "236",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "denoise": {
+        "node_id": "236",
+        "input_key": "denoise",
+        "label": "Denoise"
+      },
+      "fps": {
+        "node_id": "237",
+        "input_key": "fps",
+        "label": "FPS"
+      },
+      "loras": {
+        "node_id": "317",
+        "type": "loras",
+        "label": "LoRAs"
+      }
+    }
   }
 }

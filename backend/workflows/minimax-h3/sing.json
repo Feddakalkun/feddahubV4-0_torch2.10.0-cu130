@@ -1,0 +1,243 @@
+{
+  "207": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "default"
+    },
+    "_meta": {
+      "title": "CLIPLoader"
+    }
+  },
+  "208": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "209": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_audio_vae_fp32.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "210": {
+    "class_type": "PixaromaLoadImageMini",
+    "inputs": {
+      "image": "japan-woman.png"
+    },
+    "_meta": {
+      "title": "3. Load Image"
+    }
+  },
+  "211": {
+    "class_type": "PixaromaLongestSide",
+    "inputs": {
+      "image": [
+        "210",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "5. Longest Side (Select the max size you want)"
+    }
+  },
+  "212": {
+    "class_type": "PixaromaPrompt",
+    "inputs": {},
+    "_meta": {
+      "title": "4. The Prompt"
+    }
+  },
+  "213": {
+    "class_type": "PixaromaDuration",
+    "inputs": {},
+    "_meta": {
+      "title": "1. Set Duration"
+    }
+  },
+  "214": {
+    "class_type": "PixaromaLoadAudio",
+    "inputs": {
+      "seconds": [
+        "213",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "2. Upload Audio and adjust duration"
+    }
+  },
+  "215": {
+    "class_type": "MiniMaxH3ReferenceToVideo",
+    "inputs": {
+      "prompt": [
+        "212",
+        0
+      ],
+      "width": [
+        "211",
+        1
+      ],
+      "height": [
+        "211",
+        2
+      ],
+      "length": [
+        "213",
+        0
+      ],
+      "ref_image_size": "match",
+      "clip": [
+        "207",
+        0
+      ],
+      "vae": [
+        "208",
+        0
+      ],
+      "audio_vae": [
+        "209",
+        0
+      ],
+      "ref_images.ref_image_0": [
+        "211",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "MiniMaxH3ReferenceToVideo"
+    }
+  },
+  "216": {
+    "class_type": "ConditioningZeroOut",
+    "inputs": {
+      "conditioning": [
+        "215",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ConditioningZeroOut"
+    }
+  },
+  "217": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "219",
+        0
+      ],
+      "vae": [
+        "208",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecode"
+    }
+  },
+  "218": {
+    "class_type": "PixaromaH3AudioSync",
+    "inputs": {
+      "model": [
+        "221",
+        0
+      ],
+      "latent": [
+        "215",
+        1
+      ],
+      "audio_vae": [
+        "209",
+        0
+      ],
+      "track": [
+        "214",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "PixaromaH3AudioSync"
+    }
+  },
+  "219": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": 82642248211848,
+      "steps": 8,
+      "cfg": 1,
+      "sampler_name": "res_multistep",
+      "scheduler": "beta",
+      "denoise": 1,
+      "model": [
+        "318",
+        0
+      ],
+      "positive": [
+        "215",
+        0
+      ],
+      "negative": [
+        "216",
+        0
+      ],
+      "latent_image": [
+        "218",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "220": {
+    "class_type": "PixaromaSaveMp4",
+    "inputs": {
+      "fps": 24,
+      "filename_prefix": "VIDEO/MINIMAX-H3/0",
+      "save_mode": "save",
+      "trim_to_audio": false,
+      "video_frames": [
+        "217",
+        0
+      ],
+      "audio": [
+        "218",
+        2
+      ]
+    },
+    "_meta": {
+      "title": "PixaromaSaveMp4"
+    }
+  },
+  "221": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_ref2va_pruned_int8_convrot.safetensors",
+      "weight_dtype": "default"
+    },
+    "_meta": {
+      "title": "UNETLoader"
+    }
+  },
+  "318": {
+    "class_type": "Power Lora Loader (rgthree)",
+    "inputs": {
+      "model": [
+        "221",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  }
+}

@@ -143,15 +143,24 @@
         "minimax-h3-txt2vid",
         "minimax-h3-img2vid",
         "minimax-h3-video-edit",
-        "minimax-h3-ref-images"
+        "minimax-h3-ref-images",
+        "minimax-h3-first-frame",
+        "minimax-h3-fflf",
+        "minimax-h3-sing",
+        "minimax-h3-speak"
       ],
       "workflows": [
         "minimax-h3/txt2vid.json",
         "minimax-h3/img2vid.json",
         "minimax-h3/video-edit.json",
-        "minimax-h3/ref-images.json"
+        "minimax-h3/ref-images.json",
+        "minimax-h3/first-frame.json",
+        "minimax-h3/fflf.json",
+        "minimax-h3/sing.json",
+        "minimax-h3/speak.json"
       ],
       "custom_nodes": [
+        "ComfyUI-Pixaroma",
         "ComfyUI-tbox",
         "ComfyUI-VideoHelperSuite",
         "rgthree-comfy"

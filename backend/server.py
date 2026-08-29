@@ -40,6 +40,7 @@ if _backend_dir not in sys.path:
     sys.path.insert(0, _backend_dir)
 
 import descriptor
+import encoders
 import model_links
 from logging_setup import setup_logging
 from lora_service import LoRAService
@@ -468,7 +469,13 @@ async def generate(req: GenerateRequest) -> Dict[str, Any]:
             or f"'{req.workflow_id}' is not installed on this machine",
         )
 
-    payload = workflow_service.prepare_payload(req.workflow_id, req.params)
+    # A few nodes want their value in a shape the control cannot produce -
+    # Pixaroma packs a prompt into a hidden JSON string, for one. The mapping
+    # names an encoder for those; everything else passes through untouched.
+    mapping = workflow_service.load_mapping().get(req.workflow_id) or {}
+    params = encoders.apply(mapping, req.params)
+
+    payload = workflow_service.prepare_payload(req.workflow_id, params)
     if not payload:
         raise HTTPException(status_code=400,
                             detail=f"Could not build a graph for '{req.workflow_id}'")

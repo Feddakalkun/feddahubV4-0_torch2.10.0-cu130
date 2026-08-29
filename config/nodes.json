@@ -90,6 +90,15 @@
     "pin_from": "fedda-v3"
   },
   {
+    "name": "ComfyUI-Pixaroma",
+    "url": "https://github.com/pixaroma/ComfyUI-Pixaroma.git",
+    "folder": "ComfyUI-Pixaroma",
+    "note": "PixaromaCompare — before/after compare, needed by klein-inpaint. Vendored: installed here without git, so the url is provenance only.",
+    "pin": "818855ad05d31c41d9401aee72fa75b631b4e903",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
     "name": "ComfyUI-SeedVR2_VideoUpscaler",
     "url": "https://github.com/numz/ComfyUI-SeedVR2_VideoUpscaler.git",
     "folder": "ComfyUI-SeedVR2_VideoUpscaler",
