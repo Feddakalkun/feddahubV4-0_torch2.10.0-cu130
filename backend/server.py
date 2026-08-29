@@ -701,6 +701,140 @@ async def comfy_refresh_models() -> Dict[str, Any]:
         return {"success": False, "detail": str(exc)}
 
 
+
+
+# ---------------------------------------------------------------- ollama
+#
+# Optional, and deliberately so. Ollama is a separate program with models of
+# its own - a text model is several gigabytes on top of the twenty this app
+# already asks for - and none of it is needed to make a picture. So nothing
+# installs it and nothing starts it here: if it answers on 11434 the prompt
+# box grows a button, and if it does not, the app is unchanged.
+#
+# v3 grew seven endpoints here, including a prompt enhancer with per-model
+# recipes, an influencer brief generator and NSFW temperature tuning. Two are
+# carried: which models exist, and turn this prompt into a better one.
+
+OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://127.0.0.1:11434")
+
+# Preference order for the writing model, best first. Falls back to whatever
+# is installed, because a machine with one model should still work.
+OLLAMA_PREFERRED = ("llama3.1", "llama3", "qwen2.5", "mistral", "gemma2")
+
+
+def _ollama_models() -> List[str]:
+    try:
+        resp = requests.get(f"{OLLAMA_URL}/api/tags", timeout=3)
+        if not resp.ok:
+            return []
+        return [m["name"] for m in resp.json().get("models", []) if m.get("name")]
+    except requests.RequestException:
+        return []
+
+
+def _ollama_text_model(models: Optional[List[str]] = None) -> Optional[str]:
+    """The model to write with. Vision models are skipped - they answer about
+    a picture rather than describing one that does not exist yet."""
+    names = models if models is not None else _ollama_models()
+    usable = [n for n in names if not any(v in n.lower() for v in ("llava", "vision", "-vl"))]
+    for want in OLLAMA_PREFERRED:
+        for name in usable:
+            if name.lower().startswith(want):
+                return name
+    return usable[0] if usable else None
+
+
+@app.get("/api/ollama/models")
+async def ollama_models() -> Dict[str, Any]:
+    models = _ollama_models()
+    return {
+        "online": bool(models),
+        "models": models,
+        "text_model": _ollama_text_model(models),
+    }
+
+
+class PromptHelpRequest(BaseModel):
+    prompt: str = ""
+    workflow_id: str = ""
+    model: str = ""
+
+
+# Two jobs, and they want different things said. An image prompt describes one
+# frame; a video prompt has to carry motion, a camera, and - for MiniMax H3,
+# which generates sound in the same pass - what the shot sounds like. Asking
+# for one and getting the other is worse than asking for nothing.
+_IMAGE_RULES = (
+    "You expand short image prompts into detailed ones for a text-to-image model.\n"
+    "Describe one still frame: subject, what they look like, what they are doing, "
+    "the setting, the light, the lens and the mood.\n"
+    "Keep every specific the user gave. Add detail, never contradict them.\n"
+    "Reply with the prompt itself and nothing else - no preamble, no quotes, "
+    "no explanation. Under 120 words."
+)
+_VIDEO_RULES = (
+    "You expand short prompts into detailed ones for a text-to-video model that "
+    "generates picture and sound together.\n"
+    "Describe the shot over time: what moves, how the camera moves, and how it "
+    "changes from the first second to the last.\n"
+    "Then describe what it sounds like - the room, the sound effects, any music. "
+    "The model renders audio from this, so silence about sound produces silence.\n"
+    "Keep every specific the user gave. Add detail, never contradict them.\n"
+    "Reply with the prompt itself and nothing else. Under 160 words."
+)
+
+
+@app.post("/api/ollama/prompt")
+async def ollama_prompt(req: PromptHelpRequest) -> Dict[str, Any]:
+    model = req.model or _ollama_text_model()
+    if not model:
+        raise HTTPException(status_code=503,
+                            detail=f"No Ollama model answered on {OLLAMA_URL}")
+
+    seed = (req.prompt or "").strip()
+    if not seed:
+        raise HTTPException(status_code=400, detail="Nothing to expand")
+
+    # Whether this workflow makes a video is already known - the schema says
+    # so, from the graph - rather than guessed from the workflow's name.
+    makes_video = False
+    try:
+        makes_video = descriptor.describes_video(req.workflow_id)
+    except Exception:
+        pass
+
+    try:
+        resp = requests.post(
+            f"{OLLAMA_URL}/api/chat",
+            json={
+                "model": model,
+                "stream": False,
+                "options": {"temperature": 0.6},
+                "messages": [
+                    {"role": "system",
+                     "content": _VIDEO_RULES if makes_video else _IMAGE_RULES},
+                    {"role": "user", "content": seed},
+                ],
+            },
+            timeout=120,
+        )
+    except requests.RequestException as exc:
+        raise HTTPException(status_code=503, detail=f"Ollama did not answer: {exc}")
+
+    if not resp.ok:
+        raise HTTPException(status_code=502, detail=f"Ollama refused: {resp.text[:200]}")
+
+    text = ((resp.json().get("message") or {}).get("content") or "").strip()
+    if not text:
+        raise HTTPException(status_code=502, detail="Ollama returned nothing")
+    return {"prompt": text, "model": model, "kind": "video" if makes_video else "image"}
+
+
+# Last in the file, and it has to stay last. uvicorn.run blocks, so every
+# route defined below this point is never registered when the app is
+# started - the Ollama endpoints sat here for a while and answered 404 on a
+# real launch while passing every in-process test, because importing the
+# module skips this block entirely and registers them fine.
 if __name__ == "__main__":
     import uvicorn
 
