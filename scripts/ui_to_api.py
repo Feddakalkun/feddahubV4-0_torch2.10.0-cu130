@@ -96,6 +96,13 @@ def _with_extra_signatures(info: Dict[str, Any]) -> Dict[str, Any]:
     return info
 
 
+# rgthree draws this node's LoRA slots in JavaScript, so ComfyUI cannot
+# describe them and the ordinary widget zip cannot read them. See
+# rgthree_lora_inputs().
+RGTHREE_POWER_LORA = "Power Lora Loader (rgthree)"
+ADD_LORA_ROW = "➕ Add Lora"
+
+
 def widget_names(info: Dict[str, Any], class_type: str) -> List[str]:
     """Input names in widget order, with the canvas-only ones interleaved.
 
@@ -373,6 +380,40 @@ def build(ui: Dict[str, Any], info: Dict[str, Any],
     for r in roots:
         walk(r)
 
+    def rgthree_lora_inputs(values: List[Any]) -> Dict[str, Any]:
+        """The Power Lora Loader's slots, which object_info does not declare.
+
+        rgthree builds `lora_1..N` in JavaScript, so its Python signature is
+        just `model` and `clip` - both links. widget_names() therefore returns
+        nothing for this node and the positional zip below dropped every slot
+        on the floor. Silently: the graph converted, ran, and produced worse
+        pictures, because a distill LoRA that makes 8-step sampling coherent
+        was simply not there. That is how MiniMax H3 arrived in v4 without its
+        4-step turbo LoRA, and 43 of the source workflows have the same node.
+
+        The canvas always writes the same shape:
+
+            [null, {"type": "PowerLoraLoaderHeaderWidget"},
+             {"on": .., "lora": .., "strength": ..}, ..., null, ""]
+
+        `on: false` slots are kept as they are. They are the menu the user
+        picks from in the UI, and dropping them would empty the picker; the
+        model preflight already skips them so nothing downloads a LoRA the
+        graph has switched off.
+        """
+        got: Dict[str, Any] = {}
+        slot = 0
+        for value in values:
+            if isinstance(value, dict) and "lora" in value:
+                slot += 1
+                got["lora_%d" % slot] = value
+            elif isinstance(value, dict) and value.get("type"):
+                got[str(value["type"])] = value
+        # The trailing empty string is the "add" row. rgthree writes it, and a
+        # graph that matches what the canvas saves is one you can still open.
+        got[ADD_LORA_ROW] = ""
+        return got
+
     out: Dict[str, Any] = {}
     unknown: List[str] = []
     filled: List[str] = []
@@ -386,7 +427,9 @@ def build(ui: Dict[str, Any], info: Dict[str, Any],
         names = widget_names(info, class_type)
         values = node.get("widgets_values")
         inputs: Dict[str, Any] = {}
-        if isinstance(values, list):
+        if class_type == RGTHREE_POWER_LORA and isinstance(values, list):
+            inputs.update(rgthree_lora_inputs(values))
+        elif isinstance(values, list):
             defaults = widget_defaults(info, class_type)
             for idx, name in enumerate(names):
                 if name in UI_ONLY_NAMES:

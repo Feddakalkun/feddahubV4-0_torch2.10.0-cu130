@@ -257,6 +257,15 @@
   "313": {
     "class_type": "Power Lora Loader (rgthree)",
     "inputs": {
+      "PowerLoraLoaderHeaderWidget": {
+        "type": "PowerLoraLoaderHeaderWidget"
+      },
+      "lora_1": {
+        "on": true,
+        "lora": "minimax_h3_fl2v_lightx2v_turbo_4step_v0.1_comfy_resized_avg_rank_21_bf16.safetensors",
+        "strength": 0.75
+      },
+      "➕ Add Lora": "",
       "model": [
         "186",
         0
