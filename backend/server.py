@@ -941,4 +941,9 @@ if __name__ == "__main__":
     # No reload. It doubles the process, and `object_info.cache.json` is read
     # once at import - a reloader would load several megabytes twice per edit.
     print("[FEDDA Hub v4] backend on http://127.0.0.1:8000")
-    uvicorn.run(app, host="127.0.0.1", port=8000, log_level="info")
+    # log_config=None so uvicorn keeps the logging setup_logging built.
+    # Its default config runs dictConfig at startup, which replaces the
+    # handlers and levels chosen above - the polling filter went on before
+    # that and was thrown away with them, and the console filled up again.
+    uvicorn.run(app, host="127.0.0.1", port=8000,
+                log_level="info", log_config=None)
