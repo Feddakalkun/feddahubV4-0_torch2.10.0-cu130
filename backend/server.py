@@ -362,7 +362,7 @@ def _workflow_models(workflow_id: str) -> List[Dict[str, Any]]:
     for item in model_links.models_from_graph(graph):
         name = item["filename"]
         seen.add(name.lower())
-        spec = model_downloader.zimage_core_specs.get(name)
+        spec = model_downloader.spec_for(name)
         # Not every spec places its file by folder: some carry a
         # root_relative_path instead, and reading relative_dir off those
         # raises rather than falling back.
@@ -377,19 +377,29 @@ def _workflow_models(workflow_id: str) -> List[Dict[str, Any]]:
         if found is None:
             found = model_links.find_anywhere(name, ROOT_DIR, extra)
 
+        # Why this one will not be downloaded, when it will not be. Three
+        # different situations drew identically before - as a row with no
+        # size and a Download button that started nothing - and only one of
+        # them was actually wrong.
+        note = ""
+        if spec and spec.get("fetched_by"):
+            note = ("%s downloads this itself the first time it runs."
+                    % spec["fetched_by"])
+        elif not spec:
+            note = ("Nothing knows where to download this - it has no entry "
+                    "in the model list.")
+
         files.append({
             "filename": name,
             "folder": folder,
-            "url": str(spec["url"]) if spec else "",
+            "url": str(spec.get("url") or "") if spec else "",
             "path": (str(model_downloader._dest_path_for_spec(spec, name))
                      if spec else ""),
             "exists": found is not None,
             "size_bytes": found.stat().st_size if found else 0,
-            # Named by the workflow with nowhere to fetch it from. Reported
-            # rather than dropped: a model the app cannot get is something
-            # the user has to know about, not something to hide. Several are
-            # fetched by the node pack itself on first use.
-            **({} if spec else {"no_source": True}),
+            # Reported rather than dropped: a model the app will not fetch is
+            # something the user has to know about, not something to hide.
+            **({"no_source": True, "note": note} if note else {}),
         })
 
     # A graph may also declare downloads inline through a

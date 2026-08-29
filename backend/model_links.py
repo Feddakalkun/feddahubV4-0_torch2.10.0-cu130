@@ -205,7 +205,12 @@ def live_progress(files: List[Dict[str, Any]], hf_token: str = "",
                 row["error"] = str(state["error"])
             elif state.get("status"):
                 row["status"] = str(state["status"])
-            if not item.get("url"):
+            # The preflight already worked out why - a pack fetches it, or
+            # nothing does. Repeating that reasoning here is how the two
+            # halves of one dialog end up disagreeing.
+            if item.get("note"):
+                row["error"] = str(item["note"])
+            elif not item.get("url"):
                 row["error"] = ("Nothing knows where to download this. It has no "
                                  "entry in the model list.")
         out.append(row)

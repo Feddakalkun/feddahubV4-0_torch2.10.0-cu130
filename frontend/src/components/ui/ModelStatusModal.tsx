@@ -26,8 +26,8 @@ interface ModelStatusModalProps {
 
 export const ModelStatusModal = ({ workflowId, workflowLabel, onClose }: ModelStatusModalProps) => {
   const { isDownloaderNode } = useComfyExecution();
-  const { preflight, liveFiles, missingCount, allReady, checked, manualDownloading, startDownload } =
-    useWorkflowDownloadStatus(workflowId);
+  const { preflight, liveFiles, missingCount, fetchableCount, allReady, checked,
+    manualDownloading, startDownload } = useWorkflowDownloadStatus(workflowId);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -47,6 +47,7 @@ export const ModelStatusModal = ({ workflowId, workflowLabel, onClose }: ModelSt
       const current = f.exists ? total : (l?.currentBytes ?? 0);
       return {
         ...f,
+        note: f.note || l?.error || '',
         exists: f.exists || Boolean(l?.exists),
         current,
         total,
@@ -56,7 +57,9 @@ export const ModelStatusModal = ({ workflowId, workflowLabel, onClose }: ModelSt
   }, [preflight, liveFiles]);
 
   const totalBytes = rows.reduce((sum, r) => sum + r.total, 0);
-  const missingBytes = rows.filter((r) => !r.exists).reduce((sum, r) => sum + Math.max(0, r.total - r.current), 0);
+  const missingBytes = rows
+    .filter((r) => !r.exists && !r.note)
+    .reduce((sum, r) => sum + Math.max(0, r.total - r.current), 0);
   const readyCount = rows.filter((r) => r.exists).length;
 
   return (
@@ -124,6 +127,13 @@ export const ModelStatusModal = ({ workflowId, workflowLabel, onClose }: ModelSt
                       <div className="truncate font-mono text-[11px] text-zinc-300" title={r.filename}>
                         {r.filename}
                       </div>
+                      {/* Why this one is not moving. Without it a file the
+                          app will not fetch draws the same as one it simply
+                          has not started - and the difference is the whole
+                          answer to "why is nothing happening". */}
+                      {!r.exists && r.note && (
+                        <div className="mt-1 text-[10px] leading-snug text-white/35">{r.note}</div>
+                      )}
                       {!r.exists && r.current > 0 && (
                         <div className="mt-1 h-[3px] w-full overflow-hidden rounded-full bg-white/5">
                           <div
@@ -148,6 +158,8 @@ export const ModelStatusModal = ({ workflowId, workflowLabel, onClose }: ModelSt
                         </span>
                       ) : r.current > 0 ? (
                         <span className="font-mono text-[10px] text-amber-300">{r.pct}%</span>
+                      ) : r.note ? (
+                        <span className="text-[10px] font-semibold text-white/30">Not fetched here</span>
                       ) : (
                         <span className="text-[10px] font-semibold text-white/25">Missing</span>
                       )}
@@ -164,11 +176,11 @@ export const ModelStatusModal = ({ workflowId, workflowLabel, onClose }: ModelSt
             {checked && rows.length > 0 && (
               <>
                 {readyCount} of {rows.length} on disk · {fmtBytes(totalBytes)} total
-                {missingCount > 0 && <> · {fmtBytes(missingBytes)} to fetch</>}
+                {fetchableCount > 0 && <> · {fmtBytes(missingBytes)} to fetch</>}
               </>
             )}
           </div>
-          {missingCount > 0 && (
+          {fetchableCount > 0 && (
             <button
               type="button"
               disabled={downloading}

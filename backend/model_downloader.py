@@ -29,6 +29,18 @@ class ModelDownloader:
             # diffusion_models and text_encoders rather than unet and clip:
             # ComfyUI maps each pair to the same search list, so both work, and
             # these are the names on the model card the workflow was built from.
+            # ref2va animates a reference image; fl2va goes from a first frame
+            # (and optionally a last one). Different models, same size, and the
+            # graphs pick one or the other - first-frame, fflf and director all
+            # load fl2va. It was absent from this table for a while, and the
+            # symptom was not an error: the file simply had no URL, so the
+            # dialog showed it missing at size "-" and the Download button
+            # started nothing at all.
+            "minimax_h3_fl2va_pruned_int8_convrot.safetensors": {
+                "relative_dir": Path("diffusion_models"),
+                "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+                "min_bytes": 1024 * 1024 * 1024,
+            },
             "minimax_h3_ref2va_pruned_int8_convrot.safetensors": {
                 "relative_dir": Path("diffusion_models"),
                 "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/diffusion_models/minimax_h3_ref2va_pruned_int8_convrot.safetensors",
@@ -163,6 +175,51 @@ class ModelDownloader:
                 "url": "https://huggingface.co/hr16/DWPose-TorchScript-BatchSize5/resolve/main/dw-ll_ucoco_384_bs5.torchscript.pt",
                 "min_bytes": 10 * 1024 * 1024,
             },
+            # ---------------------------------------------------------------
+            # Detailer and upscale, used by Z-Image Detailed.
+            #
+            # Some of these a node pack fetches for itself the first time it
+            # runs. Those carry `fetched_by` and no url, so the dialog can say
+            # who is bringing them instead of listing a file with no size and
+            # a Download button that starts nothing - which is what a missing
+            # entry looks like from the UI, and it looks exactly like a bug.
+            # ---------------------------------------------------------------
+
+            # 67 MB. Nothing fetches this one, so we do.
+            "4x_foolhardy_Remacri.pth": {
+                "relative_dir": Path("upscale_models"),
+                "url": "https://huggingface.co/FacehugmanIII/4x_foolhardy_Remacri/resolve/main/4x_foolhardy_Remacri.pth",
+                "min_bytes": 10 * 1024 * 1024,
+            },
+
+            # Impact-Subpack downloads this into ultralytics/bbox on first
+            # import; Impact-Pack does the same for the SAM below. Verified on
+            # this install - both were on disk before either was ever asked
+            # for.
+            "face_yolov8m.pt": {
+                "relative_dir": Path("ultralytics/bbox"),
+                "fetched_by": "ComfyUI-Impact-Subpack",
+                "min_bytes": 10 * 1024 * 1024,
+            },
+            "sam_vit_b_01ec64.pth": {
+                "relative_dir": Path("sams"),
+                "fetched_by": "ComfyUI-Impact-Pack",
+                "min_bytes": 100 * 1024 * 1024,
+            },
+
+            # SeedVR2 keeps its weights in models/SEEDVR2 - its own folder,
+            # registered with folder_paths at import - and downloads both the
+            # moment the upscaler node first runs. 16.5 GB and 501 MB.
+            "seedvr2_ema_7b_sharp_fp16.safetensors": {
+                "relative_dir": Path("SEEDVR2"),
+                "fetched_by": "ComfyUI-SeedVR2_VideoUpscaler",
+                "min_bytes": 1024 * 1024 * 1024,
+            },
+            "ema_vae_fp16.safetensors": {
+                "relative_dir": Path("SEEDVR2"),
+                "fetched_by": "ComfyUI-SeedVR2_VideoUpscaler",
+                "min_bytes": 100 * 1024 * 1024,
+            },
         }
         self.wan_core_specs: Dict[str, Dict[str, Any]] = {
             "clip_vision_h.safetensors": {
@@ -197,7 +254,25 @@ class ModelDownloader:
                 "url": "https://huggingface.co/Comfy-Org/flux2-dev/resolve/main/split_files/vae/flux2-vae.safetensors",
                 "min_bytes": 5 * 1024 * 1024,
             },
+
         }
+
+        # One place to ask "where does this file come from".
+        #
+        # The three tables above are v3's, one per pack, and each is read only
+        # by its own ensure_* method. The model dialog read zimage_core_specs
+        # alone, so a file listed in either of the others had no URL as far as
+        # the UI was concerned - it drew as missing at size "-" with a Download
+        # button that started nothing. Every table a graph can name has to be
+        # in the lookup, or adding one is adding a way to be silently wrong.
+        self.all_specs: Dict[str, Dict[str, Any]] = {}
+        for table in (self.zimage_core_specs, self.wan_core_specs,
+                      self.flux2klein_core_specs):
+            self.all_specs.update(table)
+
+    def spec_for(self, filename: str) -> Optional[Dict[str, Any]]:
+        """Where this model comes from, across every table."""
+        return self.all_specs.get(filename)
 
     def get_progress(self, filename: str) -> dict:
         with self.lock:

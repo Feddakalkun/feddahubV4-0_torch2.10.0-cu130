@@ -18,12 +18,16 @@ export interface PreflightFileStatus {
   folder: string;
   exists: boolean;
   size_bytes: number;
+  /** Set when pressing Download will not fetch this one, and why. */
+  note?: string;
 }
 
 export interface WorkflowDownloadState {
   preflight: PreflightFileStatus[];
   liveFiles: DownloadFileStatus[];
   missingCount: number;
+  /** Missing files this app can actually fetch. What the button acts on. */
+  fetchableCount: number;
   allReady: boolean;
   checked: boolean;
   manualDownloading: boolean;
@@ -45,12 +49,13 @@ export function useWorkflowDownloadStatus(workflowId: string): WorkflowDownloadS
         `${BACKEND_API.BASE_URL}/api/workflow/model-status/${encodeURIComponent(workflowId)}`
       );
       if (!resp.ok) return;
-      const data: { files?: Array<{ filename?: unknown; folder?: unknown; exists?: unknown; size_bytes?: unknown }> } = await resp.json();
+      const data: { files?: Array<{ filename?: unknown; folder?: unknown; exists?: unknown; size_bytes?: unknown; note?: unknown }> } = await resp.json();
       const files: PreflightFileStatus[] = (data.files ?? []).map((f) => ({
         filename: String(f.filename ?? ''),
         folder: String(f.folder ?? ''),
         exists: Boolean(f.exists),
         size_bytes: Number(f.size_bytes ?? 0),
+        note: f.note ? String(f.note) : undefined,
       }));
       setPreflight(files);
       setChecked(true);
@@ -80,12 +85,19 @@ export function useWorkflowDownloadStatus(workflowId: string): WorkflowDownloadS
         `${BACKEND_API.BASE_URL}/api/workflow/download-models/${encodeURIComponent(workflowId)}`,
         { method: 'POST' }
       );
-      if (resp.ok) {
-        setManualDownloading(true);
-        // Hand the workflow to the global tracker: this modal unmounts the
-        // moment the user clicks away, and the download does not.
-        track(workflowId);
-      }
+      if (!resp.ok) return;
+      // A 200 means the request was understood, not that anything is now
+      // downloading: the endpoint skips every file it has no URL for. Going
+      // by the response alone left the button spinning "Downloading" over a
+      // wire with nothing on it, which is how a missing table entry reached
+      // the user as an app that had simply stopped working.
+      const data: { started?: unknown } = await resp.json().catch(() => ({}));
+      const started = Array.isArray(data.started) ? data.started.length : 0;
+      if (started === 0) return;
+      setManualDownloading(true);
+      // Hand the workflow to the global tracker: this modal unmounts the
+      // moment the user clicks away, and the download does not.
+      track(workflowId);
     } catch {
       // Network unavailable — leave state unchanged
     }
@@ -105,7 +117,7 @@ export function useWorkflowDownloadStatus(workflowId: string): WorkflowDownloadS
   // watch and the reason is already on screen.
   const blocked = liveFiles.filter((f) => f.error).map((f) => f.filename);
   const canStillArrive = preflight.some(
-    (f) => !f.exists && !blocked.includes(f.filename),
+    (f) => !f.exists && !f.note && !blocked.includes(f.filename),
   );
   const pollingActive = isDownloaderNode || manualDownloading || canStillArrive;
   useEffect(() => {
@@ -156,11 +168,16 @@ export function useWorkflowDownloadStatus(workflowId: string): WorkflowDownloadS
   }, [pollingActive, manualDownloading, workflowId, fetchPreflight, track]);
 
   const missingCount = preflight.filter((f) => !f.exists).length;
+  // A file a node pack brings, or one with no source at all, is missing but
+  // not fetchable. Offering Download for those is offering a button that
+  // cannot do anything.
+  const fetchableCount = preflight.filter((f) => !f.exists && !f.note).length;
 
   return {
     preflight,
     liveFiles,
     missingCount,
+    fetchableCount,
     allReady: checked && missingCount === 0,
     checked,
     manualDownloading,
