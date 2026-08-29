@@ -71,6 +71,18 @@ class ModelDownloader:
                 "url": "https://huggingface.co/alibaba-pai/Z-Image-Turbo-Fun-Controlnet-Union/resolve/main/Z-Image-Turbo-Fun-Controlnet-Union.safetensors",
                 "min_bytes": 10 * 1024 * 1024,
             },
+            # The name the ControlNet graph actually asks for. Its repo is
+            # gated: without an accepted licence and a Hugging Face token the
+            # URL answers 401, which is why this needs a source of its own
+            # rather than being quietly served the disparity weights - those
+            # predict disparity, not depth, and swapping one for the other
+            # behind the user's back would change what the workflow does.
+            "lotus-depth-g-v2-0.safetensors": {
+                "relative_dir": Path("unet"),
+                "url": "https://huggingface.co/jingheya/lotus-depth-g-v2-0/resolve/main/unet/diffusion_pytorch_model.safetensors",
+                "min_bytes": 10 * 1024 * 1024,
+                "gated": True,
+            },
             "lotus-depth-g-v2-0-disparity.safetensors": {
                 "relative_dir": Path("unet"),
                 "url": "https://huggingface.co/jingheya/lotus-depth-g-v2-0-disparity/resolve/main/unet/diffusion_pytorch_model.safetensors",
@@ -166,6 +178,20 @@ class ModelDownloader:
                 req_headers["Range"] = f"bytes={resume_from}-"
 
             response = requests.get(url, stream=True, timeout=30, headers=req_headers)
+
+            # A gated Hugging Face repo answers 401 or 403, and
+            # raise_for_status turns that into "401 Client Error: Unauthorized
+            # for url: https://..." - which reads like the app is broken rather
+            # than like a licence nobody has accepted yet. Two clicks fix it,
+            # and the message has to be the thing that says which two.
+            if response.status_code in (401, 403) and "huggingface.co" in url:
+                repo = url.split("/resolve/")[0].replace("https://huggingface.co/", "")
+                raise PermissionError(
+                    f"{filename} is a gated model. Open "
+                    f"https://huggingface.co/{repo} and accept its licence, then "
+                    f"add your Hugging Face token in the top bar."
+                    + ("" if req_headers.get("Authorization") else " No token is saved yet."))
+
             response.raise_for_status()
 
             # 206 means the server honoured the range; anything else means it
