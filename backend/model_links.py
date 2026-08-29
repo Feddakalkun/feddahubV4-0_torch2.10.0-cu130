@@ -239,7 +239,33 @@ _LOADER_FOLDERS = {
     "UpscaleModelLoader": "upscale_models",
     "UltralyticsDetectorProvider": "ultralytics",
     "LoraLoader": "loras",
+    "LoraLoaderModelOnly": "loras",
+    "Power Lora Loader (rgthree)": "loras",
+    "UnetLoaderGGUF": "unet",
+    "DualCLIPLoaderGGUF": "clip",
 }
+
+
+def _named_files(node: Dict[str, Any]) -> List[Any]:
+    """Every input value that could name a file, dicts unwrapped.
+
+    rgthree's Power Lora Loader does not store a LoRA name as a string. Each
+    slot is `{"on": true, "lora": "...", "strength": 0.75}`, so a plain walk
+    over the input values sees a dict, skips it, and reports the graph as
+    naming no LoRA at all - which is how a baked-in distill LoRA sat in four
+    workflows with nothing to download it.
+    """
+    values: List[Any] = []
+    for value in (node.get("inputs") or {}).values():
+        if isinstance(value, dict):
+            # An off slot is not a requirement. Downloading a LoRA the graph
+            # has switched off is a gigabyte spent on nothing.
+            if value.get("on") is False:
+                continue
+            values.extend(v for v in value.values() if isinstance(v, str))
+        else:
+            values.append(value)
+    return values
 
 
 def models_from_graph(graph: Dict[str, Any]) -> List[Dict[str, str]]:
@@ -256,7 +282,7 @@ def models_from_graph(graph: Dict[str, Any]) -> List[Dict[str, str]]:
         if not isinstance(node, dict):
             continue
         class_type = str(node.get("class_type") or "")
-        for value in (node.get("inputs") or {}).values():
+        for value in _named_files(node):
             if not isinstance(value, str):
                 continue
             if not value.lower().endswith(_MODEL_EXTENSIONS):

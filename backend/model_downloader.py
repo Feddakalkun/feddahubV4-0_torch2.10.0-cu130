@@ -46,6 +46,15 @@ class ModelDownloader:
                 "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/diffusion_models/minimax_h3_ref2va_pruned_int8_convrot.safetensors",
                 "min_bytes": 1024 * 1024 * 1024,
             },
+            # 315 MB. The 4-step distill LoRA. Every MiniMax graph samples at
+            # 8 steps with cfg 1, which is a setting that only works with this
+            # present - v3 baked it in and v4 arrived without it, so the same
+            # eight steps were doing a job that normally takes twenty.
+            "minimax_h3_fl2v_lightx2v_turbo_4step_v0.1_comfy_resized_avg_rank_21_bf16.safetensors": {
+                "relative_dir": Path("loras"),
+                "url": "https://huggingface.co/Kijai/MiniMax-H3_comfy/resolve/main/loras/minimax_h3_fl2v_lightx2v_turbo_4step_v0.1_comfy_resized_avg_rank_21_bf16.safetensors",
+                "min_bytes": 100 * 1024 * 1024,
+            },
             "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors": {
                 "relative_dir": Path("text_encoders"),
                 "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",

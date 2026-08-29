@@ -430,6 +430,19 @@
         "node_id": "311",
         "type": "loras",
         "label": "LoRAs"
+      },
+      "encoder_device": {
+        "node_ids": [
+          "144"
+        ],
+        "input_key": "device",
+        "label": "Text Encoder",
+        "control": "chips",
+        "choices": [
+          "cpu",
+          "default"
+        ],
+        "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
     }
   },
@@ -493,6 +506,19 @@
         "node_id": "312",
         "type": "loras",
         "label": "LoRAs"
+      },
+      "encoder_device": {
+        "node_ids": [
+          "128"
+        ],
+        "input_key": "device",
+        "label": "Text Encoder",
+        "control": "chips",
+        "choices": [
+          "cpu",
+          "default"
+        ],
+        "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
     }
   },
@@ -532,6 +558,19 @@
         "node_id": "313",
         "type": "loras",
         "label": "LoRAs"
+      },
+      "encoder_device": {
+        "node_ids": [
+          "187"
+        ],
+        "input_key": "device",
+        "label": "Text Encoder",
+        "control": "chips",
+        "choices": [
+          "cpu",
+          "default"
+        ],
+        "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
     }
   },
@@ -625,6 +664,19 @@
         "node_id": "314",
         "type": "loras",
         "label": "LoRAs"
+      },
+      "encoder_device": {
+        "node_ids": [
+          "286"
+        ],
+        "input_key": "device",
+        "label": "Text Encoder",
+        "control": "chips",
+        "choices": [
+          "cpu",
+          "default"
+        ],
+        "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
     }
   },
@@ -675,6 +727,19 @@
         "node_id": "316",
         "type": "loras",
         "label": "LoRAs"
+      },
+      "encoder_device": {
+        "node_ids": [
+          "259"
+        ],
+        "input_key": "device",
+        "label": "Text Encoder",
+        "control": "chips",
+        "choices": [
+          "cpu",
+          "default"
+        ],
+        "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
     }
   },
@@ -730,6 +795,19 @@
         "node_id": "315",
         "type": "loras",
         "label": "LoRAs"
+      },
+      "encoder_device": {
+        "node_ids": [
+          "243"
+        ],
+        "input_key": "device",
+        "label": "Text Encoder",
+        "control": "chips",
+        "choices": [
+          "cpu",
+          "default"
+        ],
+        "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
     }
   },
@@ -790,6 +868,19 @@
         "node_id": "318",
         "type": "loras",
         "label": "LoRAs"
+      },
+      "encoder_device": {
+        "node_ids": [
+          "207"
+        ],
+        "input_key": "device",
+        "label": "Text Encoder",
+        "control": "chips",
+        "choices": [
+          "cpu",
+          "default"
+        ],
+        "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
     }
   },
@@ -850,6 +941,19 @@
         "node_id": "317",
         "type": "loras",
         "label": "LoRAs"
+      },
+      "encoder_device": {
+        "node_ids": [
+          "225"
+        ],
+        "input_key": "device",
+        "label": "Text Encoder",
+        "control": "chips",
+        "choices": [
+          "cpu",
+          "default"
+        ],
+        "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
     }
   },
@@ -889,6 +993,19 @@
         "node_id": "388",
         "input_key": "denoise",
         "label": "Denoise"
+      },
+      "encoder_device": {
+        "node_ids": [
+          "2"
+        ],
+        "input_key": "device",
+        "label": "Text Encoder",
+        "control": "chips",
+        "choices": [
+          "cpu",
+          "default"
+        ],
+        "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
     }
   },

@@ -224,6 +224,15 @@
   "392": {
     "class_type": "Power Lora Loader (rgthree)",
     "inputs": {
+      "PowerLoraLoaderHeaderWidget": {
+        "type": "PowerLoraLoaderHeaderWidget"
+      },
+      "lora_1": {
+        "on": true,
+        "lora": "minimax_h3_fl2v_lightx2v_turbo_4step_v0.1_comfy_resized_avg_rank_21_bf16.safetensors",
+        "strength": 0.55
+      },
+      "➕ Add Lora": "",
       "model": [
         "1",
         0
@@ -240,6 +249,15 @@
   "393": {
     "class_type": "Power Lora Loader (rgthree)",
     "inputs": {
+      "PowerLoraLoaderHeaderWidget": {
+        "type": "PowerLoraLoaderHeaderWidget"
+      },
+      "lora_1": {
+        "on": true,
+        "lora": "minimax_h3_fl2v_lightx2v_turbo_4step_v0.1_comfy_resized_avg_rank_21_bf16.safetensors",
+        "strength": 0.5
+      },
+      "➕ Add Lora": "",
       "model": [
         "16",
         0
