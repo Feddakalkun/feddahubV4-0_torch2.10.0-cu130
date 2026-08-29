@@ -212,10 +212,20 @@ def widget_defaults(info: Dict[str, Any], class_type: str) -> Dict[str, Any]:
         for name, decl in (spec.get("input", {}).get(section) or {}).items():
             kind = decl[0] if isinstance(decl, list) and decl else decl
             opts = decl[1] if isinstance(decl, list) and len(decl) > 1 else None
+            choices = opts.get("options") if isinstance(opts, dict) else None
             if isinstance(opts, dict) and "default" in opts:
                 out[name] = opts["default"]
             elif isinstance(kind, list) and kind:
                 out[name] = kind[0]      # a combo defaults to its first choice
+            elif isinstance(choices, list) and choices:
+                # A combo declared the new way carries its list under "options"
+                # and often no "default" at all; the first option is what the
+                # canvas shows. SaveVideo.codec is one, and a graph saved before
+                # that widget existed reached ComfyUI without it - "SaveVideo
+                # .execute() missing 1 required positional argument: codec",
+                # raised after the whole clip had finished rendering.
+                first = choices[0]
+                out[name] = first.get("key") if isinstance(first, dict) else first
     return out
 
 

@@ -48,13 +48,29 @@ def load_json(path):
         return json.load(fh)
 
 
-def available_node_types():
-    """Node types ComfyUI currently has loaded, or None if it isn't running."""
+# object_info as ComfyUI reports it, cached for the run. The names alone
+# answered "is this node installed"; checking whether a node has all the
+# inputs it now requires needs the signatures too, so the whole thing is
+# kept and `available_node_types` is a view of it.
+_SIGNATURES = {}
+
+
+def available_signatures():
+    """Full object_info, or None if ComfyUI is not running."""
+    if _SIGNATURES:
+        return _SIGNATURES
     try:
         with urllib.request.urlopen(COMFY_URL + "/object_info", timeout=120) as r:
-            return set(json.load(r).keys())
+            _SIGNATURES.update(json.load(r))
+        return _SIGNATURES
     except (urllib.error.URLError, OSError, ValueError):
         return None
+
+
+def available_node_types():
+    """Node types ComfyUI currently has loaded, or None if it isn't running."""
+    info = available_signatures()
+    return set(info) if info is not None else None
 
 
 def inspect(path, available):
@@ -83,6 +99,42 @@ def inspect(path, available):
 
     missing = sorted(t for t in types if t not in available) if available else []
     return nulls, missing, types
+
+
+def missing_required(graph, available):
+    """Required inputs a node declares and the graph does not carry.
+
+    A third failure, alongside the two above, and the quietest of them: the
+    node type exists and the pack is installed, but the node has *gained* a
+    required widget since the canvas was saved. Nothing rejects the prompt at
+    submit - ComfyUI raises when it reaches that node, which for a SaveVideo
+    is after the entire clip has rendered:
+
+        SaveVideo.execute() missing 1 required positional argument: 'codec'
+
+    Inputs that arrive over a link are skipped; only widgets are checked.
+    """
+    if not available:
+        return []
+    out = []
+    for node_id, node in (graph or {}).items():
+        if not isinstance(node, dict):
+            continue
+        spec = (available.get(node.get("class_type")) or {})
+        required = (spec.get("input", {}) or {}).get("required") or {}
+        have = set(node.get("inputs") or {})
+        for name, decl in required.items():
+            kind = decl[0] if isinstance(decl, list) and decl else decl
+            opts = (decl[1] if isinstance(decl, list) and len(decl) > 1
+                    and isinstance(decl[1], dict) else {})
+            if isinstance(kind, str) and kind.isupper() and kind not in (
+                    "STRING", "INT", "FLOAT", "BOOLEAN", "COMBO",
+                    "COMFY_DYNAMICCOMBO_V3"):
+                if not (opts.get("widgetType") or "default" in opts):
+                    continue
+            if name not in have:
+                out.append((node_id, node.get("class_type"), name))
+    return out
 
 
 def main() -> int:
@@ -131,7 +183,13 @@ def main() -> int:
         elif missing:
             broken.append((wid, "MISSING %d node type(s)" % len(missing), ", ".join(missing[:8])))
         else:
-            ok += 1
+            gaps = missing_required(load_json(path), available_signatures())
+            if gaps:
+                broken.append((wid, "MISSING %d required input(s)" % len(gaps),
+                               ", ".join("%s.%s (node %s)" % (c, n, i)
+                                         for i, c, n in gaps[:6])))
+            else:
+                ok += 1
 
     for wid, kind, detail in broken:
         print("  [BROKEN] %-26s %s" % (wid, kind))
@@ -153,6 +211,9 @@ def main() -> int:
     if broken:
         print("\nNULL class_type => re-export from ComfyUI: ungroup subgraphs and replace")
         print("  virtual-link nodes (Anything Everywhere) with real wires, then Save (API Format).")
+        print("MISSING required input => the node gained a widget after the canvas was")
+        print("  saved. Re-convert with ui_to_api.py, which fills it from the declared")
+        print("  default; ComfyUI would otherwise raise only on reaching that node.")
         print("MISSING node type => install the pack, and declare it in config/modules.json")
         print("  under the module that owns the workflow (see %s)." % os.path.relpath(MODULES, ROOT))
 

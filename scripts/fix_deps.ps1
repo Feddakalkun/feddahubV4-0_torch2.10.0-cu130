@@ -26,6 +26,44 @@ function Say($Message, $Colour = "Gray") {
     if (-not $Quiet) { Write-Host "  $Message" -ForegroundColor $Colour }
 }
 
+# --- kornia -----------------------------------------------------------------
+#
+# ComfyUI-LTXVideo imports `pad` from kornia.geometry.transform.pyramid. kornia
+# 0.8.3 dropped that import - `pad` is a local variable in the module now - so
+# the pack fails at import and takes all three of its node types with it:
+#
+#   cannot import name 'pad' from 'kornia.geometry.transform.pyramid'
+#
+# What that costs is five LTX workflows, and nothing says so at the time. The
+# pack still loads its own folder, ComfyUI carries on, and the failure only
+# shows as "node type not found" when someone presses Generate.
+#
+# 0.8.2 is the last version that exports it, checked against kornia's own
+# source for 0.7.3 through 0.8.3. ComfyUI core asks for kornia>=0.7.1, so
+# holding at 0.8.2 satisfies both. The pin is pinned upstream HEAD, so there is
+# no newer pack commit to move to instead.
+$NeedKornia = & $PyExe -c @"
+try:
+    from kornia.geometry.transform.pyramid import pad  # noqa: F401
+    print('no')
+except Exception:
+    print('yes')
+"@ 2>$null
+
+if ("$NeedKornia".Trim() -eq "yes") {
+    Say "kornia is too new for ComfyUI-LTXVideo - holding at 0.8.2..." "Yellow"
+    & $PyExe -s -m pip install --no-input --no-warn-script-location `
+        "kornia==0.8.2" 2>&1 | Out-Null
+    $after = & $PyExe -c "from kornia.geometry.transform.pyramid import pad; import kornia; print(kornia.__version__)" 2>$null
+    if ($LASTEXITCODE -eq 0 -and $after) {
+        Say "kornia $($after.Trim()) - LTXVideo can import again." "Green"
+    } else {
+        Say "kornia still will not give LTXVideo its pad - five LTX workflows stay broken." "Red"
+    }
+} else {
+    Say "kornia is fine." "DarkGray"
+}
+
 # --- onnxruntime -------------------------------------------------------------
 #
 # ComfyUI-tbox pins onnxruntime==1.18.0 and onnxruntime-gpu==1.18.0. That build

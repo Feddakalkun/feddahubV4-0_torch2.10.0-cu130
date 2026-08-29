@@ -96,6 +96,7 @@
     "inputs": {
       "filename_prefix": "VIDEO/MINIMAX/director",
       "format": "auto",
+      "codec": "auto",
       "video": [
         "394",
         0
