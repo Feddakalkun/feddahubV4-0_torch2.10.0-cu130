@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react';
 import { AlertCircle, Brush, Dice5, Loader2, Upload } from 'lucide-react';
-import type { FieldValue, WorkflowField } from '../../types/workflow';
+import type { AudioValue, FieldValue, WorkflowField } from '../../types/workflow';
 import { BACKEND_API } from '../../config/api';
 import { MaskBrush } from '../workflows/MaskBrush';
+import { AudioControl } from './AudioControl';
 import { cn } from '../../lib/styles';
 
 /**
@@ -106,8 +107,8 @@ export const FieldControl = ({ field, value, onChange, disabled }: Props) => {
               value={text}
               disabled={disabled}
               placeholder={field.key === 'negative'
-                ? 'What to keep out of the picture'
-                : 'Describe the picture you want'}
+                ? 'What to keep out'
+                : 'Describe what you want'}
               onChange={(e) => onChange(e.target.value)}
             />
           ) : (
@@ -364,6 +365,17 @@ export const FieldControl = ({ field, value, onChange, disabled }: Props) => {
         </div>
       );
     }
+
+    // ---------------------------------------------------------------- audio
+    case 'audio':
+      return (
+        <AudioControl
+          field={field}
+          value={(value && typeof value === 'object' ? value : null) as AudioValue | null}
+          onChange={(next) => onChange(next)}
+          disabled={disabled}
+        />
+      );
 
     // The LoRA panel needs the installed list, which the page fetches, so it is
     // rendered there rather than here.

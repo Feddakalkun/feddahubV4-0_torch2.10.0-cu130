@@ -207,6 +207,17 @@ def describe_input(key: str, spec: Dict[str, Any], graph: Dict[str, Any],
 
     if override:
         field["control"] = override
+        # Carry the presentation keys the control needs. `accept` on a file,
+        # `mask` on one that wants a brush: without these an overridden file
+        # control renders with no picker and no idea what it takes.
+        for key_name in ("accept", "multiline", "role", "mask"):
+            if key_name in spec:
+                field[key_name] = spec[key_name]
+        # A control that takes a file has nothing to fall back on when it is
+        # empty, so it is required unless the mapping says otherwise. 
+        # was missed here at first and an empty one reached ComfyUI.
+        if override in ("file", "audio"):
+            field["required"] = spec.get("required", True)
         if override_choices is not None:
             field["options"] = override_choices
             values = [c.get("value") if isinstance(c, dict) else c

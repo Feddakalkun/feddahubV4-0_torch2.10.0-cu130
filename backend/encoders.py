@@ -40,11 +40,30 @@ def pixaroma_prompt(value: Any) -> str:
 
 
 def pixaroma_audio(value: Any) -> str:
-    """The chosen sound file, by name in ComfyUI's input folder.
+    """The chosen sound file and the piece of it to use.
 
-    Which is what `/api/upload` returns, so an uploaded file needs no further
-    translation.
+    The control hands over `{file, start, end}` because end is what a person
+    picks off a timeline; the node wants a length, so the conversion happens
+    here rather than in the browser - one place, and the arithmetic is visible
+    next to the reason for it.
+
+    `whenUnwired` decides what an unconnected `seconds` input means to the
+    node: "whole" ignores length entirely, so a trim only takes effect when it
+    is switched to "length". Sending a start and a length while leaving it on
+    "whole" renders the entire file and looks like the trim was ignored.
+
+    A bare string still works - a file with no trim is the whole file.
     """
+    if isinstance(value, dict):
+        name = str(value.get("file") or "")
+        start = float(value.get("start") or 0)
+        end = float(value.get("end") or 0)
+        length = max(end - start, 0.0)
+        state = {"file": name, "start": start}
+        if length > 0:
+            state["length"] = length
+            state["whenUnwired"] = "length"
+        return json.dumps(state)
     return json.dumps({"file": str(value or "")})
 
 

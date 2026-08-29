@@ -14,7 +14,18 @@ export type FieldControl =
   | 'chips'
   | 'toggle'
   | 'file'
+  | 'audio'
   | 'lora';
+
+/**
+ * A sound file and the piece of it to use. `end` is what a person picks;
+ * the node wants a length, and the backend converts on the way in.
+ */
+export interface AudioValue {
+  file: string;
+  start: number;
+  end: number;
+}
 
 export interface WorkflowField {
   key: string;
@@ -70,4 +81,4 @@ export interface WorkflowSchema {
   fields: WorkflowField[];
 }
 
-export type FieldValue = string | number | boolean | null;
+export type FieldValue = string | number | boolean | AudioValue | null;

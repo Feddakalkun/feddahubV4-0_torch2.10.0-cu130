@@ -485,8 +485,15 @@ async def generate(req: GenerateRequest) -> Dict[str, Any]:
     # on.
     graph_desc = descriptor.describe_workflow(
         req.workflow_id, mapping, _load_graph(mapping), OBJECT_INFO)
+    def _filled(value: Any) -> bool:
+        # An audio control hands over an object. str() of a dict is never
+        # empty, so the plain emptiness test would call an unfilled one filled.
+        if isinstance(value, dict):
+            return bool(str(value.get("file") or "").strip())
+        return bool(str(value or "").strip())
+
     missing = [f["label"] for f in graph_desc["fields"]
-               if f.get("required") and not str(req.params.get(f["key"]) or "").strip()]
+               if f.get("required") and not _filled(req.params.get(f["key"]))]
     if missing:
         raise HTTPException(
             status_code=400,

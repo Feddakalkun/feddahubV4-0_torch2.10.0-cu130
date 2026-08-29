@@ -750,7 +750,9 @@
         "label": "Song",
         "encode": "pixaroma_audio",
         "accept": "audio",
-        "_why": "Same hidden-state pattern as the prompt: the chosen file arrives as LoadAudioState, a JSON string naming a file in ComfyUI's input folder - which is what /api/upload returns."
+        "_why": "Same hidden-state pattern as the prompt: the chosen file arrives as LoadAudioState, a JSON string naming a file in ComfyUI's input folder - which is what /api/upload returns.",
+        "control": "audio",
+        "_control": "The graph holds no value here - the file lives in a hidden JSON state - so the usual test for an upload slot finds nothing and this rendered as a text box. `audio` rather than `file` because the node takes a start and a length as well, and picking those needs to be able to hear the file."
       },
       "prompt": {
         "node_id": "212",
@@ -808,7 +810,9 @@
         "label": "Recording",
         "encode": "pixaroma_audio",
         "accept": "audio",
-        "_why": "Same hidden-state pattern as the prompt: the chosen file arrives as LoadAudioState, a JSON string naming a file in ComfyUI's input folder - which is what /api/upload returns."
+        "_why": "Same hidden-state pattern as the prompt: the chosen file arrives as LoadAudioState, a JSON string naming a file in ComfyUI's input folder - which is what /api/upload returns.",
+        "control": "audio",
+        "_control": "The graph holds no value here - the file lives in a hidden JSON state - so the usual test for an upload slot finds nothing and this rendered as a text box. `audio` rather than `file` because the node takes a start and a length as well, and picking those needs to be able to hear the file."
       },
       "prompt": {
         "node_id": "230",

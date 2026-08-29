@@ -282,7 +282,10 @@ export const WorkflowPage = ({ workflowId }: WorkflowPageProps) => {
         {loraField && (
           <LoraPanel
             title={loraField.label}
-            familyLabel="Z-Image"
+            // The schema says which model this is. Hardcoding Z-Image told
+            // someone on a MiniMax page that no Z-Image LoRAs were installed,
+            // which is true and beside the point.
+            familyLabel={schema.name}
             stack={{
               entries: loras,
               onChange: setLoras,
