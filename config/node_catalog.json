@@ -240,6 +240,15 @@
     "pin_from": "comfyuistudio-v362"
   },
   {
+    "name": "ComfyUI-PromptRelay",
+    "url": "https://github.com/kijai/ComfyUI-PromptRelay.git",
+    "folder": "ComfyUI-PromptRelay",
+    "note": "PromptRelayEncodeTimeline - a prompt per moment on a timeline, for LTX 2.3 Prompt Relay",
+    "pin": "ca5d4e3edb6abd9c2a4c68a3a6798eec1980f450",
+    "pin_source": "git-head",
+    "pin_from": "read from the repo on 2026-08-29; the only pack LTX needed that v3 never carried, so there was no v3 pin to inherit"
+  },
+  {
     "name": "ComfyUI-Manager",
     "url": "https://github.com/Comfy-Org/ComfyUI-Manager.git",
     "folder": "ComfyUI-Manager",

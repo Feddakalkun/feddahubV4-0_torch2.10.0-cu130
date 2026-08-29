@@ -100,6 +100,10 @@ def _with_extra_signatures(info: Dict[str, Any]) -> Dict[str, Any]:
 # describe them and the ordinary widget zip cannot read them. See
 # rgthree_lora_inputs().
 RGTHREE_POWER_LORA = "Power Lora Loader (rgthree)"
+
+# Canvas-only nodes that carry a signal without changing it. They have no
+# API equivalent, so they are followed through and never emitted.
+PASS_THROUGH = frozenset({"Reroute"})
 ADD_LORA_ROW = "➕ Add Lora"
 
 
@@ -339,6 +343,13 @@ def build(ui: Dict[str, Any], info: Dict[str, Any],
             # it was feeding; left as a link it is an unknown node type.
             vals = upstream.get("widgets_values") or []
             return {"literal": vals[0]} if vals else None
+        if str(upstream.get("type")) == "Reroute":
+            # A wire with a dot on it. The canvas draws one to keep a long
+            # link tidy; the API format has no such node, and emitting it
+            # gets the prompt refused with "Reroute not found". It has
+            # exactly one input, so follow straight through - the same
+            # move as a bypassed node, for the same reason.
+            return source_of(from_id, 0)
         if upstream.get("mode") == 4:
             wanted = inputs[slot].get("type")
             for i, inp in enumerate(upstream.get("inputs") or []):
@@ -417,9 +428,10 @@ def build(ui: Dict[str, Any], info: Dict[str, Any],
     out: Dict[str, Any] = {}
     unknown: List[str] = []
     filled: List[str] = []
+    dropped: List[str] = []
     for node_id in sorted(reached):
         node = nodes[node_id]
-        if node.get("mode") == 4:
+        if node.get("mode") == 4 or str(node.get("type")) in PASS_THROUGH:
             continue                       # forwarded, never submitted
         class_type = str(node.get("type", ""))
         if class_type not in info:
@@ -429,6 +441,20 @@ def build(ui: Dict[str, Any], info: Dict[str, Any],
         inputs: Dict[str, Any] = {}
         if class_type == RGTHREE_POWER_LORA and isinstance(values, list):
             inputs.update(rgthree_lora_inputs(values))
+        elif isinstance(values, list) and not names and any(
+                v not in (None, "") for v in values):
+            # The canvas saved widget values and object_info describes no
+            # widgets to put them in, so every one of them is about to be
+            # dropped. Two reasons, and both matter:
+            #
+            #   the pack is not installed - convert with it installed;
+            #   the pack draws its widgets in JavaScript - it needs a
+            #   case like rgthree_lora_inputs() above.
+            #
+            # Silence here is what cost a day: MiniMax H3 lost its distill
+            # LoRA, and LTX 2.3 Prompt Relay lost an entire timeline of
+            # prompts, and both graphs converted and ran without a word.
+            dropped.append("%s (%d value(s))" % (class_type, len(values)))
         elif isinstance(values, list):
             defaults = widget_defaults(info, class_type)
             for idx, name in enumerate(names):
@@ -456,6 +482,11 @@ def build(ui: Dict[str, Any], info: Dict[str, Any],
     if filled:
         print(f"  filled {len(filled)} widget(s) the file predates, from defaults: "
               + ", ".join(filled[:6]))
+    if dropped:
+        print("  [LOST] settings dropped - object_info declares no widgets for: "
+              + ", ".join(sorted(set(dropped))))
+        print("         install the pack and convert again, or add a case like"
+              " rgthree_lora_inputs() if it draws its widgets in JavaScript.")
     return out
 
 

@@ -90,6 +90,79 @@ class ModelDownloader:
                 "min_bytes": 100 * 1024 * 1024,
             },
 
+            # --- LTX 2.3 ---------------------------------------------------
+            # Sizes are what the origin reported when these went in. The core
+            # path is about 52 GB - the UNet and gemma together are most of it
+            # - which makes this the heaviest module in the app.
+            #
+            # Every URL here is the one the source canvas carries in its own
+            # HuggingFaceDownloader node, so the workflow states where its
+            # models come from and this table is not a second opinion.
+
+            # 23.5 GB. The distilled 22B, quantised int8 with ConvRot. Every
+            # graph samples at 4 steps, which is what "distilled" buys.
+            "ltx-2.3-22b-distilled-1.1-int8-ConvRot.safetensors": {
+                "relative_dir": Path("diffusion_models"),
+                "url": "https://huggingface.co/obsxrver/ComfyUI-Native-INT8_ConvRot/resolve/main/checkpoints/ltx-2.3-22b-distilled-1.1-int8-ConvRot.safetensors",
+                "min_bytes": 1024 * 1024 * 1024,
+            },
+
+            # 24.4 GB text encoder, and 2.3 GB of projection beside it.
+            "gemma_3_12B_it.safetensors": {
+                "relative_dir": Path("text_encoders"),
+                "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/text_encoders/gemma_3_12B_it.safetensors",
+                "min_bytes": 1024 * 1024 * 1024,
+            },
+            # 9.4 GB. The fp4 build, which only First frame styler asks for.
+            "gemma_3_12B_it_fp4_mixed.safetensors": {
+                "relative_dir": Path("text_encoders"),
+                "url": "https://huggingface.co/datasets/comfyuistudio/gemma/resolve/main/gemma_3_12B_it_fp4_mixed.safetensors",
+                "min_bytes": 1024 * 1024 * 1024,
+            },
+            "ltx-2.3_text_projection_bf16.safetensors": {
+                "relative_dir": Path("text_encoders"),
+                "url": "https://huggingface.co/Kijai/LTX2.3_comfy/resolve/main/text_encoders/ltx-2.3_text_projection_bf16.safetensors",
+                "min_bytes": 100 * 1024 * 1024,
+            },
+
+            # Two VAEs: LTX 2.3 renders picture and sound in one pass, so the
+            # audio one is not optional.
+            "LTX23_video_vae_bf16.safetensors": {
+                "relative_dir": Path("vae"),
+                "url": "https://huggingface.co/Kijai/LTX2.3_comfy/resolve/main/vae/LTX23_video_vae_bf16.safetensors",
+                "min_bytes": 100 * 1024 * 1024,
+            },
+            "LTX23_audio_vae_bf16.safetensors": {
+                "relative_dir": Path("vae"),
+                "url": "https://huggingface.co/Kijai/LTX2.3_comfy/resolve/main/vae/LTX23_audio_vae_bf16.safetensors",
+                "min_bytes": 100 * 1024 * 1024,
+            },
+
+            # One LoRA per specialised graph, each baked on in the canvas.
+            "ltx2.3-transition.safetensors": {
+                "relative_dir": Path("loras"),
+                "url": "https://huggingface.co/valiantcat/LTX-2.3-Transition-LORA/resolve/main/ltx2.3-transition.safetensors",
+                "min_bytes": 100 * 1024 * 1024,
+            },
+            "ltx23_edit_anything_global_rank128_v1_9000steps_adamw.safetensors": {
+                "relative_dir": Path("loras"),
+                "url": "https://huggingface.co/Alissonerdx/LTX-LoRAs/resolve/main/ltx23_edit_anything_global_rank128_v1_9000steps_adamw.safetensors",
+                "min_bytes": 100 * 1024 * 1024,
+            },
+            "ltx-2.3-22b-ic-lora-outpaint.safetensors": {
+                "relative_dir": Path("loras"),
+                "url": "https://huggingface.co/oumoumad/LTX-2.3-22b-IC-LoRA-Outpaint/resolve/main/ltx-2.3-22b-ic-lora-outpaint.safetensors",
+                "min_bytes": 100 * 1024 * 1024,
+            },
+
+            # First frame styler restyles one frame with FLUX 2 Klein before
+            # LTX animates it, so that graph needs a 9.4 GB image model too.
+            "flux-2-klein-9b-fp8mixed.safetensors": {
+                "relative_dir": Path("diffusion_models"),
+                "url": "https://huggingface.co/silveroxides/FLUX.2-dev-fp8_scaled/resolve/main/flux-2-klein-9b-fp8mixed.safetensors",
+                "min_bytes": 1024 * 1024 * 1024,
+            },
+
             # --- Z-Image ---------------------------------------------------
             "z_image_turbo_bf16.safetensors": {
                 "relative_dir": Path("unet"),

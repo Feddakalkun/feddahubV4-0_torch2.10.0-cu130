@@ -1,0 +1,689 @@
+{
+  "5704": {
+    "class_type": "DualCLIPLoader",
+    "inputs": {
+      "clip_name1": "gemma_3_12B_it.safetensors",
+      "clip_name2": "ltx-2.3_text_projection_bf16.safetensors",
+      "type": "ltxv",
+      "device": "default"
+    },
+    "_meta": {
+      "title": "DualCLIPLoader"
+    }
+  },
+  "5705": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "LTX23_video_vae_bf16.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "5706": {
+    "class_type": "VAELoaderKJ",
+    "inputs": {
+      "vae_name": "LTX23_audio_vae_bf16.safetensors",
+      "device": "main_device",
+      "weight_dtype": "bf16"
+    },
+    "_meta": {
+      "title": "VAELoaderKJ"
+    }
+  },
+  "5707": {
+    "class_type": "VHS_VideoCombine",
+    "inputs": {
+      "frame_rate": [
+        "5742",
+        0
+      ],
+      "loop_count": 0,
+      "filename_prefix": "VIDEO/LTX/edit",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": true,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": false,
+      "videopreview": {
+        "hidden": false,
+        "paused": false,
+        "params": {
+          "filename": "edit_00001-audio.mp4",
+          "subfolder": "VIDEO\\LTX",
+          "type": "temp",
+          "format": "video/h264-mp4",
+          "frame_rate": 24,
+          "workflow": "edit_00001.png",
+          "fullpath": "E:\\Studio-v342\\v344\\v345\\App\\ComfyUI\\temp\\VIDEO\\LTX\\edit_00001-audio.mp4"
+        },
+        "muted": false
+      },
+      "images": [
+        "5724",
+        0
+      ],
+      "audio": [
+        "5743",
+        2
+      ]
+    },
+    "_meta": {
+      "title": "VHS_VideoCombine"
+    }
+  },
+  "5708": {
+    "class_type": "LTXVPreprocess",
+    "inputs": {
+      "img_compression": 0,
+      "image": [
+        "5710",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LTXVPreprocess"
+    }
+  },
+  "5709": {
+    "class_type": "ResizeImageMaskNode",
+    "inputs": {
+      "scale_method": "scale longer dimension",
+      "input": [
+        "5743",
+        0
+      ],
+      "resize_type.longer_size": [
+        "5735",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ResizeImageMaskNode"
+    }
+  },
+  "5710": {
+    "class_type": "ImageScaleBy",
+    "inputs": {
+      "upscale_method": "lanczos",
+      "scale_by": 1,
+      "image": [
+        "5709",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ImageScaleBy"
+    }
+  },
+  "5711": {
+    "class_type": "ImageResizeKJv2",
+    "inputs": {
+      "width": 512,
+      "height": 512,
+      "upscale_method": "lanczos",
+      "keep_proportion": "resize",
+      "pad_color": "0, 0, 0",
+      "crop_position": "center",
+      "divisible_by": 2,
+      "device": "cpu",
+      "image": [
+        "5714",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ImageResizeKJv2"
+    }
+  },
+  "5712": {
+    "class_type": "StringConcatenate",
+    "inputs": {
+      "string_a": "You are a prompt normalizer for video editing training captions.\n\nYour task is to rewrite an informal user request into a single training-style caption for video editing.\n\nImportant:\n- The domain is video, not still images.\n- The output must describe an edit to a video scene or subject.\n- Do not refer to the result as an image, photo, photograph, or picture.\n- Do not use wording that implies still-image editing.\n\nChoose exactly one action verb:\n- Add\n- Remove\n- Replace\n- Convert\n\nRules:\n- Write exactly one sentence in English.\n- Start with exactly one of the four action verbs.\n- Preserve the original edit intent.\n- Do not merely fix grammar; expand the request into a more detailed and visually specific caption.\n- Make the output sound like a dataset caption for video editing.\n- Add concrete visual attributes whenever useful: color, size, material, clothing, texture, hairstyle, expression, species, shape, age, or design details.\n- Add spatial grounding whenever possible: on the left, on the right, in the center, in the foreground, in the background, on the road, on the table, next to, behind, in front of, or occupying the same position.\n- If the request is underspecified, enrich it with generic but visually plausible detail without changing the main intent.\n- Prefer outputs that describe visible edits to subjects, objects, clothing, props, backgrounds, overlays, or scene elements in a video.\n- Avoid minimal rewrites.\n- Do not explain anything.\n- Do not output multiple options.\n- Do not use conversational language.\n\nAdditional constraints:\n- Never use the words: image, photo, photograph, picture.\n- Prefer words such as: video, scene, frame, subject, person, object, background, foreground, clip.\n- Do not mention cameras, quality settings, or generation instructions.\n\nExample:\nInput: Replace the blue car by a ship\nOutput: Replace the blue car with a large white and blue ship occupying the same position in the scene.\n\nReturn only the normalized caption.\n\nUser request:\n\n",
+      "string_b": "add sunglasses on the woman,  ",
+      "delimiter": ""
+    },
+    "_meta": {
+      "title": "StringConcatenate"
+    }
+  },
+  "5713": {
+    "class_type": "TextGenerate",
+    "inputs": {
+      "prompt": [
+        "5712",
+        0
+      ],
+      "max_length": 512,
+      "thinking": "on",
+      "use_default_template": 0.7,
+      "clip": [
+        "5704",
+        0
+      ],
+      "image": [
+        "5711",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "TextGenerate"
+    }
+  },
+  "5714": {
+    "class_type": "GetImageRangeFromBatch",
+    "inputs": {
+      "start_index": 0,
+      "num_frames": 1,
+      "images": [
+        "5708",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "GetImageRangeFromBatch"
+    }
+  },
+  "5716": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": [
+        "5713",
+        0
+      ],
+      "clip": [
+        "5704",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Manual Prompt"
+    }
+  },
+  "5717": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "",
+      "clip": [
+        "5704",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "CLIPTextEncode"
+    }
+  },
+  "5718": {
+    "class_type": "VAEEncode",
+    "inputs": {
+      "pixels": [
+        "5708",
+        0
+      ],
+      "vae": [
+        "5705",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEEncode"
+    }
+  },
+  "5719": {
+    "class_type": "ImageConcanate",
+    "inputs": {
+      "direction": "right",
+      "match_image_size": true,
+      "image1": [
+        "5708",
+        0
+      ],
+      "image2": [
+        "5724",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ImageConcanate"
+    }
+  },
+  "5720": {
+    "class_type": "LTXVAddGuideMulti",
+    "inputs": {
+      "positive": [
+        "5741",
+        0
+      ],
+      "negative": [
+        "5741",
+        1
+      ],
+      "vae": [
+        "5705",
+        0
+      ],
+      "latent": [
+        "5718",
+        0
+      ],
+      "num_guides.image_1": [
+        "5708",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LTXVAddGuideMulti"
+    }
+  },
+  "5721": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "5732",
+        0
+      ],
+      "guider": [
+        "5726",
+        0
+      ],
+      "sampler": [
+        "5725",
+        0
+      ],
+      "sigmas": [
+        "5728",
+        0
+      ],
+      "latent_image": [
+        "5731",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "5723": {
+    "class_type": "LTXVCropGuides",
+    "inputs": {
+      "positive": [
+        "5720",
+        0
+      ],
+      "negative": [
+        "5720",
+        1
+      ],
+      "latent": [
+        "5736",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LTXVCropGuides"
+    }
+  },
+  "5724": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "5723",
+        2
+      ],
+      "vae": [
+        "5705",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecode"
+    }
+  },
+  "5725": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "euler"
+    },
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "5726": {
+    "class_type": "CFGGuider",
+    "inputs": {
+      "cfg": 1,
+      "model": [
+        "5784",
+        0
+      ],
+      "positive": [
+        "5720",
+        0
+      ],
+      "negative": [
+        "5720",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "CFGGuider"
+    }
+  },
+  "5727": {
+    "class_type": "easy cleanGpuUsed",
+    "inputs": {
+      "anything": [
+        "5720",
+        2
+      ]
+    },
+    "_meta": {
+      "title": "easy cleanGpuUsed"
+    }
+  },
+  "5728": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 4,
+      "denoise": 1,
+      "model": [
+        "5733",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "BasicScheduler"
+    }
+  },
+  "5730": {
+    "class_type": "LTXVEmptyLatentAudio",
+    "inputs": {
+      "frames_number": [
+        "5746",
+        1
+      ],
+      "batch_size": 24,
+      "audio_vae": [
+        "5706",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LTXVEmptyLatentAudio"
+    }
+  },
+  "5731": {
+    "class_type": "LTXVConcatAVLatent",
+    "inputs": {
+      "video_latent": [
+        "5727",
+        0
+      ],
+      "audio_latent": [
+        "5730",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LTXVConcatAVLatent"
+    }
+  },
+  "5732": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 90
+    },
+    "_meta": {
+      "title": "RandomNoise"
+    }
+  },
+  "5733": {
+    "class_type": "Power Lora Loader (rgthree)",
+    "inputs": {
+      "PowerLoraLoaderHeaderWidget": {
+        "type": "PowerLoraLoaderHeaderWidget"
+      },
+      "lora_1": {
+        "on": true,
+        "lora": "ltx23_edit_anything_global_rank128_v1_9000steps_adamw.safetensors",
+        "strength": 1,
+        "strengthTwo": null
+      },
+      "➕ Add Lora": "",
+      "model": [
+        "5904",
+        0
+      ],
+      "clip": [
+        "5704",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  },
+  "5735": {
+    "class_type": "easy int",
+    "inputs": {
+      "value": 1024
+    },
+    "_meta": {
+      "title": "VIDEO LARGER SIZE"
+    }
+  },
+  "5736": {
+    "class_type": "LTXVSeparateAVLatent",
+    "inputs": {
+      "av_latent": [
+        "5721",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LTXVSeparateAVLatent"
+    }
+  },
+  "5737": {
+    "class_type": "VHS_VideoCombine",
+    "inputs": {
+      "frame_rate": [
+        "5742",
+        0
+      ],
+      "loop_count": 0,
+      "filename_prefix": "comparison",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": true,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": false,
+      "videopreview": {
+        "hidden": false,
+        "paused": false,
+        "params": {
+          "filename": "comparison_00001-audio.mp4",
+          "subfolder": "",
+          "type": "temp",
+          "format": "video/h264-mp4",
+          "frame_rate": 24,
+          "workflow": "comparison_00001.png",
+          "fullpath": "E:\\Studio-v342\\v344\\v345\\App\\ComfyUI\\temp\\comparison_00001-audio.mp4"
+        }
+      },
+      "images": [
+        "5719",
+        0
+      ],
+      "audio": [
+        "5743",
+        2
+      ]
+    },
+    "_meta": {
+      "title": "Video Combine Comparison"
+    }
+  },
+  "5740": {
+    "class_type": "easy int",
+    "inputs": {
+      "value": 5
+    },
+    "_meta": {
+      "title": "LENGTH IN SECONDS"
+    }
+  },
+  "5741": {
+    "class_type": "LTXVConditioning",
+    "inputs": {
+      "frame_rate": [
+        "5742",
+        0
+      ],
+      "positive": [
+        "5716",
+        0
+      ],
+      "negative": [
+        "5717",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LTXVConditioning"
+    }
+  },
+  "5742": {
+    "class_type": "CM_IntToFloat",
+    "inputs": {
+      "a": [
+        "5744",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "CM_IntToFloat"
+    }
+  },
+  "5743": {
+    "class_type": "VHS_LoadVideo",
+    "inputs": {
+      "video": "CHIARA.mp4",
+      "force_rate": [
+        "5742",
+        0
+      ],
+      "custom_width": 0,
+      "custom_height": 0,
+      "frame_load_cap": [
+        "5746",
+        1
+      ],
+      "skip_first_frames": [
+        "5747",
+        0
+      ],
+      "select_every_nth": 1,
+      "format": "AnimateDiff",
+      "videopreview": {
+        "hidden": false,
+        "paused": false,
+        "params": {
+          "filename": "CHIARA.mp4",
+          "type": "input",
+          "format": "video/mp4",
+          "force_rate": 0,
+          "custom_width": 0,
+          "custom_height": 0,
+          "frame_load_cap": 0,
+          "skip_first_frames": 0,
+          "select_every_nth": 1
+        }
+      }
+    },
+    "_meta": {
+      "title": "VHS_LoadVideo"
+    }
+  },
+  "5744": {
+    "class_type": "easy int",
+    "inputs": {
+      "value": 24
+    },
+    "_meta": {
+      "title": "FRAME RATE"
+    }
+  },
+  "5745": {
+    "class_type": "easy int",
+    "inputs": {
+      "value": 0
+    },
+    "_meta": {
+      "title": "SKIP SECONDS"
+    }
+  },
+  "5746": {
+    "class_type": "SimpleCalculatorKJ",
+    "inputs": {
+      "expression": "((a * b) // 8) * 8 + 1",
+      "variables.a": [
+        "5744",
+        0
+      ],
+      "variables.b": [
+        "5740",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Total Frames"
+    }
+  },
+  "5747": {
+    "class_type": "easy mathInt",
+    "inputs": {
+      "a": [
+        "5745",
+        0
+      ],
+      "b": [
+        "5744",
+        0
+      ],
+      "operation": "multiply"
+    },
+    "_meta": {
+      "title": "easy mathInt"
+    }
+  },
+  "5784": {
+    "class_type": "PathchSageAttentionKJ",
+    "inputs": {
+      "sage_attention": "auto",
+      "allow_compile": false,
+      "model": [
+        "5733",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "PathchSageAttentionKJ"
+    }
+  },
+  "5904": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "ltx-2.3-22b-distilled-1.1-int8-ConvRot.safetensors",
+      "weight_dtype": "default"
+    },
+    "_meta": {
+      "title": "UNETLoader"
+    }
+  }
+}

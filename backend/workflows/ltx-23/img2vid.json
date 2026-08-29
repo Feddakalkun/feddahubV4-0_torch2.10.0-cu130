@@ -1,0 +1,509 @@
+{
+  "1241": {
+    "class_type": "LTXVConditioning",
+    "inputs": {
+      "frame_rate": [
+        "4978",
+        0
+      ],
+      "positive": [
+        "2483",
+        0
+      ],
+      "negative": [
+        "2612",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LTXVConditioning"
+    }
+  },
+  "2004": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "CUTEYOUGUITAR.png"
+    },
+    "_meta": {
+      "title": "LoadImage"
+    }
+  },
+  "2483": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "A young woman sitting comfortably while playing an acoustic guitar, performing a simple, cheerful song. She is relaxed and expressive, gently swaying with the rhythm. Her fingers move naturally on the guitar strings and fretboard with realistic strumming and chord transitions.\n\nShe sings directly to the camera with a warm, soft voice, her lips perfectly synced to the lyrics. Subtle facial expressions, smiling eyes, and emotional connection to the music. Natural breathing, blinking, and micro-expressions.\n\nThe setting is cozy and aesthetic — either a softly lit room with warm ambient lighting (fairy lights, sunset through a window) or an outdoor golden-hour scene. Cinematic lighting, shallow depth of field, high detail, realistic skin tones, and natural motion.\n\nCamera: slow, gentle push-in or slight handheld movement for intimacy. Audio-driven performance feel, smooth animation, no distortion, consistent character identity. 4K quality.",
+      "clip": [
+        "4987",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "CLIP Text Encode (Positive Prompt)"
+    }
+  },
+  "2612": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "pc game, console game, video game, cartoon, childish, ugly",
+      "clip": [
+        "4987",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "CLIP Text Encode (Negative Prompt)"
+    }
+  },
+  "3059": {
+    "class_type": "EmptyLTXVLatentVideo",
+    "inputs": {
+      "width": [
+        "4995",
+        1
+      ],
+      "height": [
+        "4995",
+        2
+      ],
+      "length": [
+        "4979",
+        0
+      ],
+      "batch_size": 1
+    },
+    "_meta": {
+      "title": "EmptyLTXVLatentVideo"
+    }
+  },
+  "3159": {
+    "class_type": "LTXVImgToVideoConditionOnly",
+    "inputs": {
+      "vae": [
+        "4983",
+        0
+      ],
+      "image": [
+        "3336",
+        0
+      ],
+      "latent": [
+        "3059",
+        0
+      ],
+      "bypass": [
+        "4977",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LTXVImgToVideoConditionOnly"
+    }
+  },
+  "3336": {
+    "class_type": "LTXVPreprocess",
+    "inputs": {
+      "img_compression": 18,
+      "image": [
+        "4995",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LTXVPreprocess"
+    }
+  },
+  "3980": {
+    "class_type": "LTXVEmptyLatentAudio",
+    "inputs": {
+      "frames_number": [
+        "4979",
+        0
+      ],
+      "batch_size": 25,
+      "audio_vae": [
+        "4984",
+        0
+      ],
+      "frame_rate": [
+        "4974",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LTXVEmptyLatentAudio"
+    }
+  },
+  "4528": {
+    "class_type": "LTXVConcatAVLatent",
+    "inputs": {
+      "video_latent": [
+        "3159",
+        0
+      ],
+      "audio_latent": [
+        "3980",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LTXVConcatAVLatent"
+    }
+  },
+  "4828": {
+    "class_type": "CFGGuider",
+    "inputs": {
+      "cfg": 1,
+      "model": [
+        "5788",
+        0
+      ],
+      "positive": [
+        "1241",
+        0
+      ],
+      "negative": [
+        "1241",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "CFGGuider"
+    }
+  },
+  "4829": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "4832",
+        0
+      ],
+      "guider": [
+        "4828",
+        0
+      ],
+      "sampler": [
+        "4831",
+        0
+      ],
+      "sigmas": [
+        "5789",
+        0
+      ],
+      "latent_image": [
+        "4528",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "4831": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "euler"
+    },
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "4832": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 275
+    },
+    "_meta": {
+      "title": "RandomNoise"
+    }
+  },
+  "4845": {
+    "class_type": "LTXVSeparateAVLatent",
+    "inputs": {
+      "av_latent": [
+        "4829",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LTXVSeparateAVLatent"
+    }
+  },
+  "4848": {
+    "class_type": "LTXVAudioVAEDecode",
+    "inputs": {
+      "samples": [
+        "4845",
+        1
+      ],
+      "audio_vae": [
+        "4984",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LTXVAudioVAEDecode"
+    }
+  },
+  "4851": {
+    "class_type": "VAEDecodeTiled",
+    "inputs": {
+      "tile_size": 4096,
+      "overlap": 64,
+      "temporal_size": 512,
+      "temporal_overlap": 64,
+      "samples": [
+        "4845",
+        0
+      ],
+      "vae": [
+        "4983",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecodeTiled"
+    }
+  },
+  "4974": {
+    "class_type": "CM_FloatToInt",
+    "inputs": {
+      "a": [
+        "4978",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "CM_FloatToInt"
+    }
+  },
+  "4977": {
+    "class_type": "PrimitiveBoolean",
+    "inputs": {
+      "value": false
+    },
+    "_meta": {
+      "title": "bypass_i2v"
+    }
+  },
+  "4978": {
+    "class_type": "PrimitiveFloat",
+    "inputs": {
+      "value": 24
+    },
+    "_meta": {
+      "title": "fps"
+    }
+  },
+  "4979": {
+    "class_type": "PrimitiveInt",
+    "inputs": {
+      "value": [
+        "4996",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "number of frames"
+    }
+  },
+  "4983": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "LTX23_video_vae_bf16.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "4984": {
+    "class_type": "VAELoaderKJ",
+    "inputs": {
+      "vae_name": "LTX23_audio_vae_bf16.safetensors",
+      "device": "main_device",
+      "weight_dtype": "bf16"
+    },
+    "_meta": {
+      "title": "VAELoaderKJ"
+    }
+  },
+  "4987": {
+    "class_type": "DualCLIPLoader",
+    "inputs": {
+      "clip_name1": "gemma_3_12B_it.safetensors",
+      "clip_name2": "ltx-2.3_text_projection_bf16.safetensors",
+      "type": "ltxv",
+      "device": "default"
+    },
+    "_meta": {
+      "title": "DualCLIPLoader"
+    }
+  },
+  "4991": {
+    "class_type": "VHS_VideoCombine",
+    "inputs": {
+      "frame_rate": 24,
+      "loop_count": 0,
+      "filename_prefix": "VIDEO/LTX/img2vid",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": true,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": true,
+      "videopreview": {
+        "hidden": false,
+        "paused": false,
+        "params": {
+          "filename": "img2vid_00009-audio.mp4",
+          "subfolder": "VIDEO\\LTX",
+          "type": "output",
+          "format": "video/h264-mp4",
+          "frame_rate": 24,
+          "workflow": "img2vid_00009.png",
+          "fullpath": "E:\\360u\\v360u2\\v362\\App\\ComfyUI\\output\\VIDEO\\LTX\\img2vid_00009-audio.mp4"
+        }
+      },
+      "images": [
+        "5364",
+        0
+      ],
+      "audio": [
+        "4848",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VHS_VideoCombine"
+    }
+  },
+  "4994": {
+    "class_type": "ResizeImageMaskNode",
+    "inputs": {
+      "scale_method": "scale width",
+      "input": [
+        "2004",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Video Size"
+    }
+  },
+  "4995": {
+    "class_type": "ImageResizeKJv2",
+    "inputs": {
+      "width": 0,
+      "height": 0,
+      "upscale_method": "area",
+      "keep_proportion": "crop",
+      "pad_color": "0, 0, 0",
+      "crop_position": "center",
+      "divisible_by": 32,
+      "device": "cpu",
+      "image": [
+        "4994",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ImageResizeKJv2"
+    }
+  },
+  "4996": {
+    "class_type": "easy mathInt",
+    "inputs": {
+      "a": [
+        "4997",
+        0
+      ],
+      "b": 24,
+      "operation": "multiply"
+    },
+    "_meta": {
+      "title": "easy mathInt"
+    }
+  },
+  "4997": {
+    "class_type": "easy int",
+    "inputs": {
+      "value": 8
+    },
+    "_meta": {
+      "title": "LENGTH IN SECONDS"
+    }
+  },
+  "5364": {
+    "class_type": "ImageScaleBy",
+    "inputs": {
+      "upscale_method": "lanczos",
+      "scale_by": 1.5,
+      "image": [
+        "4851",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ImageScaleBy"
+    }
+  },
+  "5584": {
+    "class_type": "Power Lora Loader (rgthree)",
+    "inputs": {
+      "PowerLoraLoaderHeaderWidget": {
+        "type": "PowerLoraLoaderHeaderWidget"
+      },
+      "➕ Add Lora": "",
+      "model": [
+        "5897",
+        0
+      ],
+      "clip": [
+        "4987",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  },
+  "5788": {
+    "class_type": "PathchSageAttentionKJ",
+    "inputs": {
+      "sage_attention": "auto",
+      "allow_compile": false,
+      "model": [
+        "5584",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "PathchSageAttentionKJ"
+    }
+  },
+  "5789": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 4,
+      "denoise": 1,
+      "model": [
+        "5584",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "BasicScheduler"
+    }
+  },
+  "5897": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "ltx-2.3-22b-distilled-1.1-int8-ConvRot.safetensors",
+      "weight_dtype": "default"
+    },
+    "_meta": {
+      "title": "UNETLoader"
+    }
+  }
+}

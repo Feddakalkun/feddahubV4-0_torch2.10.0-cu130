@@ -1,0 +1,368 @@
+{
+  "5226": {
+    "class_type": "easy int",
+    "inputs": {
+      "value": 5
+    },
+    "_meta": {
+      "title": "STEPS"
+    }
+  },
+  "5254": {
+    "class_type": "VHS_LoadVideo",
+    "inputs": {
+      "video": "muscl.mp4",
+      "force_rate": 24,
+      "custom_width": 0,
+      "custom_height": 0,
+      "frame_load_cap": 1,
+      "skip_first_frames": 0,
+      "select_every_nth": 1,
+      "format": "AnimateDiff",
+      "videopreview": {
+        "hidden": false,
+        "paused": false,
+        "params": {
+          "filename": "muscl.mp4",
+          "type": "input",
+          "format": "video/mp4",
+          "force_rate": 24,
+          "custom_width": 0,
+          "custom_height": 0,
+          "frame_load_cap": 1,
+          "skip_first_frames": 0,
+          "select_every_nth": 1
+        }
+      }
+    },
+    "_meta": {
+      "title": "VHS_LoadVideo"
+    }
+  },
+  "5255": {
+    "class_type": "PrimitiveStringMultiline",
+    "inputs": {
+      "value": "remain composition, add style "
+    },
+    "_meta": {
+      "title": "Prompt"
+    }
+  },
+  "5256": {
+    "class_type": "ImageSelector",
+    "inputs": {
+      "images": [
+        "5254",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ImageSelector"
+    }
+  },
+  "5258": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 80678999370761
+    },
+    "_meta": {
+      "title": "RandomNoise"
+    }
+  },
+  "5260": {
+    "class_type": "Load Styles CSV",
+    "inputs": {
+      "styles": "Craft | Sculpture > Stone",
+      "csv_file_path": "styles.csv"
+    },
+    "_meta": {
+      "title": "Load Styles CSV"
+    }
+  },
+  "5263": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "VIDEO/LTX/0",
+      "images": [
+        "5256",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "first frame"
+    }
+  },
+  "5264": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "VIDEO/LTX/0",
+      "images": [
+        "5592",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "SaveImage"
+    }
+  },
+  "5590": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "euler"
+    },
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "5591": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "5258",
+        0
+      ],
+      "guider": [
+        "5597",
+        0
+      ],
+      "sampler": [
+        "5590",
+        0
+      ],
+      "sigmas": [
+        "5598",
+        0
+      ],
+      "latent_image": [
+        "5596",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "5592": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "5591",
+        0
+      ],
+      "vae": [
+        "5595",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecode"
+    }
+  },
+  "5593": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "flux-2-klein-9b-fp8mixed.safetensors",
+      "weight_dtype": "default"
+    },
+    "_meta": {
+      "title": "UNETLoader"
+    }
+  },
+  "5594": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen_3_8b_fp8mixed.safetensors",
+      "type": "flux2",
+      "device": "default"
+    },
+    "_meta": {
+      "title": "CLIPLoader"
+    }
+  },
+  "5595": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "flux2-vae.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "5596": {
+    "class_type": "EmptyFlux2LatentImage",
+    "inputs": {
+      "width": [
+        "5607",
+        0
+      ],
+      "height": [
+        "5607",
+        1
+      ],
+      "batch_size": 1
+    },
+    "_meta": {
+      "title": "EmptyFlux2LatentImage"
+    }
+  },
+  "5597": {
+    "class_type": "CFGGuider",
+    "inputs": {
+      "cfg": 1,
+      "model": [
+        "5593",
+        0
+      ],
+      "positive": [
+        "5606",
+        0
+      ],
+      "negative": [
+        "5604",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "CFGGuider"
+    }
+  },
+  "5598": {
+    "class_type": "Flux2Scheduler",
+    "inputs": {
+      "steps": [
+        "5226",
+        0
+      ],
+      "width": [
+        "5607",
+        0
+      ],
+      "height": [
+        "5607",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "Flux2Scheduler"
+    }
+  },
+  "5599": {
+    "class_type": "ConditioningZeroOut",
+    "inputs": {
+      "conditioning": [
+        "5600",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ConditioningZeroOut"
+    }
+  },
+  "5600": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": [
+        "5601",
+        0
+      ],
+      "clip": [
+        "5594",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "CLIP Text Encode (Positive Prompt)"
+    }
+  },
+  "5601": {
+    "class_type": "Text Concatenate",
+    "inputs": {
+      "delimiter": ", ",
+      "clean_whitespace": "true",
+      "text_a": [
+        "5255",
+        0
+      ],
+      "text_b": [
+        "5260",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Text Concatenate"
+    }
+  },
+  "5604": {
+    "class_type": "ReferenceLatent",
+    "inputs": {
+      "conditioning": [
+        "5599",
+        0
+      ],
+      "latent": [
+        "5605",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ReferenceLatent"
+    }
+  },
+  "5605": {
+    "class_type": "VAEEncode",
+    "inputs": {
+      "pixels": [
+        "5256",
+        0
+      ],
+      "vae": [
+        "5595",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEEncode"
+    }
+  },
+  "5606": {
+    "class_type": "ReferenceLatent",
+    "inputs": {
+      "conditioning": [
+        "5600",
+        0
+      ],
+      "latent": [
+        "5605",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ReferenceLatent"
+    }
+  },
+  "5607": {
+    "class_type": "GetImageSize+",
+    "inputs": {
+      "image": [
+        "5608",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "GetImageSize+"
+    }
+  },
+  "5608": {
+    "class_type": "ResizeImageMaskNode",
+    "inputs": {
+      "scale_method": "scale total pixels",
+      "input": [
+        "5256",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "set image size in megapixels"
+    }
+  }
+}
