@@ -1,0 +1,292 @@
+{
+  "135": {
+    "class_type": "DualCLIPLoader",
+    "inputs": {
+      "clip_name1": "clip_l-for-gguf.safetensors",
+      "clip_name2": "t5xxl_fp8_e4m3fn.safetensors",
+      "type": "flux",
+      "device": "default"
+    },
+    "_meta": {
+      "title": "DualCLIPLoader"
+    }
+  },
+  "138": {
+    "class_type": "PreviewImage",
+    "inputs": {
+      "images": [
+        "147",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "PreviewImage"
+    }
+  },
+  "139": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "241",
+        0
+      ],
+      "vae": [
+        "238",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecode"
+    }
+  },
+  "143": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "IMAGE/FLUX-KREA/0",
+      "images": [
+        "139",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "SaveImage"
+    }
+  },
+  "145": {
+    "class_type": "LoadLotusModel",
+    "inputs": {
+      "model": "lotus-depth-g-v2-0.safetensors",
+      "precision": "fp16"
+    },
+    "_meta": {
+      "title": "LoadLotusModel"
+    }
+  },
+  "146": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "vae-ft-mse-840000-ema-pruned.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "147": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "244",
+        0
+      ],
+      "vae": [
+        "146",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecode"
+    }
+  },
+  "163": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "",
+      "clip": [
+        "198",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "CLIPTextEncode"
+    }
+  },
+  "178": {
+    "class_type": "SetUnionControlNetType",
+    "inputs": {
+      "type": "depth",
+      "control_net": [
+        "249",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "SetUnionControlNetType"
+    }
+  },
+  "198": {
+    "class_type": "Power Lora Loader (rgthree)",
+    "inputs": {
+      "model": [
+        "250",
+        0
+      ],
+      "clip": [
+        "135",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  },
+  "237": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "couple.png"
+    },
+    "_meta": {
+      "title": "LoadImage"
+    }
+  },
+  "238": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "FLUX1\\ae.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "239": {
+    "class_type": "VAEEncode",
+    "inputs": {
+      "pixels": [
+        "240",
+        0
+      ],
+      "vae": [
+        "238",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEEncode"
+    }
+  },
+  "240": {
+    "class_type": "ImageResizeKJ",
+    "inputs": {
+      "width": 1024,
+      "height": 1024,
+      "upscale_method": "nearest-exact",
+      "keep_proportion": true,
+      "divisible_by": 2,
+      "crop": 0,
+      "image": [
+        "237",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ImageResizeKJ"
+    }
+  },
+  "241": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": 298,
+      "steps": 20,
+      "cfg": 1,
+      "sampler_name": "ipndm",
+      "scheduler": "simple",
+      "denoise": 1,
+      "model": [
+        "198",
+        0
+      ],
+      "positive": [
+        "243",
+        0
+      ],
+      "negative": [
+        "243",
+        1
+      ],
+      "latent_image": [
+        "239",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "242": {
+    "class_type": "VAEEncode",
+    "inputs": {
+      "pixels": [
+        "240",
+        0
+      ],
+      "vae": [
+        "146",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEEncode"
+    }
+  },
+  "243": {
+    "class_type": "ControlNetApplyAdvanced",
+    "inputs": {
+      "strength": 0.6000000000000001,
+      "start_percent": 0,
+      "end_percent": 0.4000000000000001,
+      "negative": [
+        "163",
+        0
+      ],
+      "control_net": [
+        "178",
+        0
+      ],
+      "image": [
+        "147",
+        0
+      ],
+      "vae": [
+        "238",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ControlNetApplyAdvanced"
+    }
+  },
+  "244": {
+    "class_type": "LotusSampler",
+    "inputs": {
+      "seed": 303,
+      "per_batch": 1,
+      "keep_model_loaded": false,
+      "lotus_unet": [
+        "145",
+        0
+      ],
+      "samples": [
+        "242",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LotusSampler"
+    }
+  },
+  "249": {
+    "class_type": "ControlNetLoader",
+    "inputs": {
+      "control_net_name": "FLUX.1-dev-ControlNet-Union-Pro-2.0.safetensors"
+    },
+    "_meta": {
+      "title": "ControlNetLoader"
+    }
+  },
+  "250": {
+    "class_type": "UnetLoaderGGUF",
+    "inputs": {},
+    "_meta": {
+      "title": "UnetLoaderGGUF"
+    }
+  }
+}

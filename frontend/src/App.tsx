@@ -16,6 +16,7 @@ import {
   APP_VERSION_LABEL,
   FEDDA_AREAS,
   FEDDA_FAMILIES,
+  FEDDA_MODEL_GROUPS,
   FEDDA_MODULES,
   type ModuleArea,
 } from './modules/registry';
@@ -35,12 +36,13 @@ import { findModuleForTab } from './modules/moduleSelectors';
  * there is only one card.
  */
 
-type ViewMode = 'home' | 'area' | 'family' | 'workspace';
+type ViewMode = 'home' | 'area' | 'family' | 'model' | 'workspace';
 
 type AppLocation = {
   view: ViewMode;
   area?: ModuleArea;
   family?: string;
+  model?: string;
   activeTab: string;
 };
 
@@ -74,6 +76,12 @@ function FeddaApp() {
       const family = FEDDA_FAMILIES.find((f) => f.id === decodeURIComponent(rest));
       return { view: 'family', family: family?.id, area: family?.area, activeTab: fallback };
     }
+    if (head === 'model' && rest) {
+      const group = FEDDA_MODEL_GROUPS.find((g) => g.id === decodeURIComponent(rest));
+      const owner = FEDDA_FAMILIES.find((f) => f.id === group?.family);
+      return { view: 'model', model: group?.id, family: owner?.id,
+               area: owner?.area, activeTab: fallback };
+    }
     if (head === 'tab' && rest) {
       return { view: 'workspace', activeTab: decodeURIComponent(rest) };
     }
@@ -82,7 +90,7 @@ function FeddaApp() {
 
   const initial = readLocationFromHash();
   const [location, setLocation] = useState<AppLocation>(initial);
-  const { view, area, family, activeTab } = location;
+  const { view, area, family, model, activeTab } = location;
 
   useEffect(() => {
     if (loading) return;
@@ -101,6 +109,7 @@ function FeddaApp() {
     if (loc.view === 'home') return '#/home';
     if (loc.view === 'area') return `#/area/${loc.area}`;
     if (loc.view === 'family') return `#/family/${encodeURIComponent(loc.family ?? '')}`;
+    if (loc.view === 'model') return `#/model/${encodeURIComponent(loc.model ?? '')}`;
     return `#/tab/${encodeURIComponent(resolveTab(loc.activeTab))}`;
   };
 
@@ -164,10 +173,43 @@ function FeddaApp() {
     }));
   }, [area, availableModules]);
 
+  // Models under this family that have something installed. Empty for a
+  // family with one model, which is what keeps Z-Image a single click away.
+  const modelsIn = (familyId: string) =>
+    FEDDA_MODEL_GROUPS.filter(
+      (g) => g.family === familyId
+        && availableModules.some((m) => m.group === g.id && !m.hidden),
+    );
+
+  const modelCards: CardItem[] = useMemo(() => {
+    if (!family) return [];
+    return modelsIn(family).map((g) => ({
+      id: g.id,
+      label: g.label,
+      description: g.description,
+      Icon: g.Icon,
+      count: availableModules.filter((m) => m.group === g.id && !m.hidden).length,
+    }));
+  }, [family, availableModules]);
+
+  const modelWorkflowCards: CardItem[] = useMemo(() => {
+    if (!model) return [];
+    return availableModules
+      .filter((m) => m.group === model && !m.hidden)
+      .map((m) => ({
+        id: m.id,
+        label: m.label,
+        description: m.description,
+        Icon: m.Icon,
+        countLabel: m.pack === 'booster' ? 'booster' : 'core',
+        count: undefined,
+      }));
+  }, [model, availableModules]);
+
   const workflowCards: CardItem[] = useMemo(() => {
     if (!family) return [];
     return availableModules
-      .filter((m) => m.family === family && !m.hidden)
+      .filter((m) => m.family === family && !m.group && !m.hidden)
       .map((m) => ({
         id: m.id,
         label: m.label,
@@ -182,24 +224,36 @@ function FeddaApp() {
 
   const areaDef = FEDDA_AREAS.find((a) => a.id === area);
   const familyDef = FEDDA_FAMILIES.find((f) => f.id === family);
+  const modelDef = FEDDA_MODEL_GROUPS.find((g) => g.id === model);
   const meta = pageMeta[resolveTab(activeTab)] ?? { label: APP_VERSION_LABEL, Icon: Sparkles };
 
   const title = view === 'home' ? APP_VERSION_LABEL
     : view === 'area' ? (areaDef?.label ?? 'Workflows')
       : view === 'family' ? (familyDef?.label ?? 'Workflows')
-        : meta.label;
+        : view === 'model' ? (modelDef?.label ?? 'Workflows')
+          : meta.label;
   const Icon = view === 'home' ? Sparkles
     : view === 'area' ? (areaDef?.Icon ?? Sparkles)
       : view === 'family' ? (familyDef?.Icon ?? Sparkles)
-        : meta.Icon;
+        : view === 'model' ? (modelDef?.Icon ?? Sparkles)
+          : meta.Icon;
 
   const goHome = () => navigate({ view: 'home', activeTab });
   const goBack = () => {
     if (view === 'workspace') {
       const owner = FEDDA_MODULES.find((m) => m.id === activeTab);
+      // Back goes to whichever level actually opened this, so a workflow
+      // under a model returns to its model rather than skipping past it.
+      if (owner?.group) {
+        return navigate({ view: 'model', model: owner.group, family: owner.family,
+                          area: owner.area, activeTab });
+      }
       return owner?.family
         ? navigate({ view: 'family', family: owner.family, area: owner.area, activeTab })
         : goHome();
+    }
+    if (view === 'model') {
+      return navigate({ view: 'family', family: modelDef?.family, area, activeTab });
     }
     if (view === 'family') {
       return navigate({ view: 'area', area: familyDef?.area ?? 'image', activeTab });
@@ -278,9 +332,29 @@ function FeddaApp() {
           )}
 
           {view === 'family' && (
+            // A family with models shows those; one without opens straight
+            // onto its workflows, which is why Z-Image needed no change.
+            modelCards.length > 0 ? (
+              <CardGrid
+                items={modelCards}
+                kicker={familyDef?.label}
+                title="Choose a model"
+                onSelect={(id) => navigate({ view: 'model', model: id, family, area, activeTab })}
+              />
+            ) : (
+              <CardGrid
+                items={workflowCards}
+                kicker={familyDef?.label}
+                title="Choose a workflow"
+                onSelect={(id) => navigate({ view: 'workspace', activeTab: id })}
+              />
+            )
+          )}
+
+          {view === 'model' && (
             <CardGrid
-              items={workflowCards}
-              kicker={familyDef?.label}
+              items={modelWorkflowCards}
+              kicker={`${familyDef?.label ?? ''} ${modelDef?.label ?? ''}`.trim()}
               title="Choose a workflow"
               onSelect={(id) => navigate({ view: 'workspace', activeTab: id })}
             />

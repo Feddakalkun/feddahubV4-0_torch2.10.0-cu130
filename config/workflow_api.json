@@ -891,5 +891,338 @@
         "label": "Denoise"
       }
     }
+  },
+  "flux-krea-gguf": {
+    "name": "FLUX Krea GGUF",
+    "filename": "flux-krea/gguf.json",
+    "module": "flux-krea",
+    "description": "The quantised build. Same pictures, far less VRAM.",
+    "inputs": {
+      "prompt": {
+        "node_id": "2",
+        "input_key": "text",
+        "label": "Prompt"
+      },
+      "width": {
+        "node_id": "277",
+        "input_key": "width",
+        "label": "Width"
+      },
+      "height": {
+        "node_id": "277",
+        "input_key": "height",
+        "label": "Height"
+      },
+      "aspect_ratio": {
+        "node_id": "277",
+        "input_key": "aspect_ratio",
+        "label": "Aspect Ratio"
+      },
+      "seed": {
+        "node_id": "39",
+        "input_key": "seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "39",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "cfg": {
+        "node_id": "39",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "denoise": {
+        "node_id": "39",
+        "input_key": "denoise",
+        "label": "Denoise"
+      },
+      "loras": {
+        "node_id": "1",
+        "type": "loras",
+        "label": "LoRAs"
+      }
+    }
+  },
+  "flux-krea-dev": {
+    "name": "FLUX Krea Dev",
+    "filename": "flux-krea/dev.json",
+    "module": "flux-krea",
+    "description": "The full-weight build, for when the card can take it.",
+    "inputs": {
+      "prompt": {
+        "node_id": "92",
+        "input_key": "text",
+        "label": "Prompt"
+      },
+      "width": {
+        "node_id": "278",
+        "input_key": "width",
+        "label": "Width"
+      },
+      "height": {
+        "node_id": "278",
+        "input_key": "height",
+        "label": "Height"
+      },
+      "aspect_ratio": {
+        "node_id": "278",
+        "input_key": "aspect_ratio",
+        "label": "Aspect Ratio"
+      },
+      "seed": {
+        "node_id": "127",
+        "input_key": "seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "127",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "cfg": {
+        "node_id": "127",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "denoise": {
+        "node_id": "127",
+        "input_key": "denoise",
+        "label": "Denoise"
+      },
+      "loras": {
+        "node_id": "126",
+        "type": "loras",
+        "label": "LoRAs"
+      }
+    }
+  },
+  "flux-krea-img2img": {
+    "name": "FLUX Krea - Image to Image",
+    "filename": "flux-krea/img2img.json",
+    "module": "flux-krea",
+    "description": "Redraw a picture you already have.",
+    "inputs": {
+      "prompt": {
+        "node_id": "275",
+        "input_key": "string",
+        "label": "Prompt"
+      },
+      "style": {
+        "node_id": "274",
+        "input_key": "styles",
+        "label": "Style"
+      },
+      "image": {
+        "node_id": "260",
+        "input_key": "image",
+        "label": "Reference Image"
+      },
+      "width": {
+        "node_id": "261",
+        "input_key": "width",
+        "label": "Width"
+      },
+      "height": {
+        "node_id": "261",
+        "input_key": "height",
+        "label": "Height"
+      },
+      "seed": {
+        "node_id": "254",
+        "input_key": "seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "254",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "cfg": {
+        "node_id": "254",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "denoise": {
+        "node_id": "254",
+        "input_key": "denoise",
+        "label": "Denoise"
+      }
+    }
+  },
+  "flux-krea-depth": {
+    "name": "FLUX Krea - ControlNet Depth",
+    "filename": "flux-krea/depth.json",
+    "module": "flux-krea",
+    "description": "Keep the depth of a reference picture.",
+    "inputs": {
+      "prompt": {
+        "node_id": "163",
+        "input_key": "text",
+        "label": "Prompt"
+      },
+      "image": {
+        "node_id": "237",
+        "input_key": "image",
+        "label": "Reference Image"
+      },
+      "width": {
+        "node_id": "240",
+        "input_key": "width",
+        "label": "Width"
+      },
+      "height": {
+        "node_id": "240",
+        "input_key": "height",
+        "label": "Height"
+      },
+      "seed": {
+        "node_id": "241",
+        "input_key": "seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "241",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "cfg": {
+        "node_id": "241",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "denoise": {
+        "node_id": "241",
+        "input_key": "denoise",
+        "label": "Denoise"
+      },
+      "control_strength": {
+        "node_id": "243",
+        "input_key": "strength",
+        "label": "Control Strength"
+      },
+      "control_start": {
+        "node_id": "243",
+        "input_key": "start_percent",
+        "label": "Control From"
+      },
+      "control_end": {
+        "node_id": "243",
+        "input_key": "end_percent",
+        "label": "Control To"
+      },
+      "loras": {
+        "node_id": "198",
+        "type": "loras",
+        "label": "LoRAs"
+      }
+    }
+  },
+  "flux-krea-openpose": {
+    "name": "FLUX Krea - ControlNet Pose",
+    "filename": "flux-krea/openpose.json",
+    "module": "flux-krea",
+    "description": "Keep the pose of a reference picture.",
+    "inputs": {
+      "prompt": {
+        "node_id": "175",
+        "input_key": "text",
+        "label": "Prompt"
+      },
+      "image": {
+        "node_id": "182",
+        "input_key": "image",
+        "label": "Reference Image"
+      },
+      "width": {
+        "node_id": "193",
+        "input_key": "width",
+        "label": "Width"
+      },
+      "height": {
+        "node_id": "193",
+        "input_key": "height",
+        "label": "Height"
+      },
+      "seed": {
+        "node_id": "185",
+        "input_key": "seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "185",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "cfg": {
+        "node_id": "185",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "denoise": {
+        "node_id": "185",
+        "input_key": "denoise",
+        "label": "Denoise"
+      },
+      "loras": {
+        "node_id": "184",
+        "type": "loras",
+        "label": "LoRAs"
+      }
+    }
+  },
+  "flux-krea-normal": {
+    "name": "FLUX Krea - ControlNet Normal",
+    "filename": "flux-krea/normal.json",
+    "module": "flux-krea",
+    "description": "Keep the surface detail of a reference picture.",
+    "inputs": {
+      "prompt": {
+        "node_id": "213",
+        "input_key": "text",
+        "label": "Prompt"
+      },
+      "image": {
+        "node_id": "233",
+        "input_key": "image",
+        "label": "Reference Image"
+      },
+      "width": {
+        "node_id": "221",
+        "input_key": "width",
+        "label": "Width"
+      },
+      "height": {
+        "node_id": "221",
+        "input_key": "height",
+        "label": "Height"
+      },
+      "seed": {
+        "node_id": "224",
+        "input_key": "seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "224",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "cfg": {
+        "node_id": "224",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "denoise": {
+        "node_id": "224",
+        "input_key": "denoise",
+        "label": "Denoise"
+      },
+      "loras": {
+        "node_id": "225",
+        "type": "loras",
+        "label": "LoRAs"
+      }
+    }
   }
 }

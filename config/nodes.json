@@ -36,6 +36,15 @@
     "pin_from": "fedda-v3"
   },
   {
+    "name": "ComfyUI-GGUF",
+    "url": "https://github.com/city96/ComfyUI-GGUF.git",
+    "folder": "ComfyUI-GGUF",
+    "note": "UnetLoaderGGUF — loads quantized GGUF model files (required for SCAIL-2 and other GGUF models)",
+    "pin": "6ea2651e7df66d7585f6ffee804b20e92fb38b8a",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
     "name": "ComfyUI-Impact-Pack",
     "url": "https://github.com/ltdrdata/ComfyUI-Impact-Pack.git",
     "folder": "ComfyUI-Impact-Pack",
@@ -126,6 +135,15 @@
     "pin_from": "fedda-v3"
   },
   {
+    "name": "ComfyUI-Styles_CSV_Loader",
+    "url": "https://github.com/theUpsider/ComfyUI-Styles_CSV_Loader.git",
+    "folder": "ComfyUI-Styles_CSV_Loader",
+    "note": "Load Styles CSV",
+    "pin": "255a4af7fcc818c756286c885483a1f97e4f1e9a",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
     "name": "ComfyUI-tbox",
     "url": "https://github.com/ai-shizuka/ComfyUI-tbox.git",
     "folder": "ComfyUI-tbox",
@@ -142,6 +160,15 @@
     "pin": "4ee72c065db22c9d96c2427954dc69e7b908444b",
     "pin_source": "git",
     "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI_Comfyroll_CustomNodes",
+    "url": "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes.git",
+    "folder": "ComfyUI_Comfyroll_CustomNodes",
+    "note": "Comfyroll utility nodes used by several audio and control workflows",
+    "pin": "d78b780ae43fcf8c6b7c6505e6ffb4584281ceca",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
   },
   {
     "name": "comfyui_controlnet_aux",

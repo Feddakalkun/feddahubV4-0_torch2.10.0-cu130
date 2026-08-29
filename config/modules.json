@@ -175,6 +175,44 @@
         "minimax_h3_audio_vae_fp32.safetensors"
       ],
       "notes": "Text to video with joint stereo audio. About 40 GB of models - twice the Z-Image core pack - which is why it is a booster."
+    },
+    {
+      "id": "flux-krea",
+      "label": "FLUX Krea",
+      "pack": "booster",
+      "area": "image",
+      "enabled": true,
+      "tabs": [
+        "image",
+        "flux-krea-gguf",
+        "flux-krea-dev",
+        "flux-krea-img2img",
+        "flux-krea-depth",
+        "flux-krea-openpose",
+        "flux-krea-normal"
+      ],
+      "workflows": [
+        "flux-krea/gguf.json",
+        "flux-krea/dev.json",
+        "flux-krea/img2img.json",
+        "flux-krea/depth.json",
+        "flux-krea/openpose.json",
+        "flux-krea/normal.json"
+      ],
+      "custom_nodes": [
+        "comfy-image-saver",
+        "ComfyUI-GGUF",
+        "ComfyUI-KJNodes",
+        "ComfyUI-Lotus",
+        "ComfyUI-Studio-nodes",
+        "ComfyUI-Styles_CSV_Loader",
+        "ComfyUI_Comfyroll_CustomNodes",
+        "comfyui_controlnet_aux",
+        "rgthree-comfy",
+        "was-node-suite-comfyui"
+      ],
+      "models": [],
+      "notes": "FLUX.1 Krea, in six shapes: two builds of the base model and four ways of steering it."
     }
   ]
 }

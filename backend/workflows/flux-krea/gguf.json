@@ -1,0 +1,166 @@
+{
+  "1": {
+    "class_type": "Power Lora Loader (rgthree)",
+    "inputs": {
+      "model": [
+        "44",
+        0
+      ],
+      "clip": [
+        "3",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  },
+  "2": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "",
+      "clip": [
+        "3",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "do not write here"
+    }
+  },
+  "3": {
+    "class_type": "DualCLIPLoader",
+    "inputs": {
+      "clip_name1": "clip_l-for-gguf.safetensors",
+      "clip_name2": "t5xxl_fp8_e4m3fn.safetensors",
+      "type": "flux",
+      "device": "default"
+    },
+    "_meta": {
+      "title": "DualCLIPLoader"
+    }
+  },
+  "4": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "39",
+        0
+      ],
+      "vae": [
+        "34",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecode"
+    }
+  },
+  "20": {
+    "class_type": "CR Conditioning Mixer",
+    "inputs": {},
+    "_meta": {
+      "title": "CR Conditioning Mixer"
+    }
+  },
+  "24": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "IMAGE/FLUX-KREA/0",
+      "images": [
+        "4",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "SaveImage"
+    }
+  },
+  "25": {
+    "class_type": "CR Conditioning Mixer",
+    "inputs": {
+      "conditioning_1": [
+        "20",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "CR Conditioning Mixer"
+    }
+  },
+  "34": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "FLUX1\\ae.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "36": {
+    "class_type": "EmptyLatentImage",
+    "inputs": {
+      "width": [
+        "277",
+        0
+      ],
+      "height": [
+        "277",
+        1
+      ],
+      "batch_size": 1
+    },
+    "_meta": {
+      "title": "EmptyLatentImage"
+    }
+  },
+  "39": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": 321,
+      "steps": 20,
+      "cfg": 1,
+      "sampler_name": "ipndm",
+      "scheduler": "beta",
+      "denoise": 1,
+      "model": [
+        "1",
+        0
+      ],
+      "positive": [
+        "25",
+        0
+      ],
+      "negative": [
+        "2",
+        0
+      ],
+      "latent_image": [
+        "36",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "44": {
+    "class_type": "UnetLoaderGGUF",
+    "inputs": {},
+    "_meta": {
+      "title": "UnetLoaderGGUF"
+    }
+  },
+  "277": {
+    "class_type": "AspectRatioImageSize",
+    "inputs": {
+      "width": 0,
+      "height": 0,
+      "aspect_ratio": "1:1",
+      "direction": "Vertical"
+    },
+    "_meta": {
+      "title": "AspectRatioImageSize"
+    }
+  }
+}

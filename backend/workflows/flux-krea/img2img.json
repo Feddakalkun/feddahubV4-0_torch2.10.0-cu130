@@ -1,0 +1,195 @@
+{
+  "251": {
+    "class_type": "UnetLoaderGGUF",
+    "inputs": {},
+    "_meta": {
+      "title": "UnetLoaderGGUF"
+    }
+  },
+  "252": {
+    "class_type": "DualCLIPLoader",
+    "inputs": {
+      "clip_name1": "clip_l-for-gguf.safetensors",
+      "clip_name2": "t5xxl_fp8_e4m3fn.safetensors",
+      "type": "flux",
+      "device": "default"
+    },
+    "_meta": {
+      "title": "DualCLIPLoader"
+    }
+  },
+  "253": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "FLUX1\\ae.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "254": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": 298,
+      "steps": 20,
+      "cfg": 1,
+      "sampler_name": "ipndm",
+      "scheduler": "beta",
+      "denoise": 0.7500000000000001,
+      "model": [
+        "251",
+        0
+      ],
+      "negative": [
+        "257",
+        0
+      ],
+      "latent_image": [
+        "255",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "255": {
+    "class_type": "VAEEncode",
+    "inputs": {
+      "pixels": [
+        "261",
+        0
+      ],
+      "vae": [
+        "253",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEEncode"
+    }
+  },
+  "256": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": [
+        "276",
+        0
+      ],
+      "clip": [
+        "252",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "CLIPTextEncode"
+    }
+  },
+  "257": {
+    "class_type": "ConditioningZeroOut",
+    "inputs": {
+      "conditioning": [
+        "256",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ConditioningZeroOut"
+    }
+  },
+  "258": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "254",
+        0
+      ],
+      "vae": [
+        "253",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecode"
+    }
+  },
+  "259": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "IMAGE/FLUX-KREA/0",
+      "images": [
+        "258",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "SaveImage"
+    }
+  },
+  "260": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "MV1.png"
+    },
+    "_meta": {
+      "title": "LoadImage"
+    }
+  },
+  "261": {
+    "class_type": "ImageResizeKJv2",
+    "inputs": {
+      "width": 1080,
+      "height": 1080,
+      "upscale_method": "nearest-exact",
+      "keep_proportion": "stretch",
+      "pad_color": "0, 0, 0",
+      "crop_position": "center",
+      "divisible_by": 2,
+      "device": "cpu",
+      "image": [
+        "260",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ImageResizeKJv2"
+    }
+  },
+  "274": {
+    "class_type": "Load Styles CSV",
+    "inputs": {
+      "styles": "Photography | Portrait > Cinematic",
+      "csv_file_path": "styles.csv"
+    },
+    "_meta": {
+      "title": "CHOOSE STYLE"
+    }
+  },
+  "275": {
+    "class_type": "String Literal",
+    "inputs": {
+      "string": "superhero woman"
+    },
+    "_meta": {
+      "title": "POSITIVE PROMPT"
+    }
+  },
+  "276": {
+    "class_type": "Text Concatenate",
+    "inputs": {
+      "delimiter": ", ",
+      "clean_whitespace": "true",
+      "text_a": [
+        "275",
+        0
+      ],
+      "text_b": [
+        "274",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Text Concatenate"
+    }
+  }
+}

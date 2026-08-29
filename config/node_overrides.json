@@ -4,6 +4,8 @@
     "VHS_VideoCombine": "ComfyUI-VideoHelperSuite",
     "VHS_LoadVideo": "ComfyUI-VideoHelperSuite",
     "VHS_LoadImagePath": "ComfyUI-VideoHelperSuite",
-    "VideoInfo": "ComfyUI-tbox"
+    "VideoInfo": "ComfyUI-tbox",
+    "UnetLoaderGGUF": "ComfyUI-GGUF",
+    "CR Conditioning Mixer": "ComfyUI_Comfyroll_CustomNodes"
   }
 }

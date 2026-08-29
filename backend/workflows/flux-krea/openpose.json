@@ -1,0 +1,242 @@
+{
+  "173": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "185",
+        0
+      ],
+      "vae": [
+        "181",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecode"
+    }
+  },
+  "175": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "",
+      "clip": [
+        "184",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "CLIPTextEncode"
+    }
+  },
+  "176": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "IMAGE/FLUX-KREA/0",
+      "images": [
+        "173",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "SaveImage"
+    }
+  },
+  "177": {
+    "class_type": "SetShakkerLabsUnionControlNetType",
+    "inputs": {
+      "type": "pose",
+      "control_net": [
+        "245",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "SetShakkerLabsUnionControlNetType"
+    }
+  },
+  "179": {
+    "class_type": "DWPreprocessor",
+    "inputs": {
+      "detect_hand": "enable",
+      "detect_body": "enable",
+      "detect_face": "enable",
+      "resolution": 1024,
+      "bbox_detector": "yolox_l.onnx",
+      "pose_estimator": "dw-ll_ucoco_384_bs5.torchscript.pt",
+      "scale_stick_for_xinsr_cn": "disable",
+      "image": [
+        "193",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "DWPreprocessor"
+    }
+  },
+  "180": {
+    "class_type": "DualCLIPLoader",
+    "inputs": {
+      "clip_name1": "clip_l-for-gguf.safetensors",
+      "clip_name2": "t5xxl_fp8_e4m3fn.safetensors",
+      "type": "flux",
+      "device": "default"
+    },
+    "_meta": {
+      "title": "DualCLIPLoader"
+    }
+  },
+  "181": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "FLUX1\\ae.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "182": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "pose10.png"
+    },
+    "_meta": {
+      "title": "LoadImage"
+    }
+  },
+  "184": {
+    "class_type": "Power Lora Loader (rgthree)",
+    "inputs": {
+      "model": [
+        "262",
+        0
+      ],
+      "clip": [
+        "180",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  },
+  "185": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": 303,
+      "steps": 20,
+      "cfg": 1,
+      "sampler_name": "ipndm",
+      "scheduler": "beta",
+      "denoise": 1,
+      "model": [
+        "184",
+        0
+      ],
+      "positive": [
+        "186",
+        0
+      ],
+      "negative": [
+        "186",
+        1
+      ],
+      "latent_image": [
+        "189",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "186": {
+    "class_type": "ControlNetApplySD3",
+    "inputs": {
+      "strength": 0.6500000000000001,
+      "start_percent": 0,
+      "end_percent": 0.6500000000000001,
+      "negative": [
+        "175",
+        0
+      ],
+      "control_net": [
+        "177",
+        0
+      ],
+      "vae": [
+        "181",
+        0
+      ],
+      "image": [
+        "179",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ControlNetApplySD3"
+    }
+  },
+  "189": {
+    "class_type": "EmptyLatentImage",
+    "inputs": {
+      "width": [
+        "193",
+        1
+      ],
+      "height": [
+        "193",
+        2
+      ],
+      "batch_size": 1
+    },
+    "_meta": {
+      "title": "EmptyLatentImage"
+    }
+  },
+  "190": {
+    "class_type": "PreviewImage",
+    "inputs": {
+      "images": [
+        "179",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "PreviewImage"
+    }
+  },
+  "193": {
+    "class_type": "ImageResizeKJ",
+    "inputs": {
+      "width": 1024,
+      "height": 1024,
+      "upscale_method": "nearest-exact",
+      "keep_proportion": true,
+      "divisible_by": 2,
+      "crop": 0,
+      "image": [
+        "182",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ImageResizeKJ"
+    }
+  },
+  "245": {
+    "class_type": "ControlNetLoader",
+    "inputs": {
+      "control_net_name": "FLUX.1-dev-ControlNet-Union-Pro-2.0.safetensors"
+    },
+    "_meta": {
+      "title": "ControlNetLoader"
+    }
+  },
+  "262": {
+    "class_type": "UnetLoaderGGUF",
+    "inputs": {},
+    "_meta": {
+      "title": "UnetLoaderGGUF"
+    }
+  }
+}

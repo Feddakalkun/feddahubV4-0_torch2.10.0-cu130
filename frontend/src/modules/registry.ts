@@ -32,6 +32,7 @@ export type SourceModuleId =
   | 'z-image-inpaint'
   | 'z-image-control'
   | 'z-image-detailed'
+  | 'flux-krea'
   | 'minimax-h3';
 
 export const APP_VERSION_LABEL = 'FEDDA Hub v4.0';
@@ -95,6 +96,44 @@ export const FEDDA_FAMILIES: FeddaFamily[] = [
     Icon: Clapperboard,
     requiresAnyOf: ['minimax-h3'],
   },
+  {
+    id: 'flux',
+    area: 'image',
+    label: 'FLUX',
+    description: 'Black Forest Labs. Several models, each with its own strengths.',
+    Icon: Sparkles,
+    requiresAnyOf: ['flux-krea'],
+  },
+];
+
+// --------------------------------------------------- level 2b, when needed
+
+export interface FeddaModelGroup {
+  id: string;
+  family: string;
+  label: string;
+  description: string;
+  Icon: LucideIcon;
+}
+
+/**
+ * Models inside a family, for families that have more than one.
+ *
+ * Z-Image is one model and its card opens straight onto workflows. FLUX is a
+ * brand with eight - Krea, Klein, Kontext, SRPO and the rest - and each has
+ * its own handful of workflows, so putting them all behind one card is the
+ * flat list this whole arrangement exists to avoid.
+ *
+ * A family with nothing here behaves exactly as before.
+ */
+export const FEDDA_MODEL_GROUPS: FeddaModelGroup[] = [
+  {
+    id: 'flux-krea',
+    family: 'flux',
+    label: 'Krea',
+    description: 'FLUX.1 Krea. Photographic by default, without the plastic look.',
+    Icon: Wand2,
+  },
 ];
 
 // ------------------------------------------------------------------- level 3
@@ -104,6 +143,8 @@ export interface FeddaModule {
   id: string;
   sourceModuleId: SourceModuleId;
   family: string;
+  /** Which model inside the family, when the family has more than one. */
+  group?: string;
   area: ModuleArea;
   label: string;
   description: string;
@@ -324,6 +365,91 @@ export const FEDDA_MODULES: FeddaModule[] = [
     defaultTab: 'minimax-h3-director',
     Icon: Clapperboard,
   },
+  {
+    id: 'flux-krea-gguf',
+    sourceModuleId: 'flux-krea',
+    family: 'flux',
+    group: 'flux-krea',
+    area: 'image',
+    label: 'Krea GGUF',
+    description: 'The quantised build. Same pictures, far less VRAM.',
+    pack: 'booster',
+    tabs: ['flux-krea-gguf'],
+    workflows: ['flux-krea/gguf.json'],
+    defaultTab: 'flux-krea-gguf',
+    Icon: Sparkles,
+  },
+  {
+    id: 'flux-krea-dev',
+    sourceModuleId: 'flux-krea',
+    family: 'flux',
+    group: 'flux-krea',
+    area: 'image',
+    label: 'Krea Dev',
+    description: 'The full-weight build, for when the card can take it.',
+    pack: 'booster',
+    tabs: ['flux-krea-dev'],
+    workflows: ['flux-krea/dev.json'],
+    defaultTab: 'flux-krea-dev',
+    Icon: Sparkles,
+  },
+  {
+    id: 'flux-krea-img2img',
+    sourceModuleId: 'flux-krea',
+    family: 'flux',
+    group: 'flux-krea',
+    area: 'image',
+    label: 'Image to Image',
+    description: 'Redraw a picture you already have.',
+    pack: 'booster',
+    tabs: ['flux-krea-img2img'],
+    workflows: ['flux-krea/img2img.json'],
+    defaultTab: 'flux-krea-img2img',
+    Icon: Sparkles,
+  },
+  {
+    id: 'flux-krea-depth',
+    sourceModuleId: 'flux-krea',
+    family: 'flux',
+    group: 'flux-krea',
+    area: 'image',
+    label: 'ControlNet Depth',
+    description: 'Keep the depth of a reference picture.',
+    pack: 'booster',
+    tabs: ['flux-krea-depth'],
+    workflows: ['flux-krea/depth.json'],
+    defaultTab: 'flux-krea-depth',
+    Icon: Sparkles,
+  },
+  {
+    id: 'flux-krea-openpose',
+    sourceModuleId: 'flux-krea',
+    family: 'flux',
+    group: 'flux-krea',
+    area: 'image',
+    label: 'ControlNet Pose',
+    description: 'Keep the pose of a reference picture.',
+    pack: 'booster',
+    tabs: ['flux-krea-openpose'],
+    workflows: ['flux-krea/openpose.json'],
+    defaultTab: 'flux-krea-openpose',
+    Icon: Sparkles,
+  },
+  {
+    id: 'flux-krea-normal',
+    sourceModuleId: 'flux-krea',
+    family: 'flux',
+    group: 'flux-krea',
+    area: 'image',
+    label: 'ControlNet Normal',
+    description: 'Keep the surface detail of a reference picture.',
+    pack: 'booster',
+    tabs: ['flux-krea-normal'],
+    workflows: ['flux-krea/normal.json'],
+    defaultTab: 'flux-krea-normal',
+    Icon: Sparkles,
+  },
+
   // Reachable by tab, off the card tree - it is a place, not a workflow.
   {
     id: 'gallery',
