@@ -90,6 +90,15 @@
     "pin_from": "fedda-v3"
   },
   {
+    "name": "ComfyUI-MiniMaxH3-Director",
+    "url": "https://github.com/seesee75-commits/ComfyUI-MiniMaxH3-Director.git",
+    "folder": "ComfyUI-MiniMaxH3-Director",
+    "note": "MiniMaxH3DirectorCS - the storyboard timeline node behind the Director page. Core because the page is on the front page.",
+    "pin": "84863236288ca387c291acffdbfee5b77d1a77a5",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
     "name": "ComfyUI-Pixaroma",
     "url": "https://github.com/pixaroma/ComfyUI-Pixaroma.git",
     "folder": "ComfyUI-Pixaroma",

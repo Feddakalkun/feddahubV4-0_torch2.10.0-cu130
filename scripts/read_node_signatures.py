@@ -86,6 +86,67 @@ def _input_types(class_node: ast.ClassDef) -> Dict[str, List[Tuple[str, str, boo
     return {}
 
 
+# io.Int.Input -> "INT". The ones that are not scalars arrive over links and
+# take no slot in widgets_values, but they are recorded anyway so a caller
+# can tell "this input exists and is a link" from "this input is unknown".
+_IO_TYPES = {
+    "Int": "INT", "Float": "FLOAT", "String": "STRING", "Boolean": "BOOLEAN",
+    "Combo": "COMBO", "MultiCombo": "COMBO",
+    "Model": "MODEL", "Clip": "CLIP", "Vae": "VAE", "Image": "IMAGE",
+    "Mask": "MASK", "Latent": "LATENT", "Audio": "AUDIO", "Video": "VIDEO",
+    "Conditioning": "CONDITIONING", "Sampler": "SAMPLER", "Sigmas": "SIGMAS",
+    "Guider": "GUIDER", "Noise": "NOISE", "AnyType": "*",
+}
+
+
+def _v3_schema(class_node: ast.ClassDef) -> Dict[str, List[Tuple[str, str, bool]]]:
+    """Inputs from a v3 `define_schema` returning io.Schema(inputs=[...]).
+
+    Newer packs declare their nodes this way instead of INPUT_TYPES, and a
+    reader that only knows the old form finds nothing in them at all -
+    which is what happened with ComfyUI-MiniMaxH3-Director.
+    """
+    for item in class_node.body:
+        if not isinstance(item, ast.FunctionDef) or item.name != "define_schema":
+            continue
+        for call in ast.walk(item):
+            if not isinstance(call, ast.Call):
+                continue
+            entries = next((kw.value for kw in call.keywords
+                            if kw.arg == "inputs"), None)
+            if not isinstance(entries, (ast.List, ast.Tuple)):
+                continue
+
+            required: List[Tuple[str, str, bool]] = []
+            optional: List[Tuple[str, str, bool]] = []
+            for element in entries.elts:
+                if not isinstance(element, ast.Call):
+                    continue
+                func = element.func
+                # io.Int.Input(...) - the type is the attribute before .Input
+                if (not isinstance(func, ast.Attribute) or func.attr != "Input"
+                        or not isinstance(func.value, ast.Attribute)):
+                    continue
+                kind = _IO_TYPES.get(func.value.attr, func.value.attr.upper())
+                if not element.args or not isinstance(element.args[0], ast.Constant):
+                    continue
+                name = element.args[0].value
+                if not isinstance(name, str):
+                    continue
+                flags = {kw.arg: kw.value for kw in element.keywords}
+
+                def truthy(key):
+                    node = flags.get(key)
+                    return isinstance(node, ast.Constant) and node.value is True
+
+                # force_input is the v3 spelling of forceInput.
+                pair = (name, kind, truthy("force_input"))
+                (optional if truthy("optional") else required).append(pair)
+            if required or optional:
+                return {"required": required, "optional": optional}
+    return {}
+
+
 def _class_mappings(tree: ast.Module) -> Dict[str, str]:
     """class name -> registered node type, from NODE_CLASS_MAPPINGS.
 
@@ -106,6 +167,27 @@ def _class_mappings(tree: ast.Module) -> Dict[str, str]:
     return out
 
 
+def _v3_node_ids(tree: ast.Module) -> Dict[str, str]:
+    """class name -> node_id, taken from io.Schema(node_id=...).
+
+    A v3 node names itself in its schema rather than in NODE_CLASS_MAPPINGS,
+    and the two differ: MiniMaxH3Director registers as MiniMaxH3DirectorCS.
+    """
+    out = {}
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.ClassDef):
+            continue
+        for call in ast.walk(node):
+            if not isinstance(call, ast.Call):
+                continue
+            for kw in call.keywords:
+                if (kw.arg == "node_id" and isinstance(kw.value, ast.Constant)
+                        and isinstance(kw.value.value, str)):
+                    out[node.name] = kw.value.value
+                    break
+    return out
+
+
 def read_pack(pack: Path) -> Dict[str, Any]:
     classes: Dict[str, Dict[str, Any]] = {}
     registered: Dict[str, str] = {}
@@ -119,10 +201,11 @@ def read_pack(pack: Path) -> Dict[str, Any]:
         except (SyntaxError, OSError):
             continue
         registered.update(_class_mappings(tree))
+        registered.update(_v3_node_ids(tree))
         for node in tree.body:
             if not isinstance(node, ast.ClassDef):
                 continue
-            groups = _input_types(node)
+            groups = _input_types(node) or _v3_schema(node)
             if not groups:
                 continue
             spec: Dict[str, Any] = {"input": {}, "python_module": module}

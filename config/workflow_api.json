@@ -848,5 +848,44 @@
         "label": "LoRAs"
       }
     }
+  },
+  "minimax-h3-director": {
+    "name": "MiniMax H3 Director",
+    "filename": "minimax-h3/director.json",
+    "module": "minimax-h3",
+    "description": "A timeline of shots, each with its own moment and prompt, rendered as one clip.",
+    "_timeline": "timeline_data on node 5 is the storyboard itself - 1681 characters of JSON written by the node's own visual editor in ComfyUI. It is deliberately not exposed: a textarea holding that is not an editor, and the graph's own value is a working storyboard to start from. Driving it properly means porting the timeline editor, which is its own piece of work.",
+    "inputs": {
+      "duration_seconds": {
+        "node_id": "5",
+        "input_key": "duration_seconds",
+        "label": "Length (seconds)"
+      },
+      "start_second": {
+        "node_id": "5",
+        "input_key": "start_second",
+        "label": "From (seconds)"
+      },
+      "end_second": {
+        "node_id": "5",
+        "input_key": "end_second",
+        "label": "To (seconds)"
+      },
+      "seed": {
+        "node_id": "386",
+        "input_key": "noise_seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "388",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "denoise": {
+        "node_id": "388",
+        "input_key": "denoise",
+        "label": "Denoise"
+      }
+    }
   }
 }

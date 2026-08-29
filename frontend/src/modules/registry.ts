@@ -311,6 +311,19 @@ export const FEDDA_MODULES: FeddaModule[] = [
     defaultTab: 'minimax-h3-speak',
     Icon: Clapperboard,
   },
+  {
+    id: 'minimax-h3-director',
+    sourceModuleId: 'minimax-h3',
+    family: 'minimax-h3',
+    area: 'video',
+    label: 'Director',
+    description: 'A timeline of shots, each with its own moment and prompt, rendered as one clip.',
+    pack: 'booster',
+    tabs: ['minimax-h3-director'],
+    workflows: ['minimax-h3/director.json'],
+    defaultTab: 'minimax-h3-director',
+    Icon: Clapperboard,
+  },
   // Reachable by tab, off the card tree - it is a place, not a workflow.
   {
     id: 'gallery',

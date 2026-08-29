@@ -147,7 +147,8 @@
         "minimax-h3-first-frame",
         "minimax-h3-fflf",
         "minimax-h3-sing",
-        "minimax-h3-speak"
+        "minimax-h3-speak",
+        "minimax-h3-director"
       ],
       "workflows": [
         "minimax-h3/txt2vid.json",
@@ -157,9 +158,11 @@
         "minimax-h3/first-frame.json",
         "minimax-h3/fflf.json",
         "minimax-h3/sing.json",
-        "minimax-h3/speak.json"
+        "minimax-h3/speak.json",
+        "minimax-h3/director.json"
       ],
       "custom_nodes": [
+        "ComfyUI-MiniMaxH3-Director",
         "ComfyUI-Pixaroma",
         "ComfyUI-tbox",
         "ComfyUI-VideoHelperSuite",

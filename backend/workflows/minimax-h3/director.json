@@ -1,0 +1,305 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+      "weight_dtype": "default"
+    },
+    "_meta": {
+      "title": "UNETLoader"
+    }
+  },
+  "2": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "default"
+    },
+    "_meta": {
+      "title": "Load Text Encoder Qwen3vl_32b"
+    }
+  },
+  "3": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    },
+    "_meta": {
+      "title": "Load VAE (video)"
+    }
+  },
+  "4": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_audio_vae_fp32.safetensors"
+    },
+    "_meta": {
+      "title": "Load VAE (audio)"
+    }
+  },
+  "5": {
+    "class_type": "MiniMaxH3DirectorCS",
+    "inputs": {
+      "start_second": 0,
+      "end_second": 5,
+      "duration_seconds": 5,
+      "start_frame": 0,
+      "end_frame": 120,
+      "duration_frames": 120,
+      "timeline_data": "{\"mainTrackEnabled\":true,\"audioTrackEnabled\":true,\"motionTrackEnabled\":true,\"propHeight\":90,\"globalPropHeight\":114,\"showFilenames\":true,\"showPromptZones\":true,\"overrideAudio\":false,\"inpaint_audio\":true,\"global_prompt\":\"Cinematic desert chase, late afternoon golden hour, anamorphic lens, shallow depth of field, fine film grain, warm sand tones against a deep blue sky, handheld energy.\\nAudio: a low engine rumble that rises and falls with the throttle, wind across the microphone, sand hissing under the tyres, a sparse percussive score underneath.\",\"retake_global_prompt\":\"\",\"overall_soundscape\":\"\",\"non_diegetic_music\":\"\",\"prompt_override\":\"\",\"prompt_override_on\":false,\"retakeMode\":false,\"retakeStart\":24,\"retakeLength\":48,\"retakePrompt\":\"\",\"retakeStrength\":1,\"retakeVideo\":null,\"normalStartFrame\":0,\"normalDurationFrames\":120,\"reference_mode\":\"OFF\",\"prompt_format\":\"minimax\",\"analyzeProvider\":\"ollama\",\"analyzeBaseUrl\":\"\",\"analyzeModel\":\"\",\"characters\":[{\"images\":[],\"description\":\"\"},{\"images\":[],\"description\":\"\"},{\"images\":[],\"description\":\"\"}],\"segments\":[{\"id\":\"seg0\",\"start\":0,\"length\":36,\"prompt\":\"wide establishing shot: the rider crests the dune, engine roaring, sand spraying off the rear wheel into the low sun\",\"type\":\"text\",\"isEndFrame\":false},{\"id\":\"seg1\",\"start\":36,\"length\":48,\"prompt\":\"cut to a low tracking shot alongside the bike, heat haze rippling, the horizon tilting as she leans into the turn\",\"type\":\"text\",\"isEndFrame\":false},{\"id\":\"seg2\",\"start\":84,\"length\":36,\"prompt\":\"cut to a close-up on her visor, the dunes reflected in it, she exhales and the engine note drops away\",\"type\":\"text\",\"isEndFrame\":false}],\"motionSegments\":[],\"audioSegments\":[]}",
+      "local_prompts": "wide establishing shot: the rider crests the dune, engine roaring, sand spraying off the rear wheel into the low sun | cut to a low tracking shot alongside the bike, heat haze rippling, the horizon tilting as she leans into the turn | cut to a close-up on her visor, the dunes reflected in it, she exhales and the engine note drops away",
+      "segment_lengths": "36,48,36",
+      "guide_strength": "",
+      "use_custom_audio": true,
+      "use_custom_motion": true,
+      "inpaint_audio": true,
+      "frame_rate": 24,
+      "display_mode": "seconds",
+      "custom_width": 1344,
+      "custom_height": 768,
+      "resize_method": "crop",
+      "divisible_by": 32,
+      "img_compression": 0,
+      "override_audio": false,
+      "ref_image_size": "match",
+      "shift_video": 12,
+      "shift_audio": 3,
+      "ref_image_notes": "",
+      "clip": [
+        "2",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ],
+      "model": [
+        "392",
+        0
+      ],
+      "model_ref2va": [
+        "393",
+        0
+      ],
+      "audio_vae": [
+        "4",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "MiniMaxH3DirectorCS"
+    }
+  },
+  "14": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "filename_prefix": "VIDEO/MINIMAX/director",
+      "format": "auto",
+      "video": [
+        "394",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "💾 FINAL SAVE"
+    }
+  },
+  "15": {
+    "class_type": "MiniMaxH3PreviewOverrideCS",
+    "inputs": {
+      "decode": "latent2rgb (fast)",
+      "preview_target": "node",
+      "max_resolution": 512,
+      "preview_frames": 24,
+      "preview_fps": [
+        "5",
+        4
+      ],
+      "webp_quality": 80,
+      "every_n_steps": 1,
+      "max_preview_overhead": 25,
+      "suppress_default_preview": true,
+      "playback": "true speed",
+      "model": [
+        "5",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "🎯 Preview Override (live)"
+    }
+  },
+  "16": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_ref2va_pruned_int8_convrot.safetensors",
+      "weight_dtype": "default"
+    },
+    "_meta": {
+      "title": "Load Diffusion Model (ref2v)"
+    }
+  },
+  "386": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 595788716548325
+    },
+    "_meta": {
+      "title": "RandomNoise"
+    }
+  },
+  "387": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "res_multistep"
+    },
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "388": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 8,
+      "denoise": 1,
+      "model": [
+        "15",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "BasicScheduler"
+    }
+  },
+  "389": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "15",
+        0
+      ],
+      "conditioning": [
+        "5",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "BasicGuider"
+    }
+  },
+  "390": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "386",
+        0
+      ],
+      "guider": [
+        "389",
+        0
+      ],
+      "sampler": [
+        "387",
+        0
+      ],
+      "sigmas": [
+        "388",
+        0
+      ],
+      "latent_image": [
+        "5",
+        2
+      ]
+    },
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "392": {
+    "class_type": "Power Lora Loader (rgthree)",
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "clip": [
+        "2",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  },
+  "393": {
+    "class_type": "Power Lora Loader (rgthree)",
+    "inputs": {
+      "model": [
+        "16",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  },
+  "394": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "fps": [
+        "5",
+        4
+      ],
+      "bit_depth": 8,
+      "images": [
+        "396",
+        0
+      ],
+      "audio": [
+        "395",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "CreateVideo"
+    }
+  },
+  "395": {
+    "class_type": "VAEDecodeAudio",
+    "inputs": {
+      "samples": [
+        "390",
+        0
+      ],
+      "vae": [
+        "4",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecodeAudio"
+    }
+  },
+  "396": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "390",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecode"
+    }
+  }
+}
