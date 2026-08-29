@@ -103,6 +103,14 @@ def input_signature(object_info: Dict[str, Any], class_type: str,
         opts = spec[1] if len(spec) > 1 and isinstance(spec[1], dict) else {}
         if isinstance(head, list):
             return "COMBO", opts, head
+        # ComfyUI writes an enum two ways. The old one puts the list
+        # first; the new one says "COMBO" and hangs the list off options,
+        # which is what KSamplerSelect.sampler_name and
+        # BasicScheduler.scheduler look like now. Reading only the old
+        # shape turned every one of those into a free-text box asking the
+        # user to type "euler" correctly.
+        if str(head).upper() == "COMBO" and isinstance(opts.get("options"), list):
+            return "COMBO", opts, list(opts["options"])
         return str(head), opts, []
     return "", {}, []
 

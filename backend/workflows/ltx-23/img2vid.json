@@ -78,6 +78,11 @@
   "3159": {
     "class_type": "LTXVImgToVideoConditionOnly",
     "inputs": {
+      "strength": 0.7,
+      "bypass": [
+        "4977",
+        0
+      ],
       "vae": [
         "4983",
         0
@@ -88,10 +93,6 @@
       ],
       "latent": [
         "3059",
-        0
-      ],
-      "bypass": [
-        "4977",
         0
       ]
     },
@@ -119,13 +120,13 @@
         "4979",
         0
       ],
-      "batch_size": 25,
-      "audio_vae": [
-        "4984",
-        0
-      ],
       "frame_rate": [
         "4974",
+        0
+      ],
+      "batch_size": 1,
+      "audio_vae": [
+        "4984",
         0
       ]
     },
@@ -380,7 +381,9 @@
   "4994": {
     "class_type": "ResizeImageMaskNode",
     "inputs": {
-      "scale_method": "scale width",
+      "resize_type": "scale width",
+      "width": 720,
+      "scale_method": "lanczos",
       "input": [
         "2004",
         0

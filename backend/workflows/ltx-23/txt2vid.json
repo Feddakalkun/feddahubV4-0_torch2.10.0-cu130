@@ -34,6 +34,11 @@
   "5005": {
     "class_type": "LTXVImgToVideoConditionOnly",
     "inputs": {
+      "strength": 0.7,
+      "bypass": [
+        "5032",
+        0
+      ],
       "vae": [
         "5003",
         0
@@ -44,10 +49,6 @@
       ],
       "latent": [
         "5017",
-        0
-      ],
-      "bypass": [
-        "5032",
         0
       ]
     },
@@ -74,13 +75,13 @@
         "5028",
         0
       ],
-      "batch_size": 25,
-      "audio_vae": [
-        "5002",
-        0
-      ],
       "frame_rate": [
         "5006",
+        0
+      ],
+      "batch_size": 1,
+      "audio_vae": [
+        "5002",
         0
       ]
     },

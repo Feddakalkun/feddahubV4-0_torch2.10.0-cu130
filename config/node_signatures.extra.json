@@ -371,5 +371,3712 @@
       }
     },
     "python_module": "custom_nodes.ComfyUI_Comfyroll_CustomNodes"
+  },
+  "LTXVAudioOnlyModel": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVAudioOnlyEmptyVideoLatent": {
+    "input": {
+      "required": {}
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVLoadConditioning": {
+    "input": {
+      "required": {
+        "file_name": [
+          [],
+          {}
+        ],
+        "device": [
+          [],
+          {}
+        ]
+      },
+      "optional": {}
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVSaveConditioning": {
+    "input": {
+      "required": {
+        "conditioning": [
+          "CONDITIONING",
+          {}
+        ],
+        "filename": [
+          "STRING",
+          {}
+        ],
+        "dtype": [
+          [],
+          {}
+        ]
+      },
+      "optional": {}
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "Set VAE Decoder Noise": {
+    "input": {
+      "required": {
+        "vae": [
+          "VAE",
+          {}
+        ],
+        "timestep": [
+          "FLOAT",
+          {}
+        ],
+        "scale": [
+          "FLOAT",
+          {}
+        ],
+        "seed": [
+          "INT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "DynamicConditioning": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "power": [
+          "FLOAT",
+          {}
+        ],
+        "only_first_frame": [
+          "BOOLEAN",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVBaseSampler": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "vae": [
+          "VAE",
+          {}
+        ],
+        "width": [
+          "INT",
+          {}
+        ],
+        "height": [
+          "INT",
+          {}
+        ],
+        "num_frames": [
+          "INT",
+          {}
+        ],
+        "guider": [
+          "GUIDER",
+          {}
+        ],
+        "sampler": [
+          "SAMPLER",
+          {}
+        ],
+        "sigmas": [
+          "SIGMAS",
+          {}
+        ],
+        "noise": [
+          "NOISE",
+          {}
+        ]
+      },
+      "optional": {
+        "optional_cond_images": [
+          "IMAGE",
+          {}
+        ],
+        "optional_cond_indices": [
+          "STRING",
+          {}
+        ],
+        "strength": [
+          "FLOAT",
+          {}
+        ],
+        "crop": [
+          [],
+          {}
+        ],
+        "crf": [
+          "INT",
+          {}
+        ],
+        "blur": [
+          "INT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVExtendSampler": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "vae": [
+          "VAE",
+          {}
+        ],
+        "latents": [
+          "LATENT",
+          {}
+        ],
+        "num_new_frames": [
+          "INT",
+          {}
+        ],
+        "frame_overlap": [
+          "INT",
+          {}
+        ],
+        "guider": [
+          "GUIDER",
+          {}
+        ],
+        "sampler": [
+          "SAMPLER",
+          {}
+        ],
+        "sigmas": [
+          "SIGMAS",
+          {}
+        ],
+        "noise": [
+          "NOISE",
+          {}
+        ],
+        "strength": [
+          "FLOAT",
+          {}
+        ]
+      },
+      "optional": {
+        "optional_guiding_latents": [
+          "LATENT",
+          {}
+        ],
+        "optional_cond_images": [
+          "IMAGE",
+          {}
+        ],
+        "optional_cond_indices": [
+          "STRING",
+          {}
+        ],
+        "cond_image_strength": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVInContextSampler": {
+    "input": {
+      "required": {
+        "vae": [
+          "VAE",
+          {}
+        ],
+        "guider": [
+          "GUIDER",
+          {}
+        ],
+        "sampler": [
+          "SAMPLER",
+          {}
+        ],
+        "sigmas": [
+          "SIGMAS",
+          {}
+        ],
+        "noise": [
+          "NOISE",
+          {}
+        ],
+        "guiding_latents": [
+          "LATENT",
+          {}
+        ]
+      },
+      "optional": {
+        "optional_cond_images": [
+          "IMAGE",
+          {}
+        ],
+        "num_frames": [
+          "INT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVLinearOverlapLatentTransition": {
+    "input": {
+      "required": {
+        "samples1": [
+          "LATENT",
+          {}
+        ],
+        "samples2": [
+          "LATENT",
+          {}
+        ],
+        "overlap": [
+          "INT",
+          {}
+        ]
+      },
+      "optional": {
+        "axis": [
+          "INT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVNormalizingSampler": {
+    "input": {
+      "required": {
+        "noise": [
+          "NOISE",
+          {}
+        ],
+        "guider": [
+          "GUIDER",
+          {}
+        ],
+        "sampler": [
+          "SAMPLER",
+          {}
+        ],
+        "sigmas": [
+          "SIGMAS",
+          {}
+        ],
+        "latent_image": [
+          "LATENT",
+          {}
+        ],
+        "video_normalization_factors": [
+          "STRING",
+          {}
+        ],
+        "audio_normalization_factors": [
+          "STRING",
+          {}
+        ]
+      },
+      "optional": {}
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "GemmaAPITextEncode": {
+    "input": {
+      "required": {
+        "api_key": [
+          "STRING",
+          {}
+        ],
+        "prompt": [
+          "STRING",
+          {}
+        ],
+        "enhance_prompt": [
+          "BOOLEAN",
+          {}
+        ],
+        "ckpt_name": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVGemmaCLIPModelLoader": {
+    "input": {
+      "required": {
+        "gemma_path": [
+          [],
+          {}
+        ],
+        "ltxv_path": [
+          [],
+          {}
+        ],
+        "max_length": [
+          "INT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVGemmaEnhancePrompt": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP",
+          {}
+        ],
+        "prompt": [
+          "STRING",
+          {}
+        ],
+        "system_prompt": [
+          "STRING",
+          {}
+        ],
+        "max_tokens": [
+          "INT",
+          {}
+        ],
+        "bypass_i2v": [
+          "BOOLEAN",
+          {}
+        ]
+      },
+      "optional": {
+        "image": [
+          "IMAGE",
+          {}
+        ],
+        "seed": [
+          "INT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVAddGuideAdvanced": {
+    "input": {
+      "required": {
+        "positive": [
+          "CONDITIONING",
+          {}
+        ],
+        "negative": [
+          "CONDITIONING",
+          {}
+        ],
+        "vae": [
+          "VAE",
+          {}
+        ],
+        "latent": [
+          "LATENT",
+          {}
+        ],
+        "image": [
+          "IMAGE",
+          {}
+        ],
+        "frame_idx": [
+          "INT",
+          {}
+        ],
+        "strength": [
+          "FLOAT",
+          {}
+        ],
+        "crf": [
+          "INT",
+          {}
+        ],
+        "blur_radius": [
+          "INT",
+          {}
+        ],
+        "interpolation": [
+          [],
+          {}
+        ],
+        "crop": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVImgToVideoAdvanced": {
+    "input": {
+      "required": {
+        "positive": [
+          "CONDITIONING",
+          {}
+        ],
+        "negative": [
+          "CONDITIONING",
+          {}
+        ],
+        "vae": [
+          "VAE",
+          {}
+        ],
+        "image": [
+          "IMAGE",
+          {}
+        ],
+        "width": [
+          "INT",
+          {}
+        ],
+        "height": [
+          "INT",
+          {}
+        ],
+        "length": [
+          "INT",
+          {}
+        ],
+        "batch_size": [
+          "INT",
+          {}
+        ],
+        "crf": [
+          "INT",
+          {}
+        ],
+        "blur_radius": [
+          "INT",
+          {}
+        ],
+        "interpolation": [
+          [],
+          {}
+        ],
+        "crop": [
+          [],
+          {}
+        ],
+        "strength": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVAddGuideAdvancedAttention": {
+    "input": {
+      "required": {
+        "positive": [
+          "CONDITIONING",
+          {}
+        ],
+        "negative": [
+          "CONDITIONING",
+          {}
+        ],
+        "vae": [
+          "VAE",
+          {}
+        ],
+        "latent": [
+          "LATENT",
+          {}
+        ],
+        "image": [
+          "IMAGE",
+          {}
+        ],
+        "frame_idx": [
+          "INT",
+          {}
+        ],
+        "strength": [
+          "FLOAT",
+          {}
+        ],
+        "crf": [
+          "INT",
+          {}
+        ],
+        "blur_radius": [
+          "INT",
+          {}
+        ],
+        "interpolation": [
+          [],
+          {}
+        ],
+        "crop": [
+          [],
+          {}
+        ],
+        "attention_strength": [
+          "FLOAT",
+          {}
+        ]
+      },
+      "optional": {
+        "attention_mask": [
+          "MASK",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "MultimodalGuider": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "positive": [
+          "CONDITIONING",
+          {}
+        ],
+        "negative": [
+          "CONDITIONING",
+          {}
+        ],
+        "parameters": [
+          "GUIDER_PARAMETERS",
+          {}
+        ],
+        "skip_blocks": [
+          "STRING",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "GuiderParameters": {
+    "input": {
+      "required": {
+        "modality": [
+          [],
+          {}
+        ],
+        "cfg": [
+          "FLOAT",
+          {}
+        ],
+        "stg": [
+          "FLOAT",
+          {}
+        ],
+        "perturb_attn": [
+          "BOOLEAN",
+          {}
+        ],
+        "rescale": [
+          "FLOAT",
+          {}
+        ],
+        "modality_scale": [
+          "FLOAT",
+          {}
+        ],
+        "skip_step": [
+          "INT",
+          {}
+        ],
+        "cross_attn": [
+          "BOOLEAN",
+          {}
+        ]
+      },
+      "optional": {
+        "parameters": [
+          "GUIDER_PARAMETERS",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVHDRDecodePostprocess": {
+    "input": {
+      "required": {
+        "image": [
+          "IMAGE",
+          {}
+        ]
+      },
+      "optional": {
+        "exposure": [
+          "FLOAT",
+          {}
+        ],
+        "save_exr": [
+          "BOOLEAN",
+          {}
+        ],
+        "output_dir": [
+          "STRING",
+          {}
+        ],
+        "filename_prefix": [
+          "STRING",
+          {}
+        ],
+        "half_precision": [
+          "BOOLEAN",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXAddVideoICLoRAGuide": {
+    "input": {
+      "required": {
+        "positive": [
+          "CONDITIONING",
+          {}
+        ],
+        "negative": [
+          "CONDITIONING",
+          {}
+        ],
+        "vae": [
+          "VAE",
+          {}
+        ],
+        "latent": [
+          "LATENT",
+          {}
+        ],
+        "image": [
+          "IMAGE",
+          {}
+        ],
+        "frame_idx": [
+          "INT",
+          {}
+        ],
+        "strength": [
+          "FLOAT",
+          {}
+        ],
+        "latent_downscale_factor": [
+          "FLOAT",
+          {}
+        ],
+        "crop": [
+          [],
+          {}
+        ],
+        "use_tiled_encode": [
+          "BOOLEAN",
+          {}
+        ],
+        "tile_size": [
+          "INT",
+          {}
+        ],
+        "tile_overlap": [
+          "INT",
+          {}
+        ]
+      },
+      "optional": {}
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXAddVideoICLoRAGuideAdvanced": {
+    "input": {
+      "required": {
+        "positive": [
+          "CONDITIONING",
+          {}
+        ],
+        "negative": [
+          "CONDITIONING",
+          {}
+        ],
+        "vae": [
+          "VAE",
+          {}
+        ],
+        "latent": [
+          "LATENT",
+          {}
+        ],
+        "image": [
+          "IMAGE",
+          {}
+        ],
+        "frame_idx": [
+          "INT",
+          {}
+        ],
+        "strength": [
+          "FLOAT",
+          {}
+        ],
+        "latent_downscale_factor": [
+          "FLOAT",
+          {}
+        ],
+        "crop": [
+          [],
+          {}
+        ],
+        "use_tiled_encode": [
+          "BOOLEAN",
+          {}
+        ],
+        "tile_size": [
+          "INT",
+          {}
+        ],
+        "tile_overlap": [
+          "INT",
+          {}
+        ],
+        "attention_strength": [
+          "FLOAT",
+          {}
+        ]
+      },
+      "optional": {
+        "attention_mask": [
+          "MASK",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXICLoRALoaderModelOnly": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "lora_name": [
+          [],
+          {}
+        ],
+        "strength_model": [
+          "FLOAT",
+          {}
+        ]
+      },
+      "optional": {}
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVSetAudioRefTokens": {
+    "input": {
+      "required": {
+        "positive": [
+          "CONDITIONING",
+          {}
+        ],
+        "negative": [
+          "CONDITIONING",
+          {}
+        ],
+        "audio_latent": [
+          "LATENT",
+          {}
+        ]
+      },
+      "optional": {}
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVAdainLatent": {
+    "input": {
+      "required": {
+        "latents": [
+          "LATENT",
+          {}
+        ],
+        "reference": [
+          "LATENT",
+          {}
+        ],
+        "factor": [
+          "FLOAT",
+          {}
+        ]
+      },
+      "optional": {
+        "per_frame": [
+          "BOOLEAN",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVStatNormLatent": {
+    "input": {
+      "required": {
+        "latents": [
+          "LATENT",
+          {}
+        ],
+        "target_mean": [
+          "FLOAT",
+          {}
+        ],
+        "target_std": [
+          "FLOAT",
+          {}
+        ],
+        "percentile": [
+          "FLOAT",
+          {}
+        ],
+        "factor": [
+          "FLOAT",
+          {}
+        ],
+        "clip_outliers": [
+          "BOOLEAN",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVPerStepAdainPatcher": {
+    "input": {
+      "required": {},
+      "optional": {}
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVPerStepStatNormPatcher": {
+    "input": {
+      "required": {}
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVSelectLatents": {
+    "input": {
+      "required": {
+        "samples": [
+          "LATENT",
+          {}
+        ],
+        "start_index": [
+          "INT",
+          {}
+        ],
+        "end_index": [
+          "INT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVAddLatents": {
+    "input": {
+      "required": {
+        "latents1": [
+          "LATENT",
+          {}
+        ],
+        "latents2": [
+          "LATENT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVSetVideoLatentNoiseMasks": {
+    "input": {
+      "required": {
+        "samples": [
+          "LATENT",
+          {}
+        ],
+        "masks": [
+          "MASK",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVDilateLatent": {
+    "input": {
+      "required": {
+        "latent": [
+          "LATENT",
+          {}
+        ],
+        "horizontal_scale": [
+          "INT",
+          {}
+        ],
+        "vertical_scale": [
+          "INT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVAddLatentGuide": {
+    "input": {
+      "required": {
+        "vae": [
+          "VAE",
+          {}
+        ],
+        "positive": [
+          "CONDITIONING",
+          {}
+        ],
+        "negative": [
+          "CONDITIONING",
+          {}
+        ],
+        "latent": [
+          "LATENT",
+          {}
+        ],
+        "guiding_latent": [
+          "LATENT",
+          {}
+        ],
+        "latent_idx": [
+          "INT",
+          {}
+        ],
+        "strength": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVImgToVideoConditionOnly": {
+    "input": {
+      "required": {
+        "vae": [
+          "VAE",
+          {}
+        ],
+        "image": [
+          "IMAGE",
+          {}
+        ],
+        "latent": [
+          "LATENT",
+          {}
+        ],
+        "strength": [
+          "FLOAT",
+          {}
+        ]
+      },
+      "optional": {
+        "bypass": [
+          "BOOLEAN",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVSetAudioVideoMaskByTime": {
+    "input": {
+      "required": {
+        "av_latent": [
+          "LATENT",
+          {}
+        ],
+        "positive": [
+          "CONDITIONING",
+          {}
+        ],
+        "negative": [
+          "CONDITIONING",
+          {}
+        ],
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "vae": [
+          "VAE",
+          {}
+        ],
+        "audio_vae": [
+          "VAE",
+          {}
+        ],
+        "start_time": [
+          "FLOAT",
+          {}
+        ],
+        "end_time": [
+          "FLOAT",
+          {}
+        ],
+        "video_fps": [
+          "FLOAT",
+          {}
+        ],
+        "mask_video": [
+          "BOOLEAN",
+          {}
+        ],
+        "mask_audio": [
+          "BOOLEAN",
+          {}
+        ],
+        "mask_init_value_video": [
+          "FLOAT",
+          {}
+        ],
+        "mask_init_value_audio": [
+          "FLOAT",
+          {}
+        ],
+        "slope_len": [
+          "INT",
+          {}
+        ]
+      },
+      "optional": {
+        "spatial_mask": [
+          "MASK",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVLoopingSampler": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "vae": [
+          "VAE",
+          {}
+        ],
+        "noise": [
+          "NOISE",
+          {}
+        ],
+        "sampler": [
+          "SAMPLER",
+          {}
+        ],
+        "sigmas": [
+          "SIGMAS",
+          {}
+        ],
+        "guider": [
+          "GUIDER",
+          {}
+        ],
+        "latents": [
+          "LATENT",
+          {}
+        ],
+        "temporal_tile_size": [
+          "INT",
+          {}
+        ],
+        "temporal_overlap": [
+          "INT",
+          {}
+        ],
+        "guiding_strength": [
+          "FLOAT",
+          {}
+        ],
+        "temporal_overlap_cond_strength": [
+          "FLOAT",
+          {}
+        ],
+        "cond_image_strength": [
+          "FLOAT",
+          {}
+        ],
+        "horizontal_tiles": [
+          "INT",
+          {}
+        ],
+        "vertical_tiles": [
+          "INT",
+          {}
+        ],
+        "spatial_overlap": [
+          "INT",
+          {}
+        ]
+      },
+      "optional": {
+        "optional_cond_images": [
+          "IMAGE",
+          {}
+        ],
+        "optional_guiding_latents": [
+          "LATENT",
+          {}
+        ],
+        "adain_factor": [
+          "FLOAT",
+          {}
+        ],
+        "optional_positive_conditionings": [
+          "CONDITIONING",
+          {}
+        ],
+        "optional_negative_index_latents": [
+          "LATENT",
+          {}
+        ],
+        "guiding_start_step": [
+          "INT",
+          {}
+        ],
+        "guiding_end_step": [
+          "INT",
+          {}
+        ],
+        "optional_cond_image_indices": [
+          "STRING",
+          {}
+        ],
+        "optional_normalizing_latents": [
+          "LATENT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVMultiPromptProvider": {
+    "input": {
+      "required": {
+        "prompts": [
+          "STRING",
+          {}
+        ],
+        "clip": [
+          "CLIP",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LowVRAMAudioVAELoader": {
+    "input": {
+      "required": {
+        "ckpt_name": [
+          [],
+          {}
+        ]
+      },
+      "optional": {
+        "dependencies": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LowVRAMLatentUpscaleModelLoader": {
+    "input": {
+      "required": {
+        "model_name": [
+          [],
+          {}
+        ]
+      },
+      "optional": {
+        "dependencies": [
+          "*",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVPreprocessMasks": {
+    "input": {
+      "required": {
+        "masks": [
+          "MASK",
+          {}
+        ],
+        "vae": [
+          "VAE",
+          {}
+        ],
+        "invert_input_masks": [
+          "BOOLEAN",
+          {}
+        ],
+        "ignore_first_mask": [
+          "BOOLEAN",
+          {}
+        ],
+        "pooling_method": [
+          [],
+          {}
+        ],
+        "grow_mask": [
+          "INT",
+          {}
+        ],
+        "tapered_corners": [
+          "BOOLEAN",
+          {}
+        ],
+        "clamp_min": [
+          "FLOAT",
+          {}
+        ],
+        "clamp_max": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVPromptEnhancerLoader": {
+    "input": {
+      "required": {
+        "llm_name": [
+          "STRING",
+          {}
+        ],
+        "image_captioner_name": [
+          "STRING",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVPromptEnhancer": {
+    "input": {
+      "required": {
+        "prompt": [
+          "STRING",
+          {}
+        ],
+        "prompt_enhancer": [
+          "LTXV_PROMPT_ENHANCER",
+          {}
+        ],
+        "max_resulting_tokens": [
+          "INT",
+          {}
+        ]
+      },
+      "optional": {
+        "image_prompt": [
+          "IMAGE",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVLaplacianPyramidBlend": {
+    "input": {
+      "required": {
+        "image_a": [
+          "IMAGE",
+          {}
+        ],
+        "image_b": [
+          "IMAGE",
+          {}
+        ],
+        "mask": [
+          "MASK",
+          {}
+        ],
+        "trim_to_shortest": [
+          "BOOLEAN",
+          {}
+        ],
+        "mask_low_res_dilation": [
+          "INT",
+          {}
+        ]
+      },
+      "optional": {}
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXQ8Patch": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "use_fp8_attention": [
+          "BOOLEAN",
+          {}
+        ],
+        "quantization_preset": [
+          [],
+          {}
+        ],
+        "quantize_self_attn": [
+          "BOOLEAN",
+          {}
+        ],
+        "quantize_cross_attn": [
+          "BOOLEAN",
+          {}
+        ],
+        "quantize_ffn": [
+          "BOOLEAN",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVQ8LoraModelLoader": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "lora_name": [
+          [],
+          {}
+        ],
+        "strength_model": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVSparseTrackEditor": {
+    "input": {
+      "required": {
+        "image": [
+          "IMAGE",
+          {}
+        ],
+        "points_store": [
+          "STRING",
+          {}
+        ],
+        "coordinates": [
+          "STRING",
+          {}
+        ],
+        "points_to_sample": [
+          "INT",
+          {}
+        ]
+      },
+      "optional": {}
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVDrawTracks": {
+    "input": {
+      "required": {
+        "tracks": [
+          "STRING",
+          {}
+        ],
+        "width": [
+          "INT",
+          {}
+        ],
+        "height": [
+          "INT",
+          {}
+        ]
+      },
+      "optional": {}
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVApplySTG": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "block_indices": [
+          "STRING",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "STGGuiderNode": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "positive": [
+          "CONDITIONING",
+          {}
+        ],
+        "negative": [
+          "CONDITIONING",
+          {}
+        ],
+        "cfg": [
+          "FLOAT",
+          {}
+        ],
+        "stg": [
+          "FLOAT",
+          {}
+        ],
+        "rescale": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "STGGuiderAdvanced": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "positive": [
+          "CONDITIONING",
+          {}
+        ],
+        "negative": [
+          "CONDITIONING",
+          {}
+        ],
+        "skip_steps_sigma_threshold": [
+          "FLOAT",
+          {}
+        ],
+        "cfg_star_rescale": [
+          "BOOLEAN",
+          {}
+        ],
+        "sigmas": [
+          "STRING",
+          {}
+        ],
+        "cfg_values": [
+          "STRING",
+          {}
+        ],
+        "stg_scale_values": [
+          "STRING",
+          {}
+        ],
+        "stg_rescale_values": [
+          "STRING",
+          {}
+        ],
+        "stg_layers_indices": [
+          "STRING",
+          {}
+        ]
+      },
+      "optional": {
+        "preset": [
+          "STG_ADVANCED_PRESET",
+          {}
+        ],
+        "apply_apg": [
+          "BOOLEAN",
+          {}
+        ],
+        "apg_cfg_scale": [
+          "FLOAT",
+          {}
+        ],
+        "eta": [
+          "FLOAT",
+          {}
+        ],
+        "norm_threshold": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "STGAdvancedPresets": {
+    "input": {
+      "required": {
+        "preset": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "APGGuiderNode": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "positive": [
+          "CONDITIONING",
+          {}
+        ],
+        "negative": [
+          "CONDITIONING",
+          {}
+        ],
+        "cfg_scale": [
+          "FLOAT",
+          {}
+        ],
+        "eta": [
+          "FLOAT",
+          {}
+        ],
+        "norm_threshold": [
+          "FLOAT",
+          {}
+        ],
+        "momentum_coefficient": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVTiledSampler": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "vae": [
+          "VAE",
+          {}
+        ],
+        "noise": [
+          "NOISE",
+          {}
+        ],
+        "sampler": [
+          "SAMPLER",
+          {}
+        ],
+        "sigmas": [
+          "SIGMAS",
+          {}
+        ],
+        "guider": [
+          "GUIDER",
+          {}
+        ],
+        "latents": [
+          "LATENT",
+          {}
+        ],
+        "horizontal_tiles": [
+          "INT",
+          {}
+        ],
+        "vertical_tiles": [
+          "INT",
+          {}
+        ],
+        "overlap": [
+          "INT",
+          {}
+        ],
+        "latents_cond_strength": [
+          "FLOAT",
+          {}
+        ],
+        "boost_latent_similarity": [
+          "BOOLEAN",
+          {}
+        ],
+        "crop": [
+          [],
+          {}
+        ]
+      },
+      "optional": {
+        "optional_cond_images": [
+          "IMAGE",
+          {}
+        ],
+        "optional_cond_indices": [
+          "STRING",
+          {}
+        ],
+        "images_cond_strengths": [
+          "STRING",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVTiledVAEDecode": {
+    "input": {
+      "required": {
+        "vae": [
+          "VAE",
+          {}
+        ],
+        "latents": [
+          "LATENT",
+          {}
+        ],
+        "horizontal_tiles": [
+          "INT",
+          {}
+        ],
+        "vertical_tiles": [
+          "INT",
+          {}
+        ],
+        "overlap": [
+          "INT",
+          {}
+        ],
+        "last_frame_fix": [
+          "BOOLEAN",
+          {}
+        ]
+      },
+      "optional": {
+        "working_device": [
+          [],
+          {}
+        ],
+        "working_dtype": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVSpatioTemporalTiledVAEDecode": {
+    "input": {
+      "required": {
+        "vae": [
+          "VAE",
+          {}
+        ],
+        "latents": [
+          "LATENT",
+          {}
+        ],
+        "spatial_tiles": [
+          "INT",
+          {}
+        ],
+        "spatial_overlap": [
+          "INT",
+          {}
+        ],
+        "temporal_tile_length": [
+          "INT",
+          {}
+        ],
+        "temporal_overlap": [
+          "INT",
+          {}
+        ],
+        "last_frame_fix": [
+          "BOOLEAN",
+          {}
+        ],
+        "working_device": [
+          [],
+          {}
+        ],
+        "working_dtype": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXAttentionBank": {
+    "input": {
+      "required": {
+        "save_steps": [
+          "INT",
+          {}
+        ],
+        "blocks": [
+          "STRING",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXPrepareAttnInjections": {
+    "input": {
+      "required": {
+        "latent": [
+          "LATENT",
+          {}
+        ],
+        "attn_bank": [
+          "ATTN_BANK",
+          {}
+        ],
+        "query": [
+          "BOOLEAN",
+          {}
+        ],
+        "key": [
+          "BOOLEAN",
+          {}
+        ],
+        "value": [
+          "BOOLEAN",
+          {}
+        ],
+        "inject_steps": [
+          "INT",
+          {}
+        ]
+      },
+      "optional": {
+        "blocks": [
+          "LTX_BLOCKS",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXAttentioOverride": {
+    "input": {
+      "required": {
+        "blocks": [
+          "STRING",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXAttnOverride": {
+    "input": {
+      "required": {
+        "layers": [
+          "STRING",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "AddLatentGuide": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "latent": [
+          "LATENT",
+          {}
+        ],
+        "image_latent": [
+          "LATENT",
+          {}
+        ],
+        "index": [
+          "INT",
+          {}
+        ],
+        "strength": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXFetaEnhance": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "feta_weight": [
+          "FLOAT",
+          {}
+        ]
+      },
+      "optional": {
+        "attn_override": [
+          "ATTN_OVERRIDE",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXFlowEditCFGGuider": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "source_pos": [
+          "CONDITIONING",
+          {}
+        ],
+        "source_neg": [
+          "CONDITIONING",
+          {}
+        ],
+        "target_pos": [
+          "CONDITIONING",
+          {}
+        ],
+        "target_neg": [
+          "CONDITIONING",
+          {}
+        ],
+        "source_cfg": [
+          "FLOAT",
+          {}
+        ],
+        "target_cfg": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXFlowEditSampler": {
+    "input": {
+      "required": {
+        "skip_steps": [
+          "INT",
+          {}
+        ],
+        "refine_steps": [
+          "INT",
+          {}
+        ],
+        "seed": [
+          "INT",
+          {}
+        ]
+      },
+      "optional": {}
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXForwardModelSamplingPred": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXReverseModelSamplingPred": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXPerturbedAttention": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "scale": [
+          "FLOAT",
+          {}
+        ],
+        "rescale": [
+          "FLOAT",
+          {}
+        ],
+        "cfg": [
+          "FLOAT",
+          {}
+        ]
+      },
+      "optional": {
+        "attn_override": [
+          "ATTN_OVERRIDE",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "ModifyLTXModel": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXRFForwardODESampler": {
+    "input": {
+      "required": {
+        "gamma": [
+          "FLOAT",
+          {}
+        ],
+        "start_step": [
+          "INT",
+          {}
+        ],
+        "end_step": [
+          "INT",
+          {}
+        ],
+        "gamma_trend": [
+          [],
+          {}
+        ]
+      },
+      "optional": {
+        "seed": [
+          "INT",
+          {}
+        ],
+        "attn_bank": [
+          "ATTN_BANK",
+          {}
+        ],
+        "order": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXRFReverseODESampler": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "latent_image": [
+          "LATENT",
+          {}
+        ],
+        "eta": [
+          "FLOAT",
+          {}
+        ],
+        "start_step": [
+          "INT",
+          {}
+        ],
+        "end_step": [
+          "INT",
+          {}
+        ]
+      },
+      "optional": {
+        "eta_trend": [
+          [],
+          {}
+        ],
+        "attn_inj": [
+          "ATTN_INJ",
+          {}
+        ],
+        "order": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "FlowEditForwardSamplerNode": {
+    "input": {
+      "required": {
+        "save_steps": [
+          "INT",
+          {}
+        ]
+      },
+      "optional": {
+        "single_layers": [
+          "SINGLE_LAYERS",
+          {}
+        ],
+        "double_layers": [
+          "DOUBLE_LAYERS",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "FlowEdit2ReverseSamplerNode": {
+    "input": {
+      "required": {
+        "attn_inj": [
+          "ATTN_INJ",
+          {}
+        ],
+        "inject_steps": [
+          "INT",
+          {}
+        ]
+      },
+      "optional": {
+        "single_layers": [
+          "SINGLE_LAYERS",
+          {}
+        ],
+        "double_layers": [
+          "DOUBLE_LAYERS",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "PrepareAttnBankNode": {
+    "input": {
+      "required": {
+        "latent": [
+          "LATENT",
+          {}
+        ],
+        "attn_inj": [
+          "ATTN_INJ",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "RFSingleBlocksOverrideNode": {
+    "input": {
+      "required": {}
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "RFDoubleBlocksOverrideNode": {
+    "input": {
+      "required": {}
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXFloatToInt": {
+    "input": {
+      "required": {
+        "a": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "ImageToCPU": {
+    "input": {
+      "required": {
+        "image": [
+          "IMAGE",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVPatcherVAE": {
+    "input": {
+      "required": {
+        "vae": [
+          "VAE",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVDilateVideoMask": {
+    "input": {
+      "required": {
+        "spatial_radius": [
+          "INT",
+          {}
+        ],
+        "temporal_radius": [
+          "INT",
+          {}
+        ]
+      },
+      "optional": {
+        "mask": [
+          "MASK",
+          {}
+        ],
+        "image_as_mask": [
+          "IMAGE",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "LTXVInpaintPreprocess": {
+    "input": {
+      "required": {
+        "images": [
+          "IMAGE",
+          {}
+        ],
+        "mask": [
+          "MASK",
+          {}
+        ]
+      },
+      "optional": {}
+    },
+    "python_module": "custom_nodes.ComfyUI-LTXVideo"
+  },
+  "CM_BoolUnaryOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_BoolBinaryOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ],
+        "b": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_BoolToInt": {
+    "input": {
+      "required": {
+        "a": [
+          "BOOLEAN",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_IntToBool": {
+    "input": {
+      "required": {
+        "a": [
+          "INT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_FloatToInt": {
+    "input": {
+      "required": {
+        "a": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_IntToFloat": {
+    "input": {
+      "required": {
+        "a": [
+          "INT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_IntToNumber": {
+    "input": {
+      "required": {
+        "a": [
+          "INT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_NumberToInt": {
+    "input": {
+      "required": {
+        "a": [
+          "NUMBER",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_FloatToNumber": {
+    "input": {
+      "required": {
+        "a": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_NumberToFloat": {
+    "input": {
+      "required": {
+        "a": [
+          "NUMBER",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_ComposeVec2": {
+    "input": {
+      "required": {
+        "x": [
+          "FLOAT",
+          {}
+        ],
+        "y": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "FillVec2": {
+    "input": {
+      "required": {
+        "a": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_BreakoutVec2": {
+    "input": {
+      "required": {
+        "a": [
+          "VEC2",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_ComposeVec3": {
+    "input": {
+      "required": {
+        "x": [
+          "FLOAT",
+          {}
+        ],
+        "y": [
+          "FLOAT",
+          {}
+        ],
+        "z": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "FillVec3": {
+    "input": {
+      "required": {
+        "a": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_BreakoutVec3": {
+    "input": {
+      "required": {
+        "a": [
+          "VEC3",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_ComposeVec4": {
+    "input": {
+      "required": {
+        "x": [
+          "FLOAT",
+          {}
+        ],
+        "y": [
+          "FLOAT",
+          {}
+        ],
+        "z": [
+          "FLOAT",
+          {}
+        ],
+        "w": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "FillVec4": {
+    "input": {
+      "required": {
+        "a": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_BreakoutVec4": {
+    "input": {
+      "required": {
+        "a": [
+          "VEC4",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_FloatUnaryOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_FloatUnaryCondition": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_FloatBinaryOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ],
+        "b": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_FloatBinaryCondition": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ],
+        "b": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "Resolution": {
+    "input": {
+      "required": {
+        "resolution": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "NearestResolution": {
+    "input": {
+      "required": {
+        "image": [
+          "IMAGE",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_IntUnaryOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_IntUnaryCondition": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_IntBinaryOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ],
+        "b": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_IntBinaryCondition": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ],
+        "b": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_NumberUnaryOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_NumberUnaryCondition": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_NumberBinaryOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ],
+        "b": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_NumberBinaryCondition": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ],
+        "b": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec2UnaryOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec2ToScalarUnaryOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec2UnaryCondition": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec2BinaryOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ],
+        "b": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec2ToScalarBinaryOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ],
+        "b": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec2BinaryCondition": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ],
+        "b": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec2ScalarOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ],
+        "b": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec3UnaryOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec3ToScalarUnaryOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec3UnaryCondition": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec3BinaryOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ],
+        "b": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec3ToScalarBinaryOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ],
+        "b": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec3BinaryCondition": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ],
+        "b": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec3ScalarOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ],
+        "b": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec4UnaryOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec4ToScalarUnaryOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec4UnaryCondition": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec4BinaryOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ],
+        "b": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec4ToScalarBinaryOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ],
+        "b": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec4BinaryCondition": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ],
+        "b": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "CM_Vec4ScalarOperation": {
+    "input": {
+      "required": {
+        "op": [
+          [],
+          {}
+        ],
+        "a": [
+          [],
+          {}
+        ],
+        "b": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyMath"
+  },
+  "ImageSelector": {
+    "input": {
+      "required": {
+        "images": [
+          "IMAGE",
+          {}
+        ],
+        "selected_indexes": [
+          "STRING",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-Image-Selector"
+  },
+  "ImageDuplicator": {
+    "input": {
+      "required": {
+        "images": [
+          "IMAGE",
+          {}
+        ],
+        "dup_times": [
+          "INT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-Image-Selector"
+  },
+  "LatentSelector": {
+    "input": {
+      "required": {
+        "latent_image": [
+          "LATENT",
+          {}
+        ],
+        "selected_indexes": [
+          "STRING",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-Image-Selector"
+  },
+  "LatentDuplicator": {
+    "input": {
+      "required": {
+        "latent_image": [
+          "LATENT",
+          {}
+        ],
+        "dup_times": [
+          "INT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-Image-Selector"
+  },
+  "LoadAudioUI": {
+    "input": {
+      "required": {
+        "audio": [
+          [],
+          {}
+        ],
+        "start_time": [
+          "FLOAT",
+          {}
+        ],
+        "end_time": [
+          "FLOAT",
+          {}
+        ],
+        "duration": [
+          "FLOAT",
+          {}
+        ]
+      },
+      "optional": {
+        "audioUI": [
+          "AUDIO_UI",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.WhatDreamsCost-ComfyUI"
+  },
+  "LoadVideoUI": {
+    "input": {
+      "required": {
+        "video": [
+          [],
+          {}
+        ],
+        "start_time": [
+          "FLOAT",
+          {}
+        ],
+        "end_time": [
+          "FLOAT",
+          {}
+        ],
+        "duration": [
+          "FLOAT",
+          {}
+        ],
+        "start_frame": [
+          "INT",
+          {}
+        ],
+        "end_frame": [
+          "INT",
+          {}
+        ],
+        "duration_frames": [
+          "INT",
+          {}
+        ],
+        "resize_method": [
+          [],
+          {}
+        ],
+        "custom_width": [
+          "INT",
+          {}
+        ],
+        "custom_height": [
+          "INT",
+          {}
+        ],
+        "frame_rate": [
+          "INT",
+          {}
+        ],
+        "display_mode": [
+          [],
+          {}
+        ],
+        "crop_x": [
+          "FLOAT",
+          {}
+        ],
+        "crop_y": [
+          "FLOAT",
+          {}
+        ],
+        "crop_w": [
+          "FLOAT",
+          {}
+        ],
+        "crop_h": [
+          "FLOAT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.WhatDreamsCost-ComfyUI"
+  },
+  "LTXDirector": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "clip": [
+          "CLIP",
+          {}
+        ],
+        "start_second": [
+          "FLOAT",
+          {}
+        ],
+        "end_second": [
+          "FLOAT",
+          {}
+        ],
+        "duration_seconds": [
+          "FLOAT",
+          {}
+        ],
+        "start_frame": [
+          "INT",
+          {}
+        ],
+        "end_frame": [
+          "INT",
+          {}
+        ],
+        "duration_frames": [
+          "INT",
+          {}
+        ],
+        "timeline_data": [
+          "STRING",
+          {}
+        ],
+        "local_prompts": [
+          "STRING",
+          {}
+        ],
+        "segment_lengths": [
+          "STRING",
+          {}
+        ],
+        "epsilon": [
+          "FLOAT",
+          {}
+        ],
+        "guide_strength": [
+          "STRING",
+          {}
+        ]
+      },
+      "optional": {
+        "audio_vae": [
+          "VAE",
+          {}
+        ],
+        "optional_latent": [
+          "LATENT",
+          {}
+        ],
+        "global_prompt": [
+          "STRING",
+          {
+            "forceInput": true
+          }
+        ],
+        "use_custom_audio": [
+          "BOOLEAN",
+          {}
+        ],
+        "use_custom_motion": [
+          "BOOLEAN",
+          {}
+        ],
+        "inpaint_audio": [
+          "BOOLEAN",
+          {}
+        ],
+        "frame_rate": [
+          "FLOAT",
+          {}
+        ],
+        "display_mode": [
+          [],
+          {}
+        ],
+        "custom_width": [
+          "INT",
+          {}
+        ],
+        "custom_height": [
+          "INT",
+          {}
+        ],
+        "resize_method": [
+          [],
+          {}
+        ],
+        "divisible_by": [
+          "INT",
+          {}
+        ],
+        "img_compression": [
+          "INT",
+          {}
+        ],
+        "override_audio": [
+          "BOOLEAN",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.WhatDreamsCost-ComfyUI"
+  },
+  "LTXDirectorGuide": {
+    "input": {
+      "required": {
+        "positive": [
+          "CONDITIONING",
+          {}
+        ],
+        "negative": [
+          "CONDITIONING",
+          {}
+        ],
+        "vae": [
+          "VAE",
+          {}
+        ],
+        "latent": [
+          "LATENT",
+          {}
+        ],
+        "guide_data": [
+          "GUIDE_DATA",
+          {}
+        ]
+      },
+      "optional": {
+        "motion_guide_data": [
+          "MOTION_GUIDE_DATA",
+          {}
+        ],
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "ic_lora_name": [
+          [],
+          {}
+        ],
+        "ic_lora_strength": [
+          "FLOAT",
+          {}
+        ],
+        "scale_by": [
+          "FLOAT",
+          {}
+        ],
+        "upscale_method": [
+          [],
+          {}
+        ],
+        "image_attention_strength": [
+          "FLOAT",
+          {}
+        ],
+        "crop": [
+          [],
+          {}
+        ],
+        "auto_snap_ic_grid": [
+          "BOOLEAN",
+          {}
+        ],
+        "use_tiled_encode": [
+          "BOOLEAN",
+          {}
+        ],
+        "tile_size": [
+          "INT",
+          {}
+        ],
+        "tile_overlap": [
+          "INT",
+          {}
+        ],
+        "retake_mode": [
+          "BOOLEAN",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.WhatDreamsCost-ComfyUI"
+  },
+  "LTXDirectorCropGuides": {
+    "input": {
+      "required": {
+        "positive": [
+          "CONDITIONING",
+          {}
+        ],
+        "negative": [
+          "CONDITIONING",
+          {}
+        ],
+        "latent": [
+          "LATENT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.WhatDreamsCost-ComfyUI"
+  },
+  "MultiImageLoader": {
+    "input": {
+      "required": {
+        "image_paths": [
+          "STRING",
+          {}
+        ],
+        "width": [
+          "INT",
+          {}
+        ],
+        "height": [
+          "INT",
+          {}
+        ],
+        "interpolation": [
+          [],
+          {}
+        ],
+        "resize_method": [
+          [],
+          {}
+        ],
+        "multiple_of": [
+          "INT",
+          {}
+        ],
+        "img_compression": [
+          "INT",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.WhatDreamsCost-ComfyUI"
+  },
+  "SpeechLengthCalculator": {
+    "input": {
+      "required": {
+        "text": [
+          "STRING",
+          {}
+        ],
+        "fps": [
+          "INT",
+          {}
+        ],
+        "additional_time": [
+          "FLOAT",
+          {}
+        ]
+      },
+      "optional": {
+        "text_input": [
+          "STRING",
+          {
+            "forceInput": true
+          }
+        ]
+      }
+    },
+    "python_module": "custom_nodes.WhatDreamsCost-ComfyUI"
+  },
+  "PromptRelayAdvancedOptions": {
+    "input": {
+      "required": {
+        "video_strength": [
+          "FLOAT",
+          {}
+        ],
+        "video_window_scale": [
+          "FLOAT",
+          {}
+        ],
+        "audio_epsilon": [
+          "FLOAT",
+          {}
+        ],
+        "audio_strength": [
+          "FLOAT",
+          {}
+        ],
+        "audio_window_scale": [
+          "FLOAT",
+          {}
+        ]
+      },
+      "optional": {}
+    },
+    "python_module": "custom_nodes.ComfyUI-PromptRelay"
+  },
+  "PromptRelayEncode": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "clip": [
+          "CLIP",
+          {}
+        ],
+        "latent": [
+          "LATENT",
+          {}
+        ],
+        "global_prompt": [
+          "STRING",
+          {}
+        ],
+        "local_prompts": [
+          "STRING",
+          {}
+        ],
+        "segment_lengths": [
+          "STRING",
+          {}
+        ],
+        "epsilon": [
+          "FLOAT",
+          {}
+        ]
+      },
+      "optional": {}
+    },
+    "python_module": "custom_nodes.ComfyUI-PromptRelay"
+  },
+  "PromptRelayEncodeTimeline": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "clip": [
+          "CLIP",
+          {}
+        ],
+        "latent": [
+          "LATENT",
+          {}
+        ],
+        "global_prompt": [
+          "STRING",
+          {}
+        ],
+        "max_frames": [
+          "INT",
+          {}
+        ],
+        "timeline_data": [
+          "STRING",
+          {}
+        ],
+        "local_prompts": [
+          "STRING",
+          {}
+        ],
+        "segment_lengths": [
+          "STRING",
+          {}
+        ],
+        "epsilon": [
+          "FLOAT",
+          {}
+        ]
+      },
+      "optional": {
+        "fps": [
+          "FLOAT",
+          {}
+        ],
+        "time_units": [
+          [],
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-PromptRelay"
+  },
+  "PromptRelaySmartEncode": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {}
+        ],
+        "clip": [
+          "CLIP",
+          {}
+        ],
+        "latent": [
+          "LATENT",
+          {}
+        ],
+        "global_prompt": [
+          "STRING",
+          {}
+        ],
+        "smart_prompt": [
+          "STRING",
+          {}
+        ],
+        "normalize_by_tokens": [
+          "BOOLEAN",
+          {}
+        ],
+        "epsilon": [
+          "FLOAT",
+          {}
+        ]
+      },
+      "optional": {}
+    },
+    "python_module": "custom_nodes.ComfyUI-PromptRelay"
+  },
+  "PromptRelaySmartEncodeTest": {
+    "input": {
+      "required": {
+        "smart_prompt": [
+          "STRING",
+          {}
+        ],
+        "normalize_by_tokens": [
+          "BOOLEAN",
+          {}
+        ]
+      },
+      "optional": {
+        "clip": [
+          "CLIP",
+          {}
+        ]
+      }
+    },
+    "python_module": "custom_nodes.ComfyUI-PromptRelay"
   }
 }

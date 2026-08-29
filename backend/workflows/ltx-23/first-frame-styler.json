@@ -51,6 +51,7 @@
   "5256": {
     "class_type": "ImageSelector",
     "inputs": {
+      "selected_indexes": "1",
       "images": [
         "5254",
         0
@@ -355,7 +356,9 @@
   "5608": {
     "class_type": "ResizeImageMaskNode",
     "inputs": {
-      "scale_method": "scale total pixels",
+      "resize_type": "scale total pixels",
+      "megapixels": 1.12,
+      "scale_method": "lanczos",
       "input": [
         "5256",
         0

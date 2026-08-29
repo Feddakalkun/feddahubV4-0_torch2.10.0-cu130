@@ -259,6 +259,56 @@
       ],
       "models": [],
       "notes": "FLUX.1 Krea, in six shapes: two builds of the base model and four ways of steering it."
+    },
+    {
+      "id": "ltx-23",
+      "label": "LTX 2.3 Video",
+      "pack": "booster",
+      "area": "video",
+      "enabled": true,
+      "tabs": [
+        "video",
+        "ltx-23-txt2vid",
+        "ltx-23-img2vid",
+        "ltx-23-image-audio2vid",
+        "ltx-23-flf",
+        "ltx-23-vid2vid-prompt",
+        "ltx-23-vid2vid-reference",
+        "ltx-23-outpaint",
+        "ltx-23-edit-anything",
+        "ltx-23-prompt-relay",
+        "ltx-23-first-frame-styler"
+      ],
+      "workflows": [
+        "ltx-23/txt2vid.json",
+        "ltx-23/img2vid.json",
+        "ltx-23/image-audio2vid.json",
+        "ltx-23/flf.json",
+        "ltx-23/vid2vid-prompt.json",
+        "ltx-23/vid2vid-reference.json",
+        "ltx-23/outpaint.json",
+        "ltx-23/edit-anything.json",
+        "ltx-23/prompt-relay.json",
+        "ltx-23/first-frame-styler.json"
+      ],
+      "custom_nodes": [
+        "ComfyMath",
+        "ComfyUI-Custom-Scripts",
+        "ComfyUI-Easy-Use",
+        "ComfyUI-Image-Selector",
+        "ComfyUI-KJNodes",
+        "ComfyUI-LTXVideo",
+        "ComfyUI-PromptRelay",
+        "ComfyUI-Studio-nodes",
+        "ComfyUI-Styles_CSV_Loader",
+        "ComfyUI-VideoHelperSuite",
+        "comfyui_controlnet_aux",
+        "ComfyUI_essentials",
+        "rgthree-comfy",
+        "was-node-suite-comfyui",
+        "WhatDreamsCost-ComfyUI"
+      ],
+      "notes": "Ten workflows on one model. About 52 GB for the core path - the 22B UNet and gemma are most of it - which makes this the heaviest module here. Picture and sound are rendered in one pass, so the audio VAE is not optional. First Frame Styler additionally wants FLUX 2 Klein."
     }
   ]
 }

@@ -461,6 +461,16 @@
   "5882": {
     "class_type": "LTXAddVideoICLoRAGuide",
     "inputs": {
+      "frame_idx": 0,
+      "strength": 1,
+      "latent_downscale_factor": [
+        "5889",
+        1
+      ],
+      "crop": "disabled",
+      "use_tiled_encode": false,
+      "tile_size": 256,
+      "tile_overlap": 64,
       "positive": [
         "5845",
         0
@@ -480,10 +490,6 @@
       "image": [
         "5859",
         0
-      ],
-      "latent_downscale_factor": [
-        "5889",
-        1
       ]
     },
     "_meta": {
@@ -543,7 +549,8 @@
         "5861",
         2
       ],
-      "batch_size": 24,
+      "frame_rate": 24,
+      "batch_size": 1,
       "audio_vae": [
         "5841",
         0
@@ -576,6 +583,8 @@
   "5889": {
     "class_type": "LTXICLoRALoaderModelOnly",
     "inputs": {
+      "lora_name": "ltx-2.3-22b-ic-lora-union-control-ref0.5.safetensors",
+      "strength_model": 1,
       "model": [
         "5887",
         0

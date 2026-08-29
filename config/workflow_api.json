@@ -1970,5 +1970,612 @@
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
     }
+  },
+  "ltx-23-txt2vid": {
+    "name": "LTX 2.3 Text to Video",
+    "filename": "ltx-23/txt2vid.json",
+    "module": "ltx-23",
+    "description": "A clip from a prompt, guided by one reference picture that also sets the frame size.",
+    "inputs": {
+      "prompt": {
+        "node_id": "5023",
+        "input_key": "text",
+        "label": "Prompt",
+        "control": "text",
+        "multiline": true
+      },
+      "negative_prompt": {
+        "node_id": "5021",
+        "input_key": "text",
+        "label": "Negative prompt",
+        "control": "text",
+        "multiline": true
+      },
+      "image": {
+        "node_id": "5027",
+        "input_key": "image",
+        "label": "Reference image",
+        "_why": "Sets the output width and height through ImageResizeKJv2, and conditions the video at strength 0.7. The canvas calls this group TXT2VID; the graph does not work without the picture."
+      },
+      "cfg": {
+        "node_id": "5015",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "sampler": {
+        "node_id": "5019",
+        "input_key": "sampler_name",
+        "label": "Sampler"
+      },
+      "seed": {
+        "node_id": "5024",
+        "input_key": "noise_seed",
+        "label": "Seed"
+      },
+      "length": {
+        "node_id": "5025",
+        "input_key": "value",
+        "label": "Length (seconds)"
+      },
+      "loras": {
+        "node_id": "5583",
+        "type": "loras",
+        "label": "LoRAs"
+      },
+      "steps": {
+        "node_id": "5790",
+        "input_key": "steps",
+        "label": "Steps"
+      }
+    }
+  },
+  "ltx-23-img2vid": {
+    "name": "LTX 2.3 Image to Video",
+    "filename": "ltx-23/img2vid.json",
+    "module": "ltx-23",
+    "description": "Bring a still picture to life, with sound.",
+    "inputs": {
+      "prompt": {
+        "node_id": "2483",
+        "input_key": "text",
+        "label": "Prompt",
+        "control": "text",
+        "multiline": true
+      },
+      "negative_prompt": {
+        "node_id": "2612",
+        "input_key": "text",
+        "label": "Negative prompt",
+        "control": "text",
+        "multiline": true
+      },
+      "image": {
+        "node_id": "2004",
+        "input_key": "image",
+        "label": "Image"
+      },
+      "cfg": {
+        "node_id": "4828",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "sampler": {
+        "node_id": "4831",
+        "input_key": "sampler_name",
+        "label": "Sampler"
+      },
+      "seed": {
+        "node_id": "4832",
+        "input_key": "noise_seed",
+        "label": "Seed"
+      },
+      "length": {
+        "node_id": "4997",
+        "input_key": "value",
+        "label": "Length (seconds)"
+      },
+      "loras": {
+        "node_id": "5584",
+        "type": "loras",
+        "label": "LoRAs"
+      },
+      "steps": {
+        "node_id": "5789",
+        "input_key": "steps",
+        "label": "Steps"
+      }
+    }
+  },
+  "ltx-23-image-audio2vid": {
+    "name": "LTX 2.3 Image + Audio to Video",
+    "filename": "ltx-23/image-audio2vid.json",
+    "module": "ltx-23",
+    "description": "A portrait and a voice clip become a talking, singing shot.",
+    "inputs": {
+      "prompt": {
+        "node_id": "5283",
+        "input_key": "text",
+        "label": "Prompt",
+        "control": "text",
+        "multiline": true
+      },
+      "negative_prompt": {
+        "node_id": "5282",
+        "input_key": "text",
+        "label": "Negative prompt",
+        "control": "text",
+        "multiline": true
+      },
+      "image": {
+        "node_id": "5310",
+        "input_key": "image",
+        "label": "Image"
+      },
+      "seed": {
+        "node_id": "5293",
+        "input_key": "noise_seed",
+        "label": "Seed"
+      },
+      "cfg": {
+        "node_id": "5294",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "sampler": {
+        "node_id": "5307",
+        "input_key": "sampler_name",
+        "label": "Sampler"
+      },
+      "loras": {
+        "node_id": "5585",
+        "type": "loras",
+        "label": "LoRAs"
+      },
+      "audio": {
+        "node_id": "5778",
+        "input_key": "audio",
+        "label": "Audio",
+        "control": "audio",
+        "spread": {
+          "file": "audio",
+          "start": "start_time",
+          "end": "end_time"
+        },
+        "_why": "LoadAudioUI keeps the trim as three inputs, so the one control is spread across them (see workflow_service)."
+      },
+      "steps": {
+        "node_id": "5896",
+        "input_key": "steps",
+        "label": "Steps"
+      }
+    }
+  },
+  "ltx-23-flf": {
+    "name": "LTX 2.3 First and Last Frame",
+    "filename": "ltx-23/flf.json",
+    "module": "ltx-23",
+    "description": "Two stills, and the motion that gets from one to the other.",
+    "inputs": {
+      "prompt": {
+        "node_id": "5644",
+        "input_key": "text",
+        "label": "Prompt",
+        "control": "text",
+        "multiline": true
+      },
+      "negative_prompt": {
+        "node_id": "5626",
+        "input_key": "text",
+        "label": "Negative prompt",
+        "control": "text",
+        "multiline": true
+      },
+      "image": {
+        "node_id": "5613",
+        "input_key": "image",
+        "label": "Image 1"
+      },
+      "image2": {
+        "node_id": "5614",
+        "input_key": "image",
+        "label": "Image 2"
+      },
+      "loras": {
+        "node_id": "5618",
+        "type": "loras",
+        "label": "LoRAs"
+      },
+      "cfg": {
+        "node_id": "5621",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "length": {
+        "node_id": "5646",
+        "input_key": "value",
+        "label": "Length (seconds)"
+      },
+      "seed": {
+        "node_id": "5650",
+        "input_key": "noise_seed",
+        "label": "Seed"
+      },
+      "frame_rate": {
+        "node_id": "5656",
+        "input_key": "value",
+        "label": "Frame rate"
+      },
+      "steps": {
+        "node_id": "5835",
+        "input_key": "steps",
+        "label": "Steps"
+      }
+    }
+  },
+  "ltx-23-vid2vid-prompt": {
+    "name": "LTX 2.3 Video to Video",
+    "filename": "ltx-23/vid2vid-prompt.json",
+    "module": "ltx-23",
+    "description": "Redirect a clip you already have with a prompt.",
+    "inputs": {
+      "prompt": {
+        "node_id": "5839",
+        "input_key": "value",
+        "label": "Prompt",
+        "control": "text",
+        "multiline": true
+      },
+      "negative_prompt": {
+        "node_id": "5847",
+        "input_key": "text",
+        "label": "Negative prompt",
+        "control": "text",
+        "multiline": true
+      },
+      "video": {
+        "node_id": "5872",
+        "input_key": "video",
+        "label": "Video"
+      },
+      "length": {
+        "node_id": "5869",
+        "input_key": "value",
+        "label": "Length (seconds)"
+      },
+      "width": {
+        "node_id": "5871",
+        "input_key": "value",
+        "label": "Width"
+      },
+      "sampler": {
+        "node_id": "5881",
+        "input_key": "sampler_name",
+        "label": "Sampler"
+      },
+      "seed": {
+        "node_id": "5884",
+        "input_key": "noise_seed",
+        "label": "Seed"
+      },
+      "loras": {
+        "node_id": "5887",
+        "type": "loras",
+        "label": "LoRAs"
+      },
+      "cfg": {
+        "node_id": "5891",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "steps": {
+        "node_id": "5892",
+        "input_key": "steps",
+        "label": "Steps"
+      }
+    }
+  },
+  "ltx-23-vid2vid-reference": {
+    "name": "LTX 2.3 Video to Video (reference)",
+    "filename": "ltx-23/vid2vid-reference.json",
+    "module": "ltx-23",
+    "description": "Redirect a clip, keeping a reference picture's look.",
+    "inputs": {
+      "prompt": {
+        "node_id": "5532",
+        "input_key": "value",
+        "label": "Prompt",
+        "control": "text",
+        "multiline": true
+      },
+      "negative_prompt": {
+        "node_id": "5533",
+        "input_key": "text",
+        "label": "Negative prompt",
+        "control": "text",
+        "multiline": true
+      },
+      "image": {
+        "node_id": "5548",
+        "input_key": "image",
+        "label": "REFERENCE IMAGE"
+      },
+      "video": {
+        "node_id": "5565",
+        "input_key": "video",
+        "label": "Video"
+      },
+      "width": {
+        "node_id": "5566",
+        "input_key": "value",
+        "label": "Width"
+      },
+      "length": {
+        "node_id": "5570",
+        "input_key": "value",
+        "label": "Length (seconds)"
+      },
+      "loras": {
+        "node_id": "5582",
+        "type": "loras",
+        "label": "LoRAs"
+      },
+      "steps": {
+        "node_id": "5811",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "sampler": {
+        "node_id": "5822",
+        "input_key": "sampler_name",
+        "label": "Sampler"
+      },
+      "cfg": {
+        "node_id": "5824",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "seed": {
+        "node_id": "5826",
+        "input_key": "noise_seed",
+        "label": "Seed"
+      }
+    }
+  },
+  "ltx-23-outpaint": {
+    "name": "LTX 2.3 Outpaint Video",
+    "filename": "ltx-23/outpaint.json",
+    "module": "ltx-23",
+    "description": "Widen a clip past its own edges.",
+    "inputs": {
+      "prompt": {
+        "node_id": "5667",
+        "input_key": "text",
+        "label": "Prompt",
+        "control": "text",
+        "multiline": true
+      },
+      "negative_prompt": {
+        "node_id": "5665",
+        "input_key": "text",
+        "label": "Negative prompt",
+        "control": "text",
+        "multiline": true
+      },
+      "video": {
+        "node_id": "5662",
+        "input_key": "video",
+        "label": "Video"
+      },
+      "loras": {
+        "node_id": "5660",
+        "type": "loras",
+        "label": "LoRAs"
+      },
+      "seed": {
+        "node_id": "5668",
+        "input_key": "noise_seed",
+        "label": "Seed"
+      },
+      "sampler": {
+        "node_id": "5676",
+        "input_key": "sampler_name",
+        "label": "Sampler"
+      },
+      "cfg": {
+        "node_id": "5678",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "width": {
+        "node_id": "5695",
+        "input_key": "value",
+        "label": "Width"
+      },
+      "height": {
+        "node_id": "5696",
+        "input_key": "value",
+        "label": "Height"
+      },
+      "length": {
+        "node_id": "5697",
+        "input_key": "value",
+        "label": "Length (seconds)"
+      },
+      "skip": {
+        "node_id": "5701",
+        "input_key": "value",
+        "label": "Skip (seconds)"
+      },
+      "steps": {
+        "node_id": "5832",
+        "input_key": "steps",
+        "label": "Steps"
+      }
+    }
+  },
+  "ltx-23-edit-anything": {
+    "name": "LTX 2.3 Edit Anything",
+    "filename": "ltx-23/edit-anything.json",
+    "module": "ltx-23",
+    "description": "Change one thing in a clip and leave the rest alone.",
+    "inputs": {
+      "prompt": {
+        "node_id": "5713",
+        "input_key": "value",
+        "label": "Prompt",
+        "control": "text",
+        "multiline": true
+      },
+      "negative_prompt": {
+        "node_id": "5717",
+        "input_key": "text",
+        "label": "Negative prompt",
+        "control": "text",
+        "multiline": true
+      },
+      "video": {
+        "node_id": "5743",
+        "input_key": "video",
+        "label": "Video"
+      },
+      "sampler": {
+        "node_id": "5725",
+        "input_key": "sampler_name",
+        "label": "Sampler"
+      },
+      "cfg": {
+        "node_id": "5726",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "steps": {
+        "node_id": "5728",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "seed": {
+        "node_id": "5732",
+        "input_key": "noise_seed",
+        "label": "Seed"
+      },
+      "loras": {
+        "node_id": "5733",
+        "type": "loras",
+        "label": "LoRAs"
+      },
+      "longest_side": {
+        "node_id": "5735",
+        "input_key": "value",
+        "label": "Longest side"
+      },
+      "length": {
+        "node_id": "5740",
+        "input_key": "value",
+        "label": "Length (seconds)"
+      },
+      "frame_rate": {
+        "node_id": "5744",
+        "input_key": "value",
+        "label": "Frame rate"
+      },
+      "skip": {
+        "node_id": "5745",
+        "input_key": "value",
+        "label": "Skip (seconds)"
+      }
+    }
+  },
+  "ltx-23-prompt-relay": {
+    "name": "LTX 2.3 Prompt Relay",
+    "filename": "ltx-23/prompt-relay.json",
+    "module": "ltx-23",
+    "description": "A timeline of prompts, each taking over for its own stretch.",
+    "inputs": {
+      "prompt": {
+        "node_id": "5773",
+        "input_key": "global_prompt",
+        "label": "Overall prompt",
+        "control": "text",
+        "multiline": true
+      },
+      "timeline": {
+        "node_id": "5773",
+        "input_key": "timeline_data",
+        "label": "Prompt timeline",
+        "control": "text",
+        "multiline": true,
+        "_why": "The node's own JSON: a list of {prompt, length} segments. Editing it as text is honest until there is a timeline widget."
+      },
+      "image": {
+        "node_id": "5772",
+        "input_key": "image",
+        "label": "Image"
+      },
+      "sampler": {
+        "node_id": "5750",
+        "input_key": "sampler_name",
+        "label": "Sampler"
+      },
+      "steps": {
+        "node_id": "5754",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "length": {
+        "node_id": "5768",
+        "input_key": "value",
+        "label": "Length (seconds)"
+      },
+      "seed": {
+        "node_id": "5775",
+        "input_key": "noise_seed",
+        "label": "Seed"
+      }
+    }
+  },
+  "ltx-23-first-frame-styler": {
+    "name": "LTX 2.3 First Frame Styler",
+    "filename": "ltx-23/first-frame-styler.json",
+    "module": "ltx-23",
+    "description": "Restyle a clip's opening frame with FLUX 2 Klein before animating.",
+    "inputs": {
+      "prompt": {
+        "node_id": "5255",
+        "input_key": "value",
+        "label": "Prompt",
+        "control": "text",
+        "multiline": true
+      },
+      "style": {
+        "node_id": "5260",
+        "input_key": "styles",
+        "label": "Style"
+      },
+      "video": {
+        "node_id": "5254",
+        "input_key": "video",
+        "label": "Video"
+      },
+      "steps": {
+        "node_id": "5226",
+        "input_key": "value",
+        "label": "Steps"
+      },
+      "seed": {
+        "node_id": "5258",
+        "input_key": "noise_seed",
+        "label": "Seed"
+      },
+      "sampler": {
+        "node_id": "5590",
+        "input_key": "sampler_name",
+        "label": "Sampler"
+      },
+      "cfg": {
+        "node_id": "5597",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      }
+    }
   }
 }

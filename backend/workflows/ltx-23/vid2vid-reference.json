@@ -2,6 +2,8 @@
   "5531": {
     "class_type": "LTXICLoRALoaderModelOnly",
     "inputs": {
+      "lora_name": "ltx-2.3-22b-ic-lora-union-control-ref0.5.safetensors",
+      "strength_model": 1,
       "model": [
         "5810",
         0
@@ -356,7 +358,9 @@
   "5574": {
     "class_type": "ResizeImageMaskNode",
     "inputs": {
-      "scale_method": "scale total pixels",
+      "resize_type": "scale total pixels",
+      "megapixels": 1,
+      "scale_method": "lanczos",
       "input": [
         "5548",
         0
@@ -486,7 +490,8 @@
         "5573",
         2
       ],
-      "batch_size": 24,
+      "frame_rate": 24,
+      "batch_size": 1,
       "audio_vae": [
         "5536",
         0
@@ -620,6 +625,16 @@
   "5823": {
     "class_type": "LTXAddVideoICLoRAGuide",
     "inputs": {
+      "frame_idx": 0,
+      "strength": 0.67,
+      "latent_downscale_factor": [
+        "5531",
+        1
+      ],
+      "crop": "disabled",
+      "use_tiled_encode": false,
+      "tile_size": 256,
+      "tile_overlap": 64,
       "positive": [
         "5539",
         0
@@ -639,10 +654,6 @@
       "image": [
         "5572",
         0
-      ],
-      "latent_downscale_factor": [
-        "5531",
-        1
       ]
     },
     "_meta": {
@@ -673,6 +684,11 @@
   "5825": {
     "class_type": "LTXVImgToVideoConditionOnly",
     "inputs": {
+      "strength": 0.5,
+      "bypass": [
+        "5552",
+        0
+      ],
       "vae": [
         "5534",
         0
@@ -683,10 +699,6 @@
       ],
       "latent": [
         "5812",
-        0
-      ],
-      "bypass": [
-        "5552",
         0
       ]
     },

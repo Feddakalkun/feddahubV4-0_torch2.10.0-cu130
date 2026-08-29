@@ -426,6 +426,19 @@ class WorkflowService:
                         if node_id in workflow:
                             if "inputs" not in workflow[node_id]:
                                 workflow[node_id]["inputs"] = {}
+                            # One control, several inputs on one node.
+                            #
+                            # The audio control hands over {file, start, end}
+                            # because that is what a person picks off a
+                            # waveform. Pixaroma wants that packed into one
+                            # JSON string, which encoders.py does; LoadAudioUI
+                            # wants it as three separate inputs, which is this.
+                            spread = input_info.get("spread")
+                            if spread and isinstance(param_value, dict):
+                                for field, target in spread.items():
+                                    if field in param_value:
+                                        workflow[node_id]["inputs"][target] = param_value[field]
+                                continue
                             for input_key in target_input_keys:
                                 value = (per_node_values[idx]
                                          if per_node_values is not None else param_value)

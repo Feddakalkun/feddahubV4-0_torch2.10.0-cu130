@@ -180,6 +180,8 @@
   "5669": {
     "class_type": "LTXVImgToVideoConditionOnly",
     "inputs": {
+      "strength": 0.7,
+      "bypass": true,
       "vae": [
         "5657",
         0
@@ -204,13 +206,13 @@
         "5662",
         1
       ],
-      "batch_size": 25,
-      "audio_vae": [
-        "5658",
-        0
-      ],
       "frame_rate": [
         "5672",
+        0
+      ],
+      "batch_size": 1,
+      "audio_vae": [
+        "5658",
         0
       ]
     },
@@ -331,6 +333,7 @@
   "5679": {
     "class_type": "ImageSelector",
     "inputs": {
+      "selected_indexes": "1",
       "images": [
         "5686",
         0
@@ -355,7 +358,9 @@
   "5682": {
     "class_type": "ResizeImageMaskNode",
     "inputs": {
-      "scale_method": "match size",
+      "resize_type": "match size",
+      "crop": "center",
+      "scale_method": "area",
       "input": [
         "5679",
         0
@@ -433,7 +438,9 @@
   "5686": {
     "class_type": "ResizeImageMaskNode",
     "inputs": {
-      "scale_method": "scale to multiple",
+      "resize_type": "scale to multiple",
+      "multiple": 32,
+      "scale_method": "area",
       "input": [
         "5700",
         0
@@ -446,6 +453,13 @@
   "5687": {
     "class_type": "LTXAddVideoICLoRAGuide",
     "inputs": {
+      "frame_idx": 0,
+      "strength": 1,
+      "latent_downscale_factor": 1,
+      "crop": "disabled",
+      "use_tiled_encode": false,
+      "tile_size": 256,
+      "tile_overlap": 64,
       "positive": [
         "5685",
         0

@@ -2,6 +2,7 @@
   "5748": {
     "class_type": "LTX2SamplingPreviewOverride",
     "inputs": {
+      "preview_rate": 8,
       "model": [
         "5773",
         0
@@ -121,6 +122,9 @@
   "5757": {
     "class_type": "LTXVImgToVideoInplaceKJ",
     "inputs": {
+      "num_images": "1",
+      "strength_1": 1,
+      "index_1": 0,
       "vae": [
         "5762",
         0
@@ -278,7 +282,8 @@
         "5766",
         0
       ],
-      "batch_size": 24,
+      "frame_rate": 24,
+      "batch_size": 1,
       "audio_vae": [
         "5763",
         0
@@ -321,6 +326,17 @@
   "5773": {
     "class_type": "PromptRelayEncodeTimeline",
     "inputs": {
+      "global_prompt": "A single continuous cinematic shot of a woman on the street at night",
+      "max_frames": [
+        "5766",
+        0
+      ],
+      "timeline_data": "{\"segments\":[{\"prompt\":\"A women says \\\"Well well... what do we have here?\\\" and smiles\",\"length\":123,\"color\":\"#4f8edc\"},{\"prompt\":\"then she puts up sunglases\",\"length\":122,\"color\":\"#e07b3a\"},{\"prompt\":\"a horse passing by behind the woman\",\"length\":122,\"color\":\"#d9534f\"},{\"prompt\":\"the woman says \\\"oh my god, its a horse\\\"\",\"length\":122,\"color\":\"#5cb85c\"}]}",
+      "local_prompts": "A women says \"Well well... what do we have here?\" and smiles | then she puts up sunglases | a horse passing by behind the woman | the woman says \"oh my god, its a horse\"",
+      "segment_lengths": "123, 122, 122, 122",
+      "epsilon": 0.001,
+      "fps": 24,
+      "time_units": "seconds",
       "model": [
         "5764",
         0
@@ -331,10 +347,6 @@
       ],
       "latent": [
         "5774",
-        0
-      ],
-      "max_frames": [
-        "5766",
         0
       ]
     },

@@ -149,6 +149,15 @@ class ModelDownloader:
                 "url": "https://huggingface.co/Alissonerdx/LTX-LoRAs/resolve/main/ltx23_edit_anything_global_rank128_v1_9000steps_adamw.safetensors",
                 "min_bytes": 100 * 1024 * 1024,
             },
+            # Both Video to Video graphs steer with this one. It only became
+            # visible once the converter learned to read LTXICLoRALoaderModelOnly's
+            # widgets - before that the graphs named no LoRA at all and
+            # validate_models passed them.
+            "ltx-2.3-22b-ic-lora-union-control-ref0.5.safetensors": {
+                "relative_dir": Path("loras"),
+                "url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Union-Control/resolve/main/ltx-2.3-22b-ic-lora-union-control-ref0.5.safetensors",
+                "min_bytes": 100 * 1024 * 1024,
+            },
             "ltx-2.3-22b-ic-lora-outpaint.safetensors": {
                 "relative_dir": Path("loras"),
                 "url": "https://huggingface.co/oumoumad/LTX-2.3-22b-IC-LoRA-Outpaint/resolve/main/ltx-2.3-22b-ic-lora-outpaint.safetensors",

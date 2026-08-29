@@ -47,7 +47,15 @@ EXTRA_SIGNATURES = ROOT / "config" / "node_signatures.extra.json"
 # Widgets the canvas owns. They occupy a slot in widgets_values and correspond
 # to no input, so they have to be skipped while walking the list.
 UI_ONLY_AFTER = {"seed", "noise_seed"}
-UI_ONLY_NAMES = {"control_after_generate"}
+# Named like inputs, but they are the canvas drawing itself. They keep their
+# slot in widgets_values - dropping the name would shift every value after it
+# - and are then left out of the submitted graph.
+#
+# videopreview is VHS_VideoCombine's player state, and it carries the filename
+# of whatever the author last rendered. It only started appearing once
+# _is_widget learned to trust `default`, so it arrives with that fix.
+UI_ONLY_NAMES = {"control_after_generate", "videopreview", "audioUI", "videoUI",
+                 "imageUI", "previewaudio", "preview"}
 
 # Anything that ends a graph. An output node is a root whether or not something
 # downstream reads it - that is what makes a downloader hanging off
@@ -107,31 +115,81 @@ PASS_THROUGH = frozenset({"Reroute"})
 ADD_LORA_ROW = "➕ Add Lora"
 
 
-def widget_names(info: Dict[str, Any], class_type: str) -> List[str]:
+SCALARS = ("STRING", "INT", "FLOAT", "BOOLEAN", "COMBO")
+DYNAMIC_COMBO = "COMFY_DYNAMICCOMBO_V3"
+
+
+def _is_widget(kind: Any, opts: Dict[str, Any]) -> bool:
+    """Does this input take a slot in widgets_values?
+
+    The plain rule - uppercase type means it arrives over a link - is wrong
+    twice, and both cases are in LTX 2.3:
+
+      LTX2SamplingPreviewOverride.preview_rate is typed "FLOAT,INT". A union
+      of scalars is still a scalar, and it was being read as a link.
+
+      LTXVImgToVideoInplaceKJ.num_images is COMFY_DYNAMICCOMBO_V3 - a combo
+      that also decides which further inputs exist.
+
+    `widgetType` and `default` are what ComfyUI itself puts on a declaration it
+    draws as a widget, so trust those over the type string.
+    """
+    if opts.get("forceInput"):
+        # Drawn as a socket, so it takes no slot - and counting it shifts
+        # every value after it by one. PixaromaPrompt.text_in is a STRING
+        # with this set.
+        return False
+    if not isinstance(kind, str):
+        return True                      # an inline list of choices
+    if kind == DYNAMIC_COMBO:
+        return True
+    if opts.get("widgetType") or "default" in opts:
+        return True
+    if not kind.isupper():
+        return True
+    return all(part.strip() in SCALARS for part in kind.split(",") if part.strip())
+
+
+def _declared(spec: Dict[str, Any]) -> List[Tuple[str, Any, Dict[str, Any]]]:
+    """(name, kind, opts) for every declared input, required before optional."""
+    out = []
+    for section in ("required", "optional"):
+        for name, decl in (spec.get(section) or {}).items():
+            kind = decl[0] if isinstance(decl, list) and decl else decl
+            opts = (decl[1] if isinstance(decl, list) and len(decl) > 1
+                    and isinstance(decl[1], dict) else {})
+            out.append((name, kind, opts))
+    return out
+
+
+def widget_names(info: Dict[str, Any], class_type: str,
+                 values: Optional[List[Any]] = None) -> List[str]:
     """Input names in widget order, with the canvas-only ones interleaved.
 
-    A widget is an input whose type is a list of choices or a plain scalar; the
-    ones typed MODEL, LATENT and so on arrive over links and never appear in
-    widgets_values.
+    `values` is needed only for a dynamic combo, whose chosen key decides which
+    further inputs the node has. Without it those inputs are invisible and every
+    value after the combo is dropped - which is how LTX Edit Anything and Prompt
+    Relay lost their guide frames and strengths.
     """
-    spec = info.get(class_type)
+    spec = (info.get(class_type) or {}).get("input")
     if not spec:
         return []
     names: List[str] = []
-    for section in ("required", "optional"):
-        for name, decl in (spec.get("input", {}).get(section) or {}).items():
-            kind = decl[0] if isinstance(decl, list) and decl else decl
-            opts = decl[1] if isinstance(decl, list) and len(decl) > 1 and isinstance(decl[1], dict) else {}
-            if isinstance(kind, str) and kind.isupper() and kind not in ("STRING", "INT", "FLOAT", "BOOLEAN", "COMBO"):
-                continue          # comes in over a link
-            if opts.get("forceInput"):
-                # Drawn as a socket, not a widget, so it takes no slot in
-                # widgets_values - and counting it shifts every value after
-                # it by one. PixaromaPrompt.text_in is a STRING with this set.
-                continue
-            names.append(name)
-            if name in UI_ONLY_AFTER:
-                names.append("control_after_generate")
+    for name, kind, opts in _declared(spec):
+        if not _is_widget(kind, opts):
+            continue
+        names.append(name)
+        if name in UI_ONLY_AFTER:
+            names.append("control_after_generate")
+        if kind == DYNAMIC_COMBO and values is not None and len(names) <= len(values):
+            chosen = str(values[len(names) - 1])
+            for option in (opts.get("options") or []):
+                if str(option.get("key")) != chosen:
+                    continue
+                for sub, subkind, subopts in _declared(option.get("inputs") or {}):
+                    if _is_widget(subkind, subopts):
+                        names.append(sub)
+                break
     return names
 
 
@@ -436,8 +494,9 @@ def build(ui: Dict[str, Any], info: Dict[str, Any],
         class_type = str(node.get("type", ""))
         if class_type not in info:
             unknown.append(class_type)
-        names = widget_names(info, class_type)
         values = node.get("widgets_values")
+        names = widget_names(info, class_type,
+                             values if isinstance(values, list) else None)
         inputs: Dict[str, Any] = {}
         if class_type == RGTHREE_POWER_LORA and isinstance(values, list):
             inputs.update(rgthree_lora_inputs(values))
