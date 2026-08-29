@@ -46,7 +46,7 @@ from logging_setup import setup_logging
 from lora_service import LoRAService
 from model_downloader import ModelDownloader
 from module_service import ModuleService
-from workflow_service import WorkflowService
+from workflow_service import EmptyUpload, WorkflowService
 
 if sys.platform == "win32":
     os.environ.setdefault("PYTHONIOENCODING", "utf-8")
@@ -87,9 +87,28 @@ if not OBJECT_INFO:
 
 # ----------------------------------------------------------------- health
 
+def _installed_commit() -> str:
+    """Which commit this install is running, short form.
+
+    Worth the eight lines: when somebody else reports a bug there is no way
+    to tell a fault from an install that predates the fix, and every answer
+    starts by guessing. One URL settles it.
+    """
+    try:
+        import subprocess
+        out = subprocess.run(
+            ["git", "-C", str(ROOT_DIR), "log", "-1", "--format=%h %s"],
+            capture_output=True, text=True, timeout=5)
+        return out.stdout.strip() if out.returncode == 0 else ""
+    except Exception:
+        # Not a clone, or no git on PATH. Not knowing is fine; failing is not.
+        return ""
+
+
 @app.get("/health")
 async def health() -> Dict[str, Any]:
-    return {"status": "ok", "version": "4.0.0"}
+    return {"status": "ok", "version": "4.0.0",
+            "commit": _installed_commit()}
 
 
 @app.get("/api/system/comfy-status")
@@ -541,7 +560,15 @@ async def generate(req: GenerateRequest) -> Dict[str, Any]:
 
     params = encoders.apply(mapping, req.params)
 
-    payload = workflow_service.prepare_payload(req.workflow_id, params)
+    try:
+        payload = workflow_service.prepare_payload(req.workflow_id, params)
+    except EmptyUpload as exc:
+        # The check above should have caught this. That it did not means a
+        # loader slot the descriptor does not mark required, so say which
+        # one rather than letting an empty filename reach ComfyUI and come
+        # back as a permission error on its own input folder.
+        raise HTTPException(status_code=400,
+                            detail="Fill these in first: %s" % exc)
     if not payload:
         raise HTTPException(status_code=400,
                             detail=f"Could not build a graph for '{req.workflow_id}'")

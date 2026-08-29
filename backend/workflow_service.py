@@ -33,6 +33,45 @@ _OUTPUT_TYPES_FALLBACK = frozenset({
 _OUTPUT_TYPES_CACHE: Optional[frozenset] = None
 
 
+# An empty filename is not a value a loader can be given.
+#
+# folder_paths.get_annotated_filepath("") returns the input *directory*,
+# and PIL then opens a directory as a file. What reaches the user is
+#
+#     PermissionError: [Errno 13] Permission denied:
+#     '...\ComfyUI\input'
+#
+# several nodes into a run that ComfyUI still reports as executed. Nothing
+# in that message is about the picture nobody chose.
+#
+# /api/generate refuses this already, by asking the descriptor which fields
+# are required. This is the second line, and it is here because the first
+# one is only as good as that `required` flag: a loader slot the descriptor
+# does not recognise - a hint word not in the list, a mapping that says
+# required: false - brings the whole thing back, with the same traceback
+# that takes an afternoon to read.
+_FILENAME_HINTS = ("image", "audio", "video", "frame", "portrait", "mask",
+                   "file", "name")
+
+
+class EmptyUpload(ValueError):
+    """A loader was handed an empty filename. Carries the slot it was for."""
+
+
+def _is_filename_slot(node: Dict[str, Any], input_key: str) -> bool:
+    """Does this input hold a filename a loader will try to open?"""
+    if not isinstance(node, dict):
+        return False
+    if "load" not in str(node.get("class_type") or "").lower():
+        return False
+    low = str(input_key).lower()
+    # lora_name is a filename too, but an empty one is how "no LoRA" is
+    # spelled and the LoRA path has its own handling well before here.
+    if low.startswith("lora"):
+        return False
+    return any(hint in low for hint in _FILENAME_HINTS)
+
+
 def comfy_output_types(timeout: float = 10.0) -> frozenset:
     """Every class ComfyUI treats as an output node, cached for the process.
 
@@ -388,7 +427,13 @@ class WorkflowService:
                             if "inputs" not in workflow[node_id]:
                                 workflow[node_id]["inputs"] = {}
                             for input_key in target_input_keys:
-                                workflow[node_id]["inputs"][input_key] = per_node_values[idx] if per_node_values is not None else param_value
+                                value = (per_node_values[idx]
+                                         if per_node_values is not None else param_value)
+                                if (isinstance(value, str) and not value.strip()
+                                        and _is_filename_slot(workflow[node_id], input_key)):
+                                    raise EmptyUpload(
+                                        input_info.get("label") or param_key)
+                                workflow[node_id]["inputs"][input_key] = value
                         else:
                             logger.warning("Node %s NOT FOUND in workflow", node_id)
                 else:
