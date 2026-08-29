@@ -53,16 +53,25 @@ export const WorkflowDownloadBanner = ({ workflowId }: { workflowId: string }) =
               <div key={`${f.folder}/${f.filename}`} className="space-y-1">
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-[10px] text-zinc-300 truncate min-w-0 font-mono">{f.filename}</span>
-                  <span className="text-[10px] font-mono text-zinc-500 flex-shrink-0">
+                  <span className={`text-[10px] font-mono flex-shrink-0 ${f.error ? 'text-amber-400' : 'text-zinc-500'}`}>
                     {f.exists
                       ? '✓ Done'
-                      : f.currentBytes > 0
-                        ? hasTotal
-                          ? `${pct}% · ${fmtBytes(f.currentBytes)} / ${fmtBytes(f.totalBytes)}`
-                          : fmtBytes(f.currentBytes)
-                        : 'Waiting…'}
+                      : f.error
+                        ? 'Blocked'
+                        : f.currentBytes > 0
+                          ? hasTotal
+                            ? `${pct}% · ${fmtBytes(f.currentBytes)} / ${fmtBytes(f.totalBytes)}`
+                            : fmtBytes(f.currentBytes)
+                          : 'Waiting…'}
                   </span>
                 </div>
+
+                {/* The reason, in full. A gated model waits forever and the
+                    backend has known why the whole time; "Waiting..." was the
+                    app keeping it to itself. */}
+                {f.error && !f.exists && (
+                  <p className="text-[10px] leading-snug text-amber-300/80">{f.error}</p>
+                )}
                 <div className="h-[3px] w-full bg-white/5 rounded-full overflow-hidden">
                   {f.exists ? (
                     <div className="h-full bg-emerald-500" style={{ width: '100%' }} />

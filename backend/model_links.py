@@ -152,7 +152,8 @@ def remote_content_length(url: str, hf_token: str = "") -> int:
     return total
 
 
-def live_progress(files: List[Dict[str, Any]], hf_token: str = "") -> List[Dict[str, Any]]:
+def live_progress(files: List[Dict[str, Any]], hf_token: str = "",
+                  status_of: Optional[Any] = None) -> List[Dict[str, Any]]:
     """Bytes on disk against bytes expected, for a progress bar.
 
     Partial files count. A download manager writing `model.safetensors.part`
@@ -186,13 +187,28 @@ def live_progress(files: List[Dict[str, Any]], hf_token: str = "") -> List[Dict[
             complete = True
             current = max(current, int(item.get("size_bytes") or 0))
 
-        out.append({
+        row = {
             "filename": item["filename"],
             "folder": item["folder"],
             "exists": complete,
             "currentBytes": current,
             "totalBytes": remote_content_length(str(item.get("url") or ""), hf_token),
-        })
+        }
+
+        # Why nothing is happening. Bytes alone cannot tell a download that
+        # failed from one that has not started, so both drew as "Waiting..."
+        # - and a gated model waits like that forever while the backend has
+        # known the reason all along.
+        if status_of is not None and not complete:
+            state = status_of(item["filename"]) or {}
+            if state.get("status") == "error" and state.get("error"):
+                row["error"] = str(state["error"])
+            elif state.get("status"):
+                row["status"] = str(state["status"])
+            if not item.get("url"):
+                row["error"] = ("Nothing knows where to download this. It has no "
+                                 "entry in the model list.")
+        out.append(row)
     return out
 
 

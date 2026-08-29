@@ -400,7 +400,8 @@ async def workflow_download_live_progress(workflow_id: str) -> Dict[str, Any]:
     there, and a 404 every two seconds looks exactly like an idle app.
     """
     token = str(_runtime_settings().get("hf_token") or "").strip()
-    return {"files": model_links.live_progress(_workflow_models(workflow_id), token)}
+    return {"files": model_links.live_progress(
+        _workflow_models(workflow_id), token, model_downloader.get_progress)}
 
 
 @app.post("/api/workflow/download-models/{workflow_id}")

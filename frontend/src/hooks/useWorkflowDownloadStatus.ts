@@ -5,6 +5,8 @@ import { BACKEND_API } from '../config/api';
 
 export interface DownloadFileStatus {
   filename: string;
+  /** Why this one is not moving. Absent while it is simply not started. */
+  error?: string;
   folder: string;
   exists: boolean;
   currentBytes: number;
