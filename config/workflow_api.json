@@ -1044,6 +1044,46 @@
           "default"
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      },
+      "sampler": {
+        "node_id": "387",
+        "input_key": "sampler_name",
+        "label": "Sampler"
+      },
+      "shift_video": {
+        "node_id": "5",
+        "input_key": "shift_video",
+        "label": "Video shift",
+        "_why": "Flow sigma shift for the video stream. H3 was tuned at 12; moving it far changes the character of the motion."
+      },
+      "shift_audio": {
+        "node_id": "5",
+        "input_key": "shift_audio",
+        "label": "Audio shift",
+        "_why": "The same for the audio stream. H3's default is 3."
+      },
+      "ref_image_size": {
+        "node_id": "5",
+        "input_key": "ref_image_size",
+        "label": "Reference detail",
+        "control": "chips",
+        "choices": [
+          "match",
+          "max"
+        ],
+        "_why": "Only used with references on. 'match' scales them to the output size and is fast; 'max' keeps a 2048px short edge for identity and costs real time."
+      },
+      "resize_method": {
+        "node_id": "5",
+        "input_key": "resize_method",
+        "label": "Fit",
+        "control": "chips",
+        "choices": [
+          "crop",
+          "maintain aspect ratio",
+          "stretch to fit",
+          "pad"
+        ]
       }
     }
   },
@@ -2044,6 +2084,46 @@
           "default"
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      },
+      "sampler": {
+        "node_id": "387",
+        "input_key": "sampler_name",
+        "label": "Sampler"
+      },
+      "shift_video": {
+        "node_id": "5",
+        "input_key": "shift_video",
+        "label": "Video shift",
+        "_why": "Flow sigma shift for the video stream. H3 was tuned at 12; moving it far changes the character of the motion."
+      },
+      "shift_audio": {
+        "node_id": "5",
+        "input_key": "shift_audio",
+        "label": "Audio shift",
+        "_why": "The same for the audio stream. H3's default is 3."
+      },
+      "ref_image_size": {
+        "node_id": "5",
+        "input_key": "ref_image_size",
+        "label": "Reference detail",
+        "control": "chips",
+        "choices": [
+          "match",
+          "max"
+        ],
+        "_why": "Only used with references on. 'match' scales them to the output size and is fast; 'max' keeps a 2048px short edge for identity and costs real time."
+      },
+      "resize_method": {
+        "node_id": "5",
+        "input_key": "resize_method",
+        "label": "Fit",
+        "control": "chips",
+        "choices": [
+          "crop",
+          "maintain aspect ratio",
+          "stretch to fit",
+          "pad"
+        ]
       }
     }
   },

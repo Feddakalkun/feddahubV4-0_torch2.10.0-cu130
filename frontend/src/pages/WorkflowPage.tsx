@@ -42,6 +42,9 @@ interface WorkflowPageProps {
    * missing-model banner, generate, cancel, outputs - stays here.
    */
   extraTop?: ReactNode;
+  /** Below the generated controls, above Generate. v3 called this one
+   *  extraSections and used it for a collapsible advanced panel. */
+  extraBottom?: ReactNode;
   /** Merged over the field values at submit. Wins on a clash. */
   extraParams?: () => Record<string, unknown>;
   /** Field keys the custom UI drives, so they are not drawn twice. */
@@ -58,7 +61,7 @@ const seedValues = (fields: WorkflowField[]): Record<string, FieldValue> => {
 };
 
 export const WorkflowPage = ({
-  workflowId, extraTop, extraParams, hideKeys,
+  workflowId, extraTop, extraBottom, extraParams, hideKeys,
 }: WorkflowPageProps) => {
   const { toast } = useToast();
   const { state } = useComfyExecution();
@@ -321,6 +324,8 @@ export const WorkflowPage = ({
             }}
           />
         )}
+
+        {extraBottom}
 
         {busy ? (
           <button type="button" className="workflow-cancel-btn" onClick={cancel}>
