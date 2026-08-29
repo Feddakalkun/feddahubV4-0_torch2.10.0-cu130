@@ -730,7 +730,7 @@ if ($LASTEXITCODE -ne 0) {
 # A pack may have downgraded something on its way in. One list, run at both
 # install and update time, so a fix cannot land on a fresh install and quietly
 # not on an updated one.
-$FixDeps = Join-Path $RootPath "scriptsix_deps.ps1"
+$FixDeps = Join-Path (Join-Path $RootPath "scripts") "fix_deps.ps1"
 if (Test-Path $FixDeps) {
     & powershell -NoProfile -ExecutionPolicy Bypass -File $FixDeps -PyExe "$VenvPy"
 }
