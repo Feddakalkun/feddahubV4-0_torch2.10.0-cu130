@@ -49,9 +49,16 @@ viteLogger.error = (msg, options) => {
   // anything. Only the port-8199 clause below did, which is why ComfyUI's
   // startup race was quiet while Ollama's poll (every 10s, forever, on any
   // machine without Ollama) filled the launcher window.
+  //
+  // Vite emits three of these, not two: 'http proxy error',
+  // 'ws proxy error' and 'ws proxy socket error'. The third contains
+  // neither of the others as a substring - the word sits in the middle -
+  // so it went straight past a filter testing for 'ws proxy error', and
+  // every page reload printed a twelve-line 'write ECONNABORTED' stack
+  // for a websocket the browser had simply closed. A regex covers all
+  // three; substring tests do not, whichever one you pick.
   if (
-    text.includes('http proxy error') ||
-    text.includes('ws proxy error') ||
+    /proxy (socket )?error/.test(text) ||
     text.includes('ECONNREFUSED 127.0.0.1:8199')
   ) {
     return

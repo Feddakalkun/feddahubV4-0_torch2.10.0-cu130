@@ -115,20 +115,11 @@ export const TopSystemStrip = () => {
   const [hfSaving, setHfSaving] = useState(false);
   const [civitaiConfigured, setCivitaiConfigured] = useState(false);
   const [civitaiSaving, setCivitaiSaving] = useState(false);
-  // One request answers for all three keys, so one flag says whether it has
-  // landed. There were two, and Venice had none - which is why Venice was the
-  // one pill that stated "Missing" from the very first paint, before anything
-  // had been asked.
+  // One request answers for both keys, so one flag says whether it has
+  // landed - the pills say "checking" until then rather than claiming a key
+  // is missing before anything has been asked.
   const [keysLoading, setKeysLoading] = useState(true);
   const { progress: download } = useModelDownload();
-  // The Venice key moved out of localStorage and into runtime_settings.json, so
-  // the backend can use it too - that is what lets a vision model reach the
-  // caption path. Status now reports whether Venice actually accepts it, which
-  // localStorage could never answer.
-  const [veniceConfigured, setVeniceConfigured] = useState(false);
-  const [veniceValid, setVeniceValid] = useState<boolean | null>(null);
-  const [veniceUsd, setVeniceUsd] = useState<number | null>(null);
-  const [veniceSaving, setVeniceSaving] = useState(false);
 
   // Poll hardware + comfy system stats
   useEffect(() => {
@@ -171,13 +162,12 @@ export const TopSystemStrip = () => {
 
     const loadTokenStatus = async () => {
       try {
-        const [hfResp, civitaiResp, veniceResp] = await Promise.all([
+        const [hfResp, civitaiResp] = await Promise.all([
           fetch(`${BACKEND_API.BASE_URL}${BACKEND_API.ENDPOINTS.SETTINGS_HF_TOKEN_STATUS}`, { cache: 'no-store' }),
           fetch(`${BACKEND_API.BASE_URL}${BACKEND_API.ENDPOINTS.SETTINGS_CIVITAI_KEY_STATUS}`, { cache: 'no-store' }),
-          fetch(`${BACKEND_API.BASE_URL}${BACKEND_API.ENDPOINTS.SETTINGS_VENICE_KEY_STATUS}`, { cache: 'no-store' }),
         ]);
-        const [hfData, civitaiData, veniceData] = await Promise.all([
-          hfResp.json(), civitaiResp.json(), veniceResp.json(),
+        const [hfData, civitaiData] = await Promise.all([
+          hfResp.json(), civitaiResp.json(),
         ]);
         if (mounted) {
           // A later failure gets its own five attempts, rather than inheriting
@@ -185,16 +175,6 @@ export const TopSystemStrip = () => {
           retries = 0;
           setHfConfigured(!!hfData.configured);
           setCivitaiConfigured(!!civitaiData.configured);
-          setVeniceConfigured(!!veniceData.configured);
-          setVeniceValid(veniceData.configured ? !!veniceData.valid : null);
-          setVeniceUsd(typeof veniceData?.balance?.balances?.usd === 'number'
-            ? veniceData.balance.balances.usd
-            : null);
-          // A key saved by an older build still sits in localStorage, where the
-          // backend cannot see it. Move it across once rather than making every
-          // existing user type it in again, then drop it from the browser.
-          const legacy = localStorage.getItem('venice_api_key');
-          if (legacy && !veniceData.configured) void migrateVeniceKey(legacy);
         }
       } catch {
         // A failed request is not an answer. The frontend loads before the
@@ -386,69 +366,8 @@ export const TopSystemStrip = () => {
     }
   };
 
-  const saveVeniceKey = async (value: string) => {
-    const res = await fetch(`${BACKEND_API.BASE_URL}${BACKEND_API.ENDPOINTS.SETTINGS_VENICE_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ api_key: value }),
-    });
-    const data = await res.json();
-    if (!res.ok || !data?.success) throw new Error(data?.detail || 'Could not save the key');
-    return !!data.configured;
-  };
-
   // One-time carry-over from the localStorage era. Silent on purpose: the user
   // set this key already and does not need to be told where it is stored now.
-  const migrateVeniceKey = async (value: string) => {
-    try {
-      const ok = await saveVeniceKey(value);
-      localStorage.removeItem('venice_api_key');
-      setVeniceConfigured(ok);
-      const check = await fetch(
-        `${BACKEND_API.BASE_URL}${BACKEND_API.ENDPOINTS.SETTINGS_VENICE_KEY_STATUS}`,
-        { cache: 'no-store' });
-      const state = await check.json();
-      setVeniceValid(state?.configured ? !!state.valid : null);
-      setVeniceUsd(typeof state?.balance?.balances?.usd === 'number' ? state.balance.balances.usd : null);
-    } catch {
-      /* leave it in localStorage so the next load can try again */
-    }
-  };
-
-  const handleVeniceKey = async () => {
-    if (veniceSaving) return;
-    const next = window.prompt(
-      veniceConfigured
-        ? 'Paste a new Venice.ai API key to replace the current one. Leave blank to remove it.'
-        : 'Paste your Venice.ai API key (from venice.ai account settings).',
-      '',
-    );
-    if (next === null) return;
-    const trimmed = next.trim();
-    if (!trimmed && veniceConfigured && !window.confirm('Remove the saved Venice.ai API key?')) return;
-    setVeniceSaving(true);
-    try {
-      const ok = await saveVeniceKey(trimmed);
-      localStorage.removeItem('venice_api_key');
-      setVeniceConfigured(ok);
-      if (!ok) {
-        setVeniceValid(null);
-        setVeniceUsd(null);
-      } else {
-        const check = await fetch(
-          `${BACKEND_API.BASE_URL}${BACKEND_API.ENDPOINTS.SETTINGS_VENICE_KEY_STATUS}`,
-          { cache: 'no-store' });
-        const state = await check.json();
-        setVeniceValid(!!state?.valid);
-        setVeniceUsd(typeof state?.balance?.balances?.usd === 'number' ? state.balance.balances.usd : null);
-      }
-    } catch (err) {
-      setVeniceValid(false);
-    } finally {
-      setVeniceSaving(false);
-    }
-  };
-
   const handleCivitaiKey = async () => {
     if (civitaiSaving) return;
     const nextKey = window.prompt(
@@ -635,45 +554,6 @@ export const TopSystemStrip = () => {
       >
         <RotateCcw className="w-3.5 h-3.5" />
         Reset UI
-      </button>
-
-      {/* "Key Set" answered the wrong question: whether a string is stored,
-          rather than whether Venice accepts it and what is left to spend. A key
-          that has been revoked or drained looked identical to a working one. */}
-      <button
-        onClick={handleVeniceKey}
-        disabled={veniceSaving}
-        title={
-          keysLoading
-            ? 'Checking whether a Venice key is saved'
-            : !veniceConfigured
-            ? 'Save your Venice.ai API key (for Venice image + chat)'
-            : veniceValid === false
-              ? 'Venice rejected this key - click to replace it'
-              : veniceUsd !== null
-                ? `Venice balance $${veniceUsd.toFixed(2)} - click to replace the key`
-                : 'Venice key saved - click to replace it'
-        }
-        className={`${PILL} disabled:opacity-40 ${
-          keysLoading
-            ? 'border-white/10 bg-white/5 text-slate-500'
-            : !veniceConfigured || veniceValid === false
-            ? 'border-amber-500/30 bg-amber-500/10 text-amber-300 hover:bg-amber-500/18'
-            : veniceUsd !== null && veniceUsd < 1
-              ? 'border-amber-500/30 bg-amber-500/10 text-amber-300 hover:bg-amber-500/18'
-              : 'border-sky-500/30 bg-sky-500/10 text-sky-300 hover:bg-sky-500/18'
-        }`}
-      >
-        {(veniceSaving || keysLoading) ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <KeyRound className="w-3.5 h-3.5" />}
-        {keysLoading
-          ? 'Venice Key'
-          : !veniceConfigured
-          ? 'Venice Key Missing'
-          : veniceValid === false
-            ? 'Venice Key Rejected'
-            : veniceUsd !== null
-              ? `Venice $${veniceUsd.toFixed(2)}`
-              : 'Venice Key Set'}
       </button>
 
       <button

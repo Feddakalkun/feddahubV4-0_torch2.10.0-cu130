@@ -66,20 +66,10 @@ export const BACKEND_API = {
         SETTINGS_CIVITAI_KEY_STATUS: '/api/settings/civitai-key/status',
         SETTINGS_HF_TOKEN: '/api/settings/hf-token',
         SETTINGS_HF_TOKEN_STATUS: '/api/settings/hf-token/status',
-        SETTINGS_VENICE_KEY: '/api/settings/venice-key',
-        SETTINGS_VENICE_KEY_STATUS: '/api/settings/venice-key/status',
-        VENICE_MODELS: '/api/venice/models',
-        VENICE_STYLES: '/api/venice/styles',
-        VENICE_BALANCE: '/api/venice/balance',
-        VENICE_RATE_LIMITS: '/api/venice/rate-limits',
-        VENICE_CHAT: '/api/venice/chat',
-        VENICE_IMAGE: '/api/venice/image',
-        VENICE_IMAGE_EDIT: '/api/venice/image-edit',
-        VENICE_EDIT_MODELS: '/api/venice/edit-models',
-        VENICE_CHARACTERS: '/api/venice/characters',
-        VENICE_CLONE_VOICE: '/api/venice/clone-voice',
-        VENICE_VOICES: '/api/venice/voices',
-        VENICE_SPEECH: '/api/venice/speech',
+        // Venice is not in v4. The fifteen endpoints these named live in v3's
+        // server.py and none of them have been ported, so listing them here
+        // was a menu of routes that answer 404. They come back with the
+        // backend, not before it.
         CHAT: '/api/chat',
         CHAT_HISTORY: '/api/chat/history',
         CHAT_RESET: '/api/chat/reset',
