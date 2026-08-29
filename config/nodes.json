@@ -9,6 +9,15 @@
     "pin_from": "comfyuistudio-v362"
   },
   {
+    "name": "ComfyMath",
+    "url": "https://github.com/evanspearman/ComfyMath.git",
+    "folder": "ComfyMath",
+    "note": "Math expression nodes — ComfyMathExpression, CM_FloatToInt",
+    "pin": "c01177221c31b8e5fbc062778fc8254aeb541638",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
     "name": "ComfyUI-Custom-Scripts",
     "url": "https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git",
     "folder": "ComfyUI-Custom-Scripts",
@@ -43,6 +52,15 @@
     "pin": "6ea2651e7df66d7585f6ffee804b20e92fb38b8a",
     "pin_source": "git",
     "pin_from": "comfyuistudio-v362"
+  },
+  {
+    "name": "ComfyUI-Image-Selector",
+    "url": "https://github.com/SLAPaper/ComfyUI-Image-Selector.git",
+    "folder": "ComfyUI-Image-Selector",
+    "note": "Image selector node — pick one image from a batch",
+    "pin": "058846b177626a226590d355a342ae8f364591ac",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
   },
   {
     "name": "ComfyUI-Impact-Pack",
@@ -90,6 +108,15 @@
     "pin_from": "comfyuistudio-v362"
   },
   {
+    "name": "ComfyUI-LTXVideo",
+    "url": "https://github.com/Lightricks/ComfyUI-LTXVideo.git",
+    "folder": "ComfyUI-LTXVideo",
+    "note": "LTX Video nodes — LTXVImgToVideoConditionOnly, LTXICLoRALoaderModelOnly, LTXAddVideoICLoRAGuide",
+    "pin": "15d09abb5a187a8dcaea2fc31fe51ee96e6c9d0d",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
     "name": "ComfyUI-Manager",
     "url": "https://github.com/Comfy-Org/ComfyUI-Manager.git",
     "folder": "ComfyUI-Manager",
@@ -115,6 +142,15 @@
     "pin": "818855ad05d31c41d9401aee72fa75b631b4e903",
     "pin_source": "git",
     "pin_from": "fedda-v3"
+  },
+  {
+    "name": "ComfyUI-PromptRelay",
+    "url": "https://github.com/kijai/ComfyUI-PromptRelay.git",
+    "folder": "ComfyUI-PromptRelay",
+    "note": "PromptRelayEncodeTimeline - a prompt per moment on a timeline, for LTX 2.3 Prompt Relay",
+    "pin": "ca5d4e3edb6abd9c2a4c68a3a6798eec1980f450",
+    "pin_source": "git-head",
+    "pin_from": "read from the repo on 2026-08-29; the only pack LTX needed that v3 never carried, so there was no v3 pin to inherit"
   },
   {
     "name": "ComfyUI-SeedVR2_VideoUpscaler",
@@ -233,5 +269,14 @@
     "pin": "ea935d1044ae5a26efa54ebeb18fe9020af49a45",
     "pin_source": "git",
     "pin_from": "fedda-v3"
+  },
+  {
+    "name": "WhatDreamsCost-ComfyUI",
+    "url": "https://github.com/WhatDreamsCost/WhatDreamsCost-ComfyUI.git",
+    "folder": "WhatDreamsCost-ComfyUI",
+    "note": "LoadAudioUI — audio-conditioned video (LTX 2.3 audio+image2video)",
+    "pin": "a3c809c8b593a74c2ddcd6c1f83ad85ebebe3c64",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
   }
 ]

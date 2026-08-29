@@ -6,6 +6,14 @@
     "VHS_LoadImagePath": "ComfyUI-VideoHelperSuite",
     "VideoInfo": "ComfyUI-tbox",
     "UnetLoaderGGUF": "ComfyUI-GGUF",
-    "CR Conditioning Mixer": "ComfyUI_Comfyroll_CustomNodes"
+    "CR Conditioning Mixer": "ComfyUI_Comfyroll_CustomNodes",
+    "CM_FloatToInt": "ComfyMath",
+    "CM_IntToFloat": "ComfyMath",
+    "ImageSelector": "ComfyUI-Image-Selector",
+    "LTXAddVideoICLoRAGuide": "ComfyUI-LTXVideo",
+    "LTXICLoRALoaderModelOnly": "ComfyUI-LTXVideo",
+    "LTXVImgToVideoConditionOnly": "ComfyUI-LTXVideo",
+    "LoadAudioUI": "WhatDreamsCost-ComfyUI",
+    "PromptRelayEncodeTimeline": "ComfyUI-PromptRelay"
   }
 }
