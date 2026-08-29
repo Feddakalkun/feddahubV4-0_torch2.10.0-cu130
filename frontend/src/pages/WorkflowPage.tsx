@@ -220,6 +220,14 @@ export const WorkflowPage = ({ workflowId }: WorkflowPageProps) => {
 
   const busy = isGenerating || state === 'executing';
 
+  // A required field left empty used to be submitted as an empty string.
+  // ComfyUI then tried to open its own input folder as a file and failed
+  // several nodes in, with a permission error naming a directory - a
+  // message that says nothing about the picture nobody chose.
+  const missing = schema.fields.filter(
+    (f) => f.required && !String(values[f.key] ?? '').trim(),
+  );
+
   return (
     <WorkflowShell
       title={schema.name}
@@ -288,9 +296,17 @@ export const WorkflowPage = ({ workflowId }: WorkflowPageProps) => {
             Cancel
           </button>
         ) : (
-          <button type="button" className="workflow-cockpit-generate" onClick={submit}>
+          <button
+            type="button"
+            className="workflow-cockpit-generate"
+            onClick={submit}
+            disabled={missing.length > 0}
+            title={missing.length ? `Still needed: ${missing.map((f) => f.label).join(', ')}` : undefined}
+          >
             <Sparkles className="h-4 w-4" />
-            Generate
+            {missing.length
+              ? `Add ${missing.map((f) => f.label).join(', ')}`
+              : 'Generate'}
           </button>
         )}
       </div>

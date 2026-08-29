@@ -473,6 +473,25 @@ async def generate(req: GenerateRequest) -> Dict[str, Any]:
     # Pixaroma packs a prompt into a hidden JSON string, for one. The mapping
     # names an encoder for those; everything else passes through untouched.
     mapping = workflow_service.load_mapping().get(req.workflow_id) or {}
+
+    # An unfilled upload used to reach ComfyUI as an empty string, and LoadImage
+    # would try to open the input *directory* as a file: "Permission denied:
+    # ...\ComfyUI\input", from av.error, several nodes into the run. The
+    # cause is not in that message anywhere.
+    #
+    # Same shape as the empty-string-over-a-number bug descriptor.py records:
+    # a control that was never filled must not overwrite the graph, and here it
+    # must not start the run at all - there is no sensible picture to fall back
+    # on.
+    graph_desc = descriptor.describe_workflow(
+        req.workflow_id, mapping, _load_graph(mapping), OBJECT_INFO)
+    missing = [f["label"] for f in graph_desc["fields"]
+               if f.get("required") and not str(req.params.get(f["key"]) or "").strip()]
+    if missing:
+        raise HTTPException(
+            status_code=400,
+            detail="Fill these in first: %s" % ", ".join(missing))
+
     params = encoders.apply(mapping, req.params)
 
     payload = workflow_service.prepare_payload(req.workflow_id, params)
