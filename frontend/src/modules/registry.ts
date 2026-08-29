@@ -1,4 +1,4 @@
-import { Images, Sparkles, Video, Wand2, type LucideIcon } from 'lucide-react';
+import { Clapperboard, Images, Sparkles, Video, Wand2, type LucideIcon } from 'lucide-react';
 
 /**
  * What the UI knows how to show, and which backend module has to be installed
@@ -31,7 +31,8 @@ export type SourceModuleId =
   | 'z-image-core'
   | 'z-image-inpaint'
   | 'z-image-control'
-  | 'z-image-detailed';
+  | 'z-image-detailed'
+  | 'minimax-h3';
 
 export const APP_VERSION_LABEL = 'FEDDA Hub v4.0';
 export const ACTIVE_TAB_STORAGE_KEY = 'fedda_v4_active_tab';
@@ -56,7 +57,7 @@ export const FEDDA_AREAS: FeddaArea[] = [
   {
     id: 'video',
     label: 'Video Workflows',
-    description: 'Motion workflows. Arrives with the first video module.',
+    description: 'Clips from a prompt, with sound generated alongside the picture.',
     Icon: Video,
   },
 ];
@@ -86,6 +87,14 @@ export const FEDDA_FAMILIES: FeddaFamily[] = [
     Icon: Wand2,
     requiresAnyOf: ['z-image-core', 'z-image-inpaint', 'z-image-control', 'z-image-detailed'],
   },
+  {
+    id: 'minimax-h3',
+    area: 'video',
+    label: 'MiniMax H3',
+    description: 'Video with its own sound. Picture and stereo audio are generated together, not layered afterwards.',
+    Icon: Clapperboard,
+    requiresAnyOf: ['minimax-h3'],
+  },
 ];
 
 // ------------------------------------------------------------------- level 3
@@ -111,9 +120,11 @@ export interface FeddaModule {
 /**
  * Every workflow the app can open.
  *
- * All six are groups of one canvas file - the owner's `Z IMAGE 6.json` - and
- * the group is the unit: one file carries seven switchable modes, converted one
- * per group by `scripts/ui_to_api.py --all-groups --activate`.
+ * The six Z-Image ones are groups of a single canvas file - the owner's
+ * `Z IMAGE 6.json` - because the group is the unit there: one file carries
+ * seven switchable modes, converted one per group by
+ * `scripts/ui_to_api.py --all-groups --activate`. MiniMax H3 came the same way
+ * from `MINIMAX H3.json`, which holds eight.
  */
 export const FEDDA_MODULES: FeddaModule[] = [
   {
@@ -193,6 +204,20 @@ export const FEDDA_MODULES: FeddaModule[] = [
     workflows: ['z-image/detailed.json'],
     defaultTab: 'z-image-detailed',
     Icon: Sparkles,
+  },
+
+  {
+    id: 'minimax-h3-txt2vid',
+    sourceModuleId: 'minimax-h3',
+    family: 'minimax-h3',
+    area: 'video',
+    label: 'Text to Video',
+    description: 'A clip from a prompt, with stereo sound generated in the same pass.',
+    pack: 'booster',
+    tabs: ['minimax-h3-txt2vid'],
+    workflows: ['minimax-h3/txt2vid.json'],
+    defaultTab: 'minimax-h3-txt2vid',
+    Icon: Clapperboard,
   },
 
   // Reachable by tab, off the card tree - it is a place, not a workflow.

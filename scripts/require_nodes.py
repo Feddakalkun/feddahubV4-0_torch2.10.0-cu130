@@ -37,6 +37,7 @@ from typing import Any, Dict, List, Set
 ROOT = Path(__file__).resolve().parent.parent
 WORKFLOWS = ROOT / "backend" / "workflows"
 CATALOG = ROOT / "config" / "node_catalog.json"
+OVERRIDES = ROOT / "config" / "node_overrides.json"
 NODES = ROOT / "config" / "nodes.json"
 MODULES = ROOT / "config" / "modules.json"
 CACHE = ROOT / "config" / "object_info.cache.json"
@@ -62,8 +63,24 @@ def object_info(comfy: str | None) -> Dict[str, Any]:
     sys.exit("No object_info. Start ComfyUI once, or pass --comfy.")
 
 
+def load_overrides() -> Dict[str, str]:
+    """Node type -> pack, for types this ComfyUI has never seen.
+
+    A class_type is resolved through object_info's python_module. One that is
+    not installed here resolves to nothing, and the pack that provides it then
+    quietly fails to reach nodes.json - which ships a workflow whose node is
+    missing, and the failure surfaces as "node not found" on a user's machine
+    rather than here. MiniMax H3's VHS_VideoCombine was the first case.
+    """
+    if not OVERRIDES.exists():
+        return {}
+    data = json.loads(OVERRIDES.read_text(encoding="utf-8-sig"))
+    return {k: str(v) for k, v in (data.get("overrides") or {}).items()}
+
+
 def packs_for(graphs: List[Path], info: Dict[str, Any]) -> tuple[Set[str], Set[str]]:
     """Which packs these graphs need, and which node types nothing here knows."""
+    overrides = load_overrides()
     packs: Set[str] = set()
     unknown: Set[str] = set()
     for f in graphs:
@@ -81,7 +98,10 @@ def packs_for(graphs: List[Path], info: Dict[str, Any]) -> tuple[Set[str], Set[s
                 continue
             spec = info.get(class_type)
             if spec is None:
-                unknown.add(class_type)
+                if class_type in overrides:
+                    packs.add(overrides[class_type])
+                else:
+                    unknown.add(class_type)
                 continue
             module = str(spec.get("python_module") or "")
             if module.startswith("custom_nodes."):
@@ -134,8 +154,17 @@ def main() -> None:
     for e in entries:
         print(f"     {e['folder']}")
     if unknown:
-        print(f"  [warn] {len(unknown)} node type(s) no ComfyUI here knows: "
-              + ", ".join(sorted(unknown)[:6]))
+        # Not a warning. An unattributed node type means the pack providing it
+        # never reaches nodes.json, so the workflow ships and fails on somebody
+        # else's machine with "node not found" - the exact class of fault this
+        # script exists to make impossible.
+        print(f"  [ERROR] {len(unknown)} node type(s) cannot be attributed to a pack:")
+        for t in sorted(unknown):
+            print(f"     {t}")
+        print("          Either read object_info from a ComfyUI that has them")
+        print("          (--comfy http://127.0.0.1:8199), or name the pack in")
+        print("          config/node_overrides.json.")
+        sys.exit(1)
     if missing:
         print(f"  [ERROR] not in node_catalog.json: {', '.join(missing)}")
         print("          Add the pack and its git URL there, then run again.")

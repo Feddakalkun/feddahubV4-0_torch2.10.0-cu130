@@ -15,7 +15,42 @@ class ModelDownloader:
         self.lock = threading.Lock()
         self._active_downloads: Dict[str, threading.Thread] = {}
 
+        # Named for the first workflow that needed it; it is now the table of
+        # every model any shipped graph names, and the download preflight looks
+        # each filename up here. A graph that names a file absent from this
+        # table reports as unavailable in the UI rather than failing at run.
         self.zimage_core_specs: Dict[str, Dict[str, Any]] = {
+            # --- MiniMax H3 ------------------------------------------------
+            # Sizes verified against the origin before these went in: 19.53,
+            # 14.61, 4.85 and 0.56 GB. Roughly 40 GB for one workflow, which is
+            # twice the whole Z-Image core pack - the reason this is a booster
+            # module and not part of core.
+            #
+            # diffusion_models and text_encoders rather than unet and clip:
+            # ComfyUI maps each pair to the same search list, so both work, and
+            # these are the names on the model card the workflow was built from.
+            "minimax_h3_ref2va_pruned_int8_convrot.safetensors": {
+                "relative_dir": Path("diffusion_models"),
+                "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/diffusion_models/minimax_h3_ref2va_pruned_int8_convrot.safetensors",
+                "min_bytes": 1024 * 1024 * 1024,
+            },
+            "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors": {
+                "relative_dir": Path("text_encoders"),
+                "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+                "min_bytes": 1024 * 1024 * 1024,
+            },
+            "minimax_h3_video_vae_fp16.safetensors": {
+                "relative_dir": Path("vae"),
+                "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae/minimax_h3_video_vae_fp16.safetensors",
+                "min_bytes": 100 * 1024 * 1024,
+            },
+            "minimax_h3_audio_vae_fp32.safetensors": {
+                "relative_dir": Path("vae"),
+                "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae/minimax_h3_audio_vae_fp32.safetensors",
+                "min_bytes": 100 * 1024 * 1024,
+            },
+
+            # --- Z-Image ---------------------------------------------------
             "z_image_turbo_bf16.safetensors": {
                 "relative_dir": Path("unet"),
                 "url": "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/diffusion_models/z_image_turbo_bf16.safetensors",

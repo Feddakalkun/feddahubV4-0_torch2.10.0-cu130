@@ -1,0 +1,9 @@
+{
+  "_note": "Node type -> pack, for types the ComfyUI that object_info was read from does not have installed. require_nodes.py resolves a class_type through object_info's python_module; a type it has never seen cannot be attributed, and leaving it out ships a workflow whose pack is missing. So an unknown type is an error there unless it is named here. Keep this small - every entry is a fact nothing verifies, and the honest fix for a growing list is to read object_info from a ComfyUI that has the packs.",
+  "overrides": {
+    "VHS_VideoCombine": "ComfyUI-VideoHelperSuite",
+    "VHS_LoadVideo": "ComfyUI-VideoHelperSuite",
+    "VHS_LoadImagePath": "ComfyUI-VideoHelperSuite",
+    "VideoInfo": "ComfyUI-tbox"
+  }
+}

@@ -379,5 +379,58 @@
         "label": "LoRAs"
       }
     }
+  },
+  "minimax-h3-txt2vid": {
+    "name": "MiniMax H3 Text to Video",
+    "filename": "minimax-h3/txt2vid.json",
+    "module": "minimax-h3",
+    "description": "Text to video with native stereo audio, generated jointly rather than added afterwards.",
+    "inputs": {
+      "prompt": {
+        "node_id": "153",
+        "input_key": "prompt",
+        "label": "Prompt"
+      },
+      "width": {
+        "node_id": "153",
+        "input_key": "width",
+        "label": "Width"
+      },
+      "height": {
+        "node_id": "153",
+        "input_key": "height",
+        "label": "Height"
+      },
+      "length": {
+        "node_id": "153",
+        "input_key": "length",
+        "label": "Frames"
+      },
+      "seed": {
+        "node_id": "143",
+        "input_key": "noise_seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "148",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "denoise": {
+        "node_id": "148",
+        "input_key": "denoise",
+        "label": "Denoise"
+      },
+      "fps": {
+        "node_id": "150",
+        "input_key": "frame_rate",
+        "label": "FPS"
+      },
+      "loras": {
+        "node_id": "311",
+        "type": "loras",
+        "label": "LoRAs"
+      }
+    }
   }
 }

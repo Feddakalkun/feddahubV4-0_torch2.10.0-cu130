@@ -108,6 +108,15 @@
     "pin_from": "fedda-v3"
   },
   {
+    "name": "ComfyUI-VideoHelperSuite",
+    "url": "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git",
+    "folder": "ComfyUI-VideoHelperSuite",
+    "note": "VHS_VideoCombine, ImageBatch — all video workflows",
+    "pin": "4ee72c065db22c9d96c2427954dc69e7b908444b",
+    "pin_source": "git",
+    "pin_from": "fedda-v3"
+  },
+  {
     "name": "comfyui_controlnet_aux",
     "url": "https://github.com/Fannovel16/comfyui_controlnet_aux.git",
     "folder": "comfyui_controlnet_aux",
