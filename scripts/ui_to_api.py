@@ -308,7 +308,23 @@ def build(ui: Dict[str, Any], info: Dict[str, Any],
             return None
         from_id, from_slot = link[0], link[1]
         upstream = nodes.get(from_id)
-        if upstream is None or muted(upstream) or from_id not in keep:
+        if upstream is None or muted(upstream):
+            return None
+
+        # Group membership decides what gets *submitted*, not what may be
+        # followed through. A bypassed node is never submitted - it forwards -
+        # so where it happens to sit on the canvas says nothing about whether
+        # the link through it is real.
+        #
+        # This was the wrong way round, and FLUX Krea gguf is what showed it:
+        # its two CR Conditioning Mixers take their conditioning through three
+        # bypassed StyleModelApplySimple nodes parked well outside the group
+        # box. The links were dropped before the forwarding below could run,
+        # the mixers converted with no inputs at all, and ComfyUI refused the
+        # graph with "Required input is missing: conditioning_1".
+        #
+        # The node the chain finally lands on still has to be in the group.
+        if upstream.get("mode") != 4 and from_id not in keep:
             return None
         if str(upstream.get("type")) == "PrimitiveNode":
             # A canvas-only node that exists to hand one widget its value. The

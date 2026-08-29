@@ -1953,3 +1953,30 @@ body {
   line-height: 1.45;
   color: rgba(255,255,255,0.42);
 }
+
+/* The control grid for a generated page.
+
+   cockpit-control-grid is four named columns - one wide for the prompt and
+   three narrow beside it - which is right for the page it was drawn for and
+   wrong for a page whose controls are not known in advance. On the Director,
+   which has six numbers and no prompt, every field stretched the full width
+   of the window and the panel read as a stack of empty boxes.
+
+   auto-fill instead: even cells that wrap, so six numbers sit in two tidy
+   rows and two numbers sit side by side rather than spanning everything. */
+.workflow-control-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(212px, 1fr));
+  gap: 8px;
+  align-items: start;
+}
+
+/* A seed is nineteen digits. Given one cell it truncates; given two it
+   reads, and the dice still fits beside it. */
+.workflow-control-grid > .is-wide {
+  grid-column: span 2;
+}
+
+@media (max-width: 640px) {
+  .workflow-control-grid > .is-wide { grid-column: span 1; }
+}

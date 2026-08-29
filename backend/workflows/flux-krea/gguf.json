@@ -60,7 +60,15 @@
     "class_type": "CR Conditioning Mixer",
     "inputs": {
       "mix_method": "Concatenate",
-      "average_strength": 1
+      "average_strength": 1,
+      "conditioning_1": [
+        "26",
+        0
+      ],
+      "conditioning_2": [
+        "26",
+        0
+      ]
     },
     "_meta": {
       "title": "CR Conditioning Mixer"
@@ -87,16 +95,63 @@
       "conditioning_1": [
         "20",
         0
+      ],
+      "conditioning_2": [
+        "26",
+        0
       ]
     },
     "_meta": {
       "title": "CR Conditioning Mixer"
     }
   },
+  "26": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": [
+        "30",
+        0
+      ],
+      "clip": [
+        "1",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "Positive Prompt from Styles"
+    }
+  },
+  "29": {
+    "class_type": "String Literal",
+    "inputs": {
+      "string": "Create an image a woman sitting on a vintage suitcase in a train station. She is dressed in a black dress adorned and has long, wavy brown hair. Her attire is complemented by large gold earrings and black-framed glasses. The background is a bustling train station with a high, arched ceiling and numerous people walking around. The atmosphere suggests a busy transportation hub. The image captures a moment of elegance and poise amidst the hustle and bustle of a train station. The woman's stylish outfit and the vintage suitcase create a sense of sophistication, while the blurred background emphasizes the dynamic activity of the station. "
+    },
+    "_meta": {
+      "title": "POSITIVE PROMPT"
+    }
+  },
+  "30": {
+    "class_type": "Text Concatenate",
+    "inputs": {
+      "delimiter": ", ",
+      "clean_whitespace": "true",
+      "text_a": [
+        "29",
+        0
+      ],
+      "text_b": [
+        "41",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Text Concatenate"
+    }
+  },
   "34": {
     "class_type": "VAELoader",
     "inputs": {
-      "vae_name": "FLUX1\\ae.safetensors"
+      "vae_name": "ae.safetensors"
     },
     "_meta": {
       "title": "VAELoader"
@@ -147,6 +202,16 @@
     },
     "_meta": {
       "title": "KSampler"
+    }
+  },
+  "41": {
+    "class_type": "Load Styles CSV",
+    "inputs": {
+      "styles": "No Style",
+      "csv_file_path": "styles.csv"
+    },
+    "_meta": {
+      "title": "CHOOSE STYLE"
     }
   },
   "44": {

@@ -23,7 +23,7 @@
   "253": {
     "class_type": "VAELoader",
     "inputs": {
-      "vae_name": "FLUX1\\ae.safetensors"
+      "vae_name": "ae.safetensors"
     },
     "_meta": {
       "title": "VAELoader"
@@ -40,6 +40,10 @@
       "denoise": 0.7500000000000001,
       "model": [
         "251",
+        0
+      ],
+      "positive": [
+        "256",
         0
       ],
       "negative": [

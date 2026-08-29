@@ -267,15 +267,22 @@ export const WorkflowPage = ({ workflowId }: WorkflowPageProps) => {
           />
         ))}
 
-        <div className="cockpit-control-grid">
+        <div className="workflow-control-grid">
           {compact.map((field) => (
-            <FieldControl
+            <div
               key={field.key}
-              field={field}
-              value={values[field.key] ?? null}
-              onChange={(next) => setValue(field.key, next)}
-              disabled={busy}
-            />
+              // A seed and a file picker need the room; everything else reads
+              // fine in one cell.
+              className={field.role === 'seed' || field.control === 'file'
+                || field.control === 'audio' ? 'is-wide' : undefined}
+            >
+              <FieldControl
+                field={field}
+                value={values[field.key] ?? null}
+                onChange={(next) => setValue(field.key, next)}
+                disabled={busy}
+              />
+            </div>
           ))}
         </div>
 

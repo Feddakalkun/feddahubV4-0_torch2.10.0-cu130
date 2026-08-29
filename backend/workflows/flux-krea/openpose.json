@@ -1,4 +1,20 @@
 {
+  "165": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": [
+        "191",
+        0
+      ],
+      "clip": [
+        "184",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "Positive Prompt from Styles"
+    }
+  },
   "173": {
     "class_type": "VAEDecode",
     "inputs": {
@@ -88,7 +104,7 @@
   "181": {
     "class_type": "VAELoader",
     "inputs": {
-      "vae_name": "FLUX1\\ae.safetensors"
+      "vae_name": "ae.safetensors"
     },
     "_meta": {
       "title": "VAELoader"
@@ -101,6 +117,16 @@
     },
     "_meta": {
       "title": "LoadImage"
+    }
+  },
+  "183": {
+    "class_type": "Load Styles CSV",
+    "inputs": {
+      "styles": "Photography | Fashion Editorial",
+      "csv_file_path": "styles.csv"
+    },
+    "_meta": {
+      "title": "CHOOSE STYLE"
     }
   },
   "184": {
@@ -155,6 +181,10 @@
       "strength": 0.6500000000000001,
       "start_percent": 0,
       "end_percent": 0.6500000000000001,
+      "positive": [
+        "165",
+        0
+      ],
       "negative": [
         "175",
         0
@@ -205,6 +235,24 @@
       "title": "PreviewImage"
     }
   },
+  "191": {
+    "class_type": "Text Concatenate",
+    "inputs": {
+      "delimiter": ", ",
+      "clean_whitespace": "true",
+      "text_a": [
+        "194",
+        0
+      ],
+      "text_b": [
+        "183",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Text Concatenate"
+    }
+  },
   "193": {
     "class_type": "ImageResizeKJ",
     "inputs": {
@@ -221,6 +269,15 @@
     },
     "_meta": {
       "title": "ImageResizeKJ"
+    }
+  },
+  "194": {
+    "class_type": "String Literal",
+    "inputs": {
+      "string": "WOMAN"
+    },
+    "_meta": {
+      "title": "POSITIVE PROMPT"
     }
   },
   "245": {

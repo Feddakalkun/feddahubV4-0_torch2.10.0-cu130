@@ -11,6 +11,16 @@
       "title": "DualCLIPLoader"
     }
   },
+  "136": {
+    "class_type": "Load Styles CSV",
+    "inputs": {
+      "styles": "No Style",
+      "csv_file_path": "styles.csv"
+    },
+    "_meta": {
+      "title": "CHOOSE STYLE"
+    }
+  },
   "138": {
     "class_type": "PreviewImage",
     "inputs": {
@@ -100,6 +110,22 @@
       "title": "CLIPTextEncode"
     }
   },
+  "164": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": [
+        "196",
+        0
+      ],
+      "clip": [
+        "198",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "Positive Prompt from Styles"
+    }
+  },
   "178": {
     "class_type": "SetUnionControlNetType",
     "inputs": {
@@ -111,6 +137,24 @@
     },
     "_meta": {
       "title": "SetUnionControlNetType"
+    }
+  },
+  "196": {
+    "class_type": "Text Concatenate",
+    "inputs": {
+      "delimiter": ", ",
+      "clean_whitespace": "true",
+      "text_a": [
+        "208",
+        0
+      ],
+      "text_b": [
+        "136",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Text Concatenate"
     }
   },
   "198": {
@@ -129,6 +173,15 @@
       "title": "Power Lora Loader (rgthree)"
     }
   },
+  "208": {
+    "class_type": "String Literal",
+    "inputs": {
+      "string": "sexy couple pro photo"
+    },
+    "_meta": {
+      "title": "POSITIVE PROMPT"
+    }
+  },
   "237": {
     "class_type": "LoadImage",
     "inputs": {
@@ -141,7 +194,7 @@
   "238": {
     "class_type": "VAELoader",
     "inputs": {
-      "vae_name": "FLUX1\\ae.safetensors"
+      "vae_name": "ae.safetensors"
     },
     "_meta": {
       "title": "VAELoader"
@@ -233,6 +286,10 @@
       "strength": 0.6000000000000001,
       "start_percent": 0,
       "end_percent": 0.4000000000000001,
+      "positive": [
+        "164",
+        0
+      ],
       "negative": [
         "163",
         0
