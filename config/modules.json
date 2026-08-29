@@ -140,12 +140,19 @@
       "enabled": true,
       "tabs": [
         "video",
-        "minimax-h3-txt2vid"
+        "minimax-h3-txt2vid",
+        "minimax-h3-img2vid",
+        "minimax-h3-video-edit",
+        "minimax-h3-ref-images"
       ],
       "workflows": [
-        "minimax-h3/txt2vid.json"
+        "minimax-h3/txt2vid.json",
+        "minimax-h3/img2vid.json",
+        "minimax-h3/video-edit.json",
+        "minimax-h3/ref-images.json"
       ],
       "custom_nodes": [
+        "ComfyUI-tbox",
         "ComfyUI-VideoHelperSuite",
         "rgthree-comfy"
       ],

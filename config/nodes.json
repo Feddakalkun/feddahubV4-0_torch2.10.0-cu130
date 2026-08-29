@@ -108,6 +108,15 @@
     "pin_from": "fedda-v3"
   },
   {
+    "name": "ComfyUI-tbox",
+    "url": "https://github.com/ai-shizuka/ComfyUI-tbox.git",
+    "folder": "ComfyUI-tbox",
+    "note": "Image/video helper nodes reached by the MiniMax H3 graphs",
+    "pin": "2d25ad76c6e884356bc76d51b16c7310d721b340",
+    "pin_source": "git",
+    "pin_from": "comfyuistudio-v362"
+  },
+  {
     "name": "ComfyUI-VideoHelperSuite",
     "url": "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git",
     "folder": "ComfyUI-VideoHelperSuite",
