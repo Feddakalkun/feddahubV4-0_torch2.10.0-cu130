@@ -21,6 +21,10 @@ interface WorkflowShellProps {
 }
 
 export const WorkflowShell = ({
+  title,
+  eyebrow,
+  description,
+  icon: Icon,
   preview,
   children,
   output,
@@ -78,6 +82,23 @@ export const WorkflowShell = ({
       )}
 
       <section className={`workflow-control-pane ${leftClassName}`.trim()}>
+        {/*
+          Which workflow this is, on the page rather than only in the top bar.
+          These props were accepted and then dropped on the floor, so every
+          generate page looked identical - someone ran Image to Video believing
+          they were in Text to Image, and nothing on screen contradicted them.
+        */}
+        {title && (
+          <header className="workflow-shell-head">
+            {eyebrow && <div className="fedda-kicker">{eyebrow}</div>}
+            <h2>
+              {Icon && <Icon className="h-4 w-4 text-white/45" />}
+              {title}
+            </h2>
+            {description && <p>{description}</p>}
+          </header>
+        )}
+
         {preview ? <div className="workflow-shell-preview">{preview}</div> : null}
 
         {/*
