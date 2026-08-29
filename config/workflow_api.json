@@ -1341,5 +1341,634 @@
         "label": "LoRAs"
       }
     }
+  },
+  "minimax-h3-txt2vid-gguf": {
+    "name": "MiniMax H3 Text to Video (GGUF)",
+    "filename": "minimax-h3-gguf/txt2vid.json",
+    "module": "minimax-h3-gguf",
+    "description": "Text to video with native stereo audio, generated jointly rather than added afterwards. Quantised build, for cards with less VRAM.",
+    "inputs": {
+      "prompt": {
+        "node_id": "153",
+        "input_key": "prompt",
+        "label": "Prompt"
+      },
+      "width": {
+        "node_id": "153",
+        "input_key": "width",
+        "label": "Width"
+      },
+      "height": {
+        "node_id": "153",
+        "input_key": "height",
+        "label": "Height"
+      },
+      "length": {
+        "node_id": "153",
+        "input_key": "length",
+        "label": "Frames"
+      },
+      "seed": {
+        "node_id": "143",
+        "input_key": "noise_seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "148",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "denoise": {
+        "node_id": "148",
+        "input_key": "denoise",
+        "label": "Denoise"
+      },
+      "fps": {
+        "node_id": "150",
+        "input_key": "frame_rate",
+        "label": "FPS"
+      },
+      "loras": {
+        "node_id": "311",
+        "type": "loras",
+        "label": "LoRAs"
+      },
+      "encoder_device": {
+        "node_ids": [
+          "144"
+        ],
+        "input_key": "device",
+        "label": "Text Encoder",
+        "control": "chips",
+        "choices": [
+          "cpu",
+          "default"
+        ],
+        "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      }
+    }
+  },
+  "minimax-h3-img2vid-gguf": {
+    "name": "MiniMax H3 Image to Video (GGUF)",
+    "filename": "minimax-h3-gguf/img2vid.json",
+    "module": "minimax-h3-gguf",
+    "description": "Animate a still, with a second image steering the look. Sound comes with it. Quantised build, for cards with less VRAM.",
+    "inputs": {
+      "image": {
+        "node_id": "137",
+        "input_key": "image",
+        "label": "Start Image"
+      },
+      "image2": {
+        "node_id": "139",
+        "input_key": "image",
+        "label": "Reference Image"
+      },
+      "prompt": {
+        "node_id": "138",
+        "input_key": "value",
+        "label": "Prompt"
+      },
+      "width": {
+        "node_id": "136",
+        "input_key": "width",
+        "label": "Width"
+      },
+      "height": {
+        "node_id": "136",
+        "input_key": "height",
+        "label": "Height"
+      },
+      "length": {
+        "node_id": "136",
+        "input_key": "length",
+        "label": "Frames"
+      },
+      "seed": {
+        "node_id": "129",
+        "input_key": "noise_seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "124",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "denoise": {
+        "node_id": "124",
+        "input_key": "denoise",
+        "label": "Denoise"
+      },
+      "fps": {
+        "node_id": "159",
+        "input_key": "frame_rate",
+        "label": "FPS"
+      },
+      "loras": {
+        "node_id": "312",
+        "type": "loras",
+        "label": "LoRAs"
+      },
+      "encoder_device": {
+        "node_ids": [
+          "128"
+        ],
+        "input_key": "device",
+        "label": "Text Encoder",
+        "control": "chips",
+        "choices": [
+          "cpu",
+          "default"
+        ],
+        "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      }
+    }
+  },
+  "minimax-h3-video-edit-gguf": {
+    "name": "MiniMax H3 Video Edit (GGUF)",
+    "filename": "minimax-h3-gguf/video-edit.json",
+    "module": "minimax-h3-gguf",
+    "description": "Change something in a clip you already have, keeping the motion. Quantised build, for cards with less VRAM.",
+    "_fps": "No FPS control: VHS_VideoCombine takes its rate from the source video, so offering one would let the output drift out of step with the input.",
+    "inputs": {
+      "video": {
+        "node_id": "195",
+        "input_key": "video",
+        "label": "Source Video"
+      },
+      "prompt": {
+        "node_id": "194",
+        "input_key": "value",
+        "label": "What to change"
+      },
+      "seed": {
+        "node_id": "190",
+        "input_key": "noise_seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "192",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "denoise": {
+        "node_id": "192",
+        "input_key": "denoise",
+        "label": "Denoise"
+      },
+      "loras": {
+        "node_id": "313",
+        "type": "loras",
+        "label": "LoRAs"
+      },
+      "encoder_device": {
+        "node_ids": [
+          "187"
+        ],
+        "input_key": "device",
+        "label": "Text Encoder",
+        "control": "chips",
+        "choices": [
+          "cpu",
+          "default"
+        ],
+        "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      }
+    }
+  },
+  "minimax-h3-ref-images-gguf": {
+    "name": "MiniMax H3 Eight References (GGUF)",
+    "filename": "minimax-h3-gguf/ref-images.json",
+    "module": "minimax-h3-gguf",
+    "description": "Up to eight reference images steering one clip. Quantised build, for cards with less VRAM.",
+    "inputs": {
+      "image": {
+        "node_id": "288",
+        "input_key": "image",
+        "label": "Reference 1"
+      },
+      "image2": {
+        "node_id": "289",
+        "input_key": "image",
+        "label": "Reference 2"
+      },
+      "image3": {
+        "node_id": "290",
+        "input_key": "image",
+        "label": "Reference 3"
+      },
+      "image4": {
+        "node_id": "291",
+        "input_key": "image",
+        "label": "Reference 4"
+      },
+      "image5": {
+        "node_id": "292",
+        "input_key": "image",
+        "label": "Reference 5"
+      },
+      "image6": {
+        "node_id": "293",
+        "input_key": "image",
+        "label": "Reference 6"
+      },
+      "image7": {
+        "node_id": "294",
+        "input_key": "image",
+        "label": "Reference 7"
+      },
+      "image8": {
+        "node_id": "295",
+        "input_key": "image",
+        "label": "Reference 8"
+      },
+      "prompt": {
+        "node_id": "319",
+        "input_key": "prompt",
+        "label": "Prompt"
+      },
+      "width": {
+        "node_id": "319",
+        "input_key": "width",
+        "label": "Width"
+      },
+      "height": {
+        "node_id": "319",
+        "input_key": "height",
+        "label": "Height"
+      },
+      "length": {
+        "node_id": "319",
+        "input_key": "length",
+        "label": "Frames"
+      },
+      "seed": {
+        "node_id": "299",
+        "input_key": "noise_seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "298",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "denoise": {
+        "node_id": "298",
+        "input_key": "denoise",
+        "label": "Denoise"
+      },
+      "fps": {
+        "node_id": "304",
+        "input_key": "frame_rate",
+        "label": "FPS"
+      },
+      "loras": {
+        "node_id": "314",
+        "type": "loras",
+        "label": "LoRAs"
+      },
+      "encoder_device": {
+        "node_ids": [
+          "286"
+        ],
+        "input_key": "device",
+        "label": "Text Encoder",
+        "control": "chips",
+        "choices": [
+          "cpu",
+          "default"
+        ],
+        "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      }
+    }
+  },
+  "minimax-h3-first-frame-gguf": {
+    "name": "MiniMax H3 First Frame (GGUF)",
+    "filename": "minimax-h3-gguf/first-frame.json",
+    "module": "minimax-h3-gguf",
+    "description": "One image becomes the opening frame, and the clip grows from it. Quantised build, for cards with less VRAM.",
+    "inputs": {
+      "image": {
+        "node_id": "264",
+        "input_key": "image",
+        "label": "First Frame"
+      },
+      "prompt": {
+        "node_id": "272",
+        "input_key": "PromptState",
+        "label": "Prompt",
+        "encode": "pixaroma_prompt",
+        "_why": "Pixaroma draws its widgets in JavaScript and the browser packs them into a hidden JSON string at submit time, so the text arrives as PromptState rather than as a plain input. See backend/encoders.py."
+      },
+      "seed": {
+        "node_id": "265",
+        "input_key": "seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "265",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "cfg": {
+        "node_id": "265",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "denoise": {
+        "node_id": "265",
+        "input_key": "denoise",
+        "label": "Denoise"
+      },
+      "fps": {
+        "node_id": "270",
+        "input_key": "fps",
+        "label": "FPS"
+      },
+      "loras": {
+        "node_id": "316",
+        "type": "loras",
+        "label": "LoRAs"
+      },
+      "encoder_device": {
+        "node_ids": [
+          "259"
+        ],
+        "input_key": "device",
+        "label": "Text Encoder",
+        "control": "chips",
+        "choices": [
+          "cpu",
+          "default"
+        ],
+        "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      }
+    }
+  },
+  "minimax-h3-fflf-gguf": {
+    "name": "MiniMax H3 First and Last Frame (GGUF)",
+    "filename": "minimax-h3-gguf/fflf.json",
+    "module": "minimax-h3-gguf",
+    "description": "Give it where to start and where to end; it makes the journey between. Quantised build, for cards with less VRAM.",
+    "inputs": {
+      "image": {
+        "node_id": "252",
+        "input_key": "image",
+        "label": "First Frame"
+      },
+      "image2": {
+        "node_id": "254",
+        "input_key": "image",
+        "label": "Last Frame"
+      },
+      "prompt": {
+        "node_id": "255",
+        "input_key": "PromptState",
+        "label": "Prompt",
+        "encode": "pixaroma_prompt",
+        "_why": "Pixaroma draws its widgets in JavaScript and the browser packs them into a hidden JSON string at submit time, so the text arrives as PromptState rather than as a plain input. See backend/encoders.py."
+      },
+      "seed": {
+        "node_id": "256",
+        "input_key": "seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "256",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "cfg": {
+        "node_id": "256",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "denoise": {
+        "node_id": "256",
+        "input_key": "denoise",
+        "label": "Denoise"
+      },
+      "fps": {
+        "node_id": "249",
+        "input_key": "fps",
+        "label": "FPS"
+      },
+      "loras": {
+        "node_id": "315",
+        "type": "loras",
+        "label": "LoRAs"
+      },
+      "encoder_device": {
+        "node_ids": [
+          "243"
+        ],
+        "input_key": "device",
+        "label": "Text Encoder",
+        "control": "chips",
+        "choices": [
+          "cpu",
+          "default"
+        ],
+        "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      }
+    }
+  },
+  "minimax-h3-sing-gguf": {
+    "name": "MiniMax H3 Sing (GGUF)",
+    "filename": "minimax-h3-gguf/sing.json",
+    "module": "minimax-h3-gguf",
+    "description": "A portrait sings the track you give it, lips matched to the sound. Quantised build, for cards with less VRAM.",
+    "inputs": {
+      "image": {
+        "node_id": "210",
+        "input_key": "image",
+        "label": "Portrait"
+      },
+      "audio": {
+        "node_id": "214",
+        "input_key": "LoadAudioState",
+        "label": "Song",
+        "encode": "pixaroma_audio",
+        "accept": "audio",
+        "_why": "Same hidden-state pattern as the prompt: the chosen file arrives as LoadAudioState, a JSON string naming a file in ComfyUI's input folder - which is what /api/upload returns.",
+        "control": "audio",
+        "_control": "The graph holds no value here - the file lives in a hidden JSON state - so the usual test for an upload slot finds nothing and this rendered as a text box. `audio` rather than `file` because the node takes a start and a length as well, and picking those needs to be able to hear the file."
+      },
+      "prompt": {
+        "node_id": "212",
+        "input_key": "PromptState",
+        "label": "Prompt",
+        "encode": "pixaroma_prompt",
+        "_why": "Pixaroma draws its widgets in JavaScript and the browser packs them into a hidden JSON string at submit time, so the text arrives as PromptState rather than as a plain input. See backend/encoders.py."
+      },
+      "seed": {
+        "node_id": "219",
+        "input_key": "seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "219",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "cfg": {
+        "node_id": "219",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "denoise": {
+        "node_id": "219",
+        "input_key": "denoise",
+        "label": "Denoise"
+      },
+      "fps": {
+        "node_id": "220",
+        "input_key": "fps",
+        "label": "FPS"
+      },
+      "loras": {
+        "node_id": "318",
+        "type": "loras",
+        "label": "LoRAs"
+      },
+      "encoder_device": {
+        "node_ids": [
+          "207"
+        ],
+        "input_key": "device",
+        "label": "Text Encoder",
+        "control": "chips",
+        "choices": [
+          "cpu",
+          "default"
+        ],
+        "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      }
+    }
+  },
+  "minimax-h3-speak-gguf": {
+    "name": "MiniMax H3 Speak (GGUF)",
+    "filename": "minimax-h3-gguf/speak.json",
+    "module": "minimax-h3-gguf",
+    "description": "A portrait speaks the recording you give it. Quantised build, for cards with less VRAM.",
+    "inputs": {
+      "image": {
+        "node_id": "228",
+        "input_key": "image",
+        "label": "Portrait"
+      },
+      "audio": {
+        "node_id": "231",
+        "input_key": "LoadAudioState",
+        "label": "Recording",
+        "encode": "pixaroma_audio",
+        "accept": "audio",
+        "_why": "Same hidden-state pattern as the prompt: the chosen file arrives as LoadAudioState, a JSON string naming a file in ComfyUI's input folder - which is what /api/upload returns.",
+        "control": "audio",
+        "_control": "The graph holds no value here - the file lives in a hidden JSON state - so the usual test for an upload slot finds nothing and this rendered as a text box. `audio` rather than `file` because the node takes a start and a length as well, and picking those needs to be able to hear the file."
+      },
+      "prompt": {
+        "node_id": "230",
+        "input_key": "PromptState",
+        "label": "Prompt",
+        "encode": "pixaroma_prompt",
+        "_why": "Pixaroma draws its widgets in JavaScript and the browser packs them into a hidden JSON string at submit time, so the text arrives as PromptState rather than as a plain input. See backend/encoders.py."
+      },
+      "seed": {
+        "node_id": "236",
+        "input_key": "seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "236",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "cfg": {
+        "node_id": "236",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "denoise": {
+        "node_id": "236",
+        "input_key": "denoise",
+        "label": "Denoise"
+      },
+      "fps": {
+        "node_id": "237",
+        "input_key": "fps",
+        "label": "FPS"
+      },
+      "loras": {
+        "node_id": "317",
+        "type": "loras",
+        "label": "LoRAs"
+      },
+      "encoder_device": {
+        "node_ids": [
+          "225"
+        ],
+        "input_key": "device",
+        "label": "Text Encoder",
+        "control": "chips",
+        "choices": [
+          "cpu",
+          "default"
+        ],
+        "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      }
+    }
+  },
+  "minimax-h3-director-gguf": {
+    "name": "MiniMax H3 Director (GGUF)",
+    "filename": "minimax-h3-gguf/director.json",
+    "module": "minimax-h3-gguf",
+    "description": "A timeline of shots, each with its own moment and prompt, rendered as one clip. Quantised build, for cards with less VRAM.",
+    "_timeline": "timeline_data on node 5 is the storyboard itself - 1681 characters of JSON written by the node's own visual editor in ComfyUI. It is deliberately not exposed: a textarea holding that is not an editor, and the graph's own value is a working storyboard to start from. Driving it properly means porting the timeline editor, which is its own piece of work.",
+    "inputs": {
+      "duration_seconds": {
+        "node_id": "5",
+        "input_key": "duration_seconds",
+        "label": "Length (seconds)"
+      },
+      "start_second": {
+        "node_id": "5",
+        "input_key": "start_second",
+        "label": "From (seconds)"
+      },
+      "end_second": {
+        "node_id": "5",
+        "input_key": "end_second",
+        "label": "To (seconds)"
+      },
+      "seed": {
+        "node_id": "386",
+        "input_key": "noise_seed",
+        "label": "Seed"
+      },
+      "steps": {
+        "node_id": "388",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "denoise": {
+        "node_id": "388",
+        "input_key": "denoise",
+        "label": "Denoise"
+      },
+      "encoder_device": {
+        "node_ids": [
+          "2"
+        ],
+        "input_key": "device",
+        "label": "Text Encoder",
+        "control": "chips",
+        "choices": [
+          "cpu",
+          "default"
+        ],
+        "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      }
+    }
   }
 }

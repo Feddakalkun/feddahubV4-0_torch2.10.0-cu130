@@ -1,0 +1,316 @@
+{
+  "284": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_audio_vae_fp32.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "285": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "286": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "cpu"
+    },
+    "_meta": {
+      "title": "CLIPLoader"
+    }
+  },
+  "287": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "299",
+        0
+      ],
+      "guider": [
+        "302",
+        0
+      ],
+      "sampler": [
+        "300",
+        0
+      ],
+      "sigmas": [
+        "298",
+        0
+      ],
+      "latent_image": [
+        "319",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "288": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "pose4.png"
+    },
+    "_meta": {
+      "title": "LoadImage"
+    }
+  },
+  "289": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "pose2.png"
+    },
+    "_meta": {
+      "title": "LoadImage"
+    }
+  },
+  "290": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "pose6.png"
+    },
+    "_meta": {
+      "title": "LoadImage"
+    }
+  },
+  "291": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "pose10.png"
+    },
+    "_meta": {
+      "title": "LoadImage"
+    }
+  },
+  "292": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "pose1.png"
+    },
+    "_meta": {
+      "title": "LoadImage"
+    }
+  },
+  "293": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "pose5.png"
+    },
+    "_meta": {
+      "title": "LoadImage"
+    }
+  },
+  "294": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "pose.png"
+    },
+    "_meta": {
+      "title": "LoadImage"
+    }
+  },
+  "295": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "pose3.png"
+    },
+    "_meta": {
+      "title": "LoadImage"
+    }
+  },
+  "298": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 8,
+      "denoise": 1,
+      "model": [
+        "314",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "BasicScheduler"
+    }
+  },
+  "299": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 797307406678361
+    },
+    "_meta": {
+      "title": "RandomNoise"
+    }
+  },
+  "300": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "res_multistep"
+    },
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "302": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "314",
+        0
+      ],
+      "conditioning": [
+        "319",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "BasicGuider"
+    }
+  },
+  "303": {
+    "class_type": "VAEDecodeAudio",
+    "inputs": {
+      "samples": [
+        "287",
+        0
+      ],
+      "vae": [
+        "284",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecodeAudio"
+    }
+  },
+  "304": {
+    "class_type": "VHS_VideoCombine",
+    "inputs": {
+      "frame_rate": 24,
+      "loop_count": 0,
+      "filename_prefix": "VIDEO/MINIMAX-H3/0",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 10,
+      "save_metadata": true,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": true,
+      "images": [
+        "305",
+        0
+      ],
+      "audio": [
+        "303",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VHS_VideoCombine"
+    }
+  },
+  "305": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "287",
+        0
+      ],
+      "vae": [
+        "285",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecode"
+    }
+  },
+  "306": {
+    "class_type": "UnetLoaderGGUF",
+    "inputs": {
+      "unet_name": "MiniMax-H3-Ref2VA-Q3_K_M.gguf"
+    },
+    "_meta": {
+      "title": "UNETLoader"
+    }
+  },
+  "314": {
+    "class_type": "Power Lora Loader (rgthree)",
+    "inputs": {
+      "model": [
+        "306",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  },
+  "319": {
+    "class_type": "MiniMaxH3ReferenceToVideo",
+    "inputs": {
+      "prompt": "they wearing sunglasses",
+      "width": 1024,
+      "height": 1024,
+      "length": 22,
+      "ref_image_size": "match",
+      "clip": [
+        "286",
+        0
+      ],
+      "vae": [
+        "285",
+        0
+      ],
+      "audio_vae": [
+        "284",
+        0
+      ],
+      "ref_images.ref_image_0": [
+        "292",
+        0
+      ],
+      "ref_images.ref_image_1": [
+        "291",
+        0
+      ],
+      "ref_images.ref_image_2": [
+        "290",
+        0
+      ],
+      "ref_images.ref_image_3": [
+        "289",
+        0
+      ],
+      "ref_images.ref_image_4": [
+        "295",
+        0
+      ],
+      "ref_images.ref_image_5": [
+        "288",
+        0
+      ],
+      "ref_images.ref_image_6": [
+        "294",
+        0
+      ],
+      "ref_images.ref_image_7": [
+        "293",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "MiniMaxH3ReferenceToVideo"
+    }
+  }
+}

@@ -1,0 +1,207 @@
+{
+  "142": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_audio_vae_fp32.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "143": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 956258692526854
+    },
+    "_meta": {
+      "title": "RandomNoise"
+    }
+  },
+  "144": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "cpu"
+    },
+    "_meta": {
+      "title": "CLIPLoader"
+    }
+  },
+  "145": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "146": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "143",
+        0
+      ],
+      "guider": [
+        "151",
+        0
+      ],
+      "sampler": [
+        "147",
+        0
+      ],
+      "sigmas": [
+        "148",
+        0
+      ],
+      "latent_image": [
+        "153",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "147": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "res_multistep"
+    },
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "148": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 8,
+      "denoise": 1,
+      "model": [
+        "311",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "BasicScheduler"
+    }
+  },
+  "150": {
+    "class_type": "VHS_VideoCombine",
+    "inputs": {
+      "frame_rate": 24,
+      "loop_count": 0,
+      "filename_prefix": "VIDEO/MINIMAX-H3/0",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": true,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": true,
+      "images": [
+        "155",
+        0
+      ],
+      "audio": [
+        "152",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VHS_VideoCombine"
+    }
+  },
+  "151": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "311",
+        0
+      ],
+      "conditioning": [
+        "153",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "BasicGuider"
+    }
+  },
+  "152": {
+    "class_type": "VAEDecodeAudio",
+    "inputs": {
+      "samples": [
+        "146",
+        0
+      ],
+      "vae": [
+        "142",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecodeAudio"
+    }
+  },
+  "153": {
+    "class_type": "MiniMaxH3ImageToVideo",
+    "inputs": {
+      "prompt": "Ultra-cinematic science fiction commercial, Hollywood quality, photorealistic, volumetric lighting, ray-traced reflections, dramatic atmosphere.\n\nThe camera travels through complete darkness until countless glowing blue particles begin assembling into an enormous futuristic neural network floating in space. Energy races through billions of connections as metallic letters slowly emerge from within the network.\n\nThe words **\"MINIMAX H3\"** ignite with brilliant electric blue light.\n\nThe camera accelerates through the letters into an infinite digital universe filled with floating AI-generated worlds: cyberpunk cities, fantasy kingdoms, realistic humans, cinematic creatures, futuristic robots, magical forests, and surreal dreamscapes. Every environment seamlessly morphs into the next without visible cuts.\n\nFinally, the camera bursts through the final world to reveal an elegant holographic workflow composed of glowing ComfyUI nodes connecting themselves automatically.\n\nThe workflow transforms into a polished chrome logo:\n\n**COMFYUI**\n\nBelow it appears:\n\n**CREATE ANYTHING**\n\nEpic cinematic soundtrack, deep bass impacts, futuristic synths, rising orchestral choir.\n\nPerfect typography. No subtitles. No watermark. No misspelled English. Stable camera motion. Premium blockbuster quality.\n",
+      "width": 736,
+      "height": 736,
+      "length": 56,
+      "clip": [
+        "144",
+        0
+      ],
+      "vae": [
+        "145",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "MiniMaxH3ImageToVideo"
+    }
+  },
+  "154": {
+    "class_type": "UnetLoaderGGUF",
+    "inputs": {
+      "unet_name": "MiniMax-H3-Ref2VA-Q3_K_M.gguf"
+    },
+    "_meta": {
+      "title": "UNETLoader"
+    }
+  },
+  "155": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "146",
+        0
+      ],
+      "vae": [
+        "145",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecode"
+    }
+  },
+  "311": {
+    "class_type": "Power Lora Loader (rgthree)",
+    "inputs": {
+      "model": [
+        "154",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  }
+}

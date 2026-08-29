@@ -1,0 +1,268 @@
+{
+  "181": {
+    "class_type": "VideoInfo",
+    "inputs": {
+      "video_info": [
+        "195",
+        3
+      ]
+    },
+    "_meta": {
+      "title": "VideoInfo"
+    }
+  },
+  "182": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "190",
+        0
+      ],
+      "guider": [
+        "185",
+        0
+      ],
+      "sampler": [
+        "191",
+        0
+      ],
+      "sigmas": [
+        "192",
+        0
+      ],
+      "latent_image": [
+        "196",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "183": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "182",
+        0
+      ],
+      "vae": [
+        "188",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecode"
+    }
+  },
+  "184": {
+    "class_type": "VAEDecodeAudio",
+    "inputs": {
+      "samples": [
+        "182",
+        0
+      ],
+      "vae": [
+        "189",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecodeAudio"
+    }
+  },
+  "185": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "313",
+        0
+      ],
+      "conditioning": [
+        "196",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "BasicGuider"
+    }
+  },
+  "186": {
+    "class_type": "UnetLoaderGGUF",
+    "inputs": {
+      "unet_name": "MiniMax-H3-Ref2VA-Q3_K_M.gguf"
+    },
+    "_meta": {
+      "title": "UNETLoader"
+    }
+  },
+  "187": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "cpu"
+    },
+    "_meta": {
+      "title": "CLIPLoader"
+    }
+  },
+  "188": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "189": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_audio_vae_fp32.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "190": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 47724852186497
+    },
+    "_meta": {
+      "title": "RandomNoise"
+    }
+  },
+  "191": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "res_multistep"
+    },
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "192": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 8,
+      "denoise": 1,
+      "model": [
+        "313",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "BasicScheduler"
+    }
+  },
+  "193": {
+    "class_type": "VHS_VideoCombine",
+    "inputs": {
+      "frame_rate": [
+        "181",
+        5
+      ],
+      "loop_count": 0,
+      "filename_prefix": "VIDEO/MINIMAX-H3/0",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": true,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": true,
+      "images": [
+        "183",
+        0
+      ],
+      "audio": [
+        "184",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VHS_VideoCombine"
+    }
+  },
+  "194": {
+    "class_type": "PrimitiveStringMultiline",
+    "inputs": {
+      "value": "add sunglasses on the woman, remain the movements, change the background on a beach"
+    },
+    "_meta": {
+      "title": "Input Text (Prompt)"
+    }
+  },
+  "195": {
+    "class_type": "VHS_LoadVideo",
+    "inputs": {
+      "video": "CHIARA.mp4",
+      "force_rate": 24,
+      "custom_width": 720,
+      "custom_height": 720,
+      "frame_load_cap": 100,
+      "skip_first_frames": 0,
+      "select_every_nth": 1,
+      "format": "AnimateDiff"
+    },
+    "_meta": {
+      "title": "VHS_LoadVideo"
+    }
+  },
+  "196": {
+    "class_type": "MiniMaxH3ReferenceToVideo",
+    "inputs": {
+      "prompt": [
+        "194",
+        0
+      ],
+      "width": [
+        "181",
+        8
+      ],
+      "height": [
+        "181",
+        9
+      ],
+      "length": [
+        "181",
+        6
+      ],
+      "ref_image_size": "max",
+      "clip": [
+        "187",
+        0
+      ],
+      "vae": [
+        "188",
+        0
+      ],
+      "audio_vae": [
+        "189",
+        0
+      ],
+      "ref_videos.ref_video_0": [
+        "195",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "MiniMaxH3ReferenceToVideo"
+    }
+  },
+  "313": {
+    "class_type": "Power Lora Loader (rgthree)",
+    "inputs": {
+      "model": [
+        "186",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  }
+}

@@ -55,6 +55,25 @@ class ModelDownloader:
                 "url": "https://huggingface.co/Kijai/MiniMax-H3_comfy/resolve/main/loras/minimax_h3_fl2v_lightx2v_turbo_4step_v0.1_comfy_resized_avg_rank_21_bf16.safetensors",
                 "min_bytes": 100 * 1024 * 1024,
             },
+            # 15.6 GB each. The GGUF builds, for cards that cannot hold the
+            # 19.5 GB originals. Q3_K_M is the smallest quant published for
+            # this model - there is no Q2 - so this is the floor, and with
+            # ComfyUI-GGUF offloading layers it is what makes a 12 GB card
+            # able to run MiniMax at all.
+            #
+            # The text encoder is deliberately not the GGUF one: these graphs
+            # reuse qwen3vl_32b_minimax_h3_nvfp4_awq, so anyone who already has
+            # MiniMax downloads one file rather than another 14.6 GB encoder.
+            "MiniMax-H3-Ref2VA-Q3_K_M.gguf": {
+                "relative_dir": Path("unet"),
+                "url": "https://huggingface.co/Abiray/MiniMax-H3-GGUF/resolve/main/unet/MiniMax-H3-Ref2VA-Q3_K_M.gguf",
+                "min_bytes": 1024 * 1024 * 1024,
+            },
+            "MiniMax-H3-FL2VA-Q3_K_M.gguf": {
+                "relative_dir": Path("unet"),
+                "url": "https://huggingface.co/Abiray/MiniMax-H3-GGUF/resolve/main/unet/MiniMax-H3-FL2VA-Q3_K_M.gguf",
+                "min_bytes": 1024 * 1024 * 1024,
+            },
             "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors": {
                 "relative_dir": Path("text_encoders"),
                 "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",

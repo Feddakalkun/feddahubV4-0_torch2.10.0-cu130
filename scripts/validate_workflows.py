@@ -103,6 +103,11 @@ def main() -> int:
     else:
         api = load_json(API_MAP)
         for wid, meta in sorted(api.items()):
+            # _note and _source are strings at the top of that file, not
+            # workflows. Reading .filename off them ends the whole run
+            # with an AttributeError before a single graph is checked.
+            if not isinstance(meta, dict):
+                continue
             fn = meta.get("filename")
             if fn:
                 targets.append((wid, os.path.join(WF_DIR, *fn.split("/"))))

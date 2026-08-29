@@ -1,0 +1,239 @@
+{
+  "243": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "cpu"
+    },
+    "_meta": {
+      "title": "CLIPLoader"
+    }
+  },
+  "244": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "245": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_audio_vae_fp32.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "246": {
+    "class_type": "ConditioningZeroOut",
+    "inputs": {
+      "conditioning": [
+        "257",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ConditioningZeroOut"
+    }
+  },
+  "247": {
+    "class_type": "VAEDecodeAudio",
+    "inputs": {
+      "samples": [
+        "256",
+        0
+      ],
+      "vae": [
+        "245",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecodeAudio"
+    }
+  },
+  "248": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "256",
+        0
+      ],
+      "vae": [
+        "244",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecode"
+    }
+  },
+  "249": {
+    "class_type": "PixaromaSaveMp4",
+    "inputs": {
+      "fps": 24,
+      "filename_prefix": "VIDEO/MINIMAX-H3/0",
+      "save_mode": "save",
+      "trim_to_audio": false,
+      "video_frames": [
+        "248",
+        0
+      ],
+      "audio": [
+        "247",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "PixaromaSaveMp4"
+    }
+  },
+  "250": {
+    "class_type": "PixaromaDuration",
+    "inputs": {},
+    "_meta": {
+      "title": "3. Set Duration"
+    }
+  },
+  "251": {
+    "class_type": "PixaromaLongestSide",
+    "inputs": {
+      "image": [
+        "252",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "4. Longest Side (Select the max size you want)"
+    }
+  },
+  "252": {
+    "class_type": "PixaromaLoadImageMini",
+    "inputs": {
+      "image": "CUTEYOUPOSE.png"
+    },
+    "_meta": {
+      "title": "1. Load Image - First Frame"
+    }
+  },
+  "253": {
+    "class_type": "UnetLoaderGGUF",
+    "inputs": {
+      "unet_name": "MiniMax-H3-FL2VA-Q3_K_M.gguf"
+    },
+    "_meta": {
+      "title": "UNETLoader"
+    }
+  },
+  "254": {
+    "class_type": "PixaromaLoadImageMini",
+    "inputs": {
+      "image": "CUTEYOUGUITAR.png"
+    },
+    "_meta": {
+      "title": "2. Load Image - Last Frame"
+    }
+  },
+  "255": {
+    "class_type": "PixaromaPrompt",
+    "inputs": {},
+    "_meta": {
+      "title": "5. Add a prompt"
+    }
+  },
+  "256": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": 307637896239414,
+      "steps": 8,
+      "cfg": 1,
+      "sampler_name": "res_multistep",
+      "scheduler": "simple",
+      "denoise": 1,
+      "model": [
+        "315",
+        0
+      ],
+      "positive": [
+        "257",
+        0
+      ],
+      "negative": [
+        "246",
+        0
+      ],
+      "latent_image": [
+        "257",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "257": {
+    "class_type": "MiniMaxH3ImageToVideo",
+    "inputs": {
+      "prompt": [
+        "255",
+        0
+      ],
+      "width": [
+        "251",
+        1
+      ],
+      "height": [
+        "251",
+        2
+      ],
+      "length": [
+        "250",
+        0
+      ],
+      "clip": [
+        "243",
+        0
+      ],
+      "vae": [
+        "244",
+        0
+      ],
+      "first_frame": [
+        "251",
+        0
+      ],
+      "last_frame": [
+        "254",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "MiniMaxH3ImageToVideo"
+    }
+  },
+  "315": {
+    "class_type": "Power Lora Loader (rgthree)",
+    "inputs": {
+      "PowerLoraLoaderHeaderWidget": {
+        "type": "PowerLoraLoaderHeaderWidget"
+      },
+      "lora_1": {
+        "on": true,
+        "lora": "minimax_h3_fl2v_lightx2v_turbo_4step_v0.1_comfy_resized_avg_rank_21_bf16.safetensors",
+        "strength": 0.75
+      },
+      "➕ Add Lora": "",
+      "model": [
+        "253",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  }
+}

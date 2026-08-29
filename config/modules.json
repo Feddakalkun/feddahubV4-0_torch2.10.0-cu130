@@ -177,6 +177,52 @@
       "notes": "Text to video with joint stereo audio. About 40 GB of models - twice the Z-Image core pack - which is why it is a booster."
     },
     {
+      "id": "minimax-h3-gguf",
+      "label": "MiniMax H3 Video (GGUF)",
+      "pack": "booster",
+      "area": "video",
+      "enabled": true,
+      "tabs": [
+        "video",
+        "minimax-h3-txt2vid-gguf",
+        "minimax-h3-img2vid-gguf",
+        "minimax-h3-video-edit-gguf",
+        "minimax-h3-ref-images-gguf",
+        "minimax-h3-first-frame-gguf",
+        "minimax-h3-fflf-gguf",
+        "minimax-h3-sing-gguf",
+        "minimax-h3-speak-gguf",
+        "minimax-h3-director-gguf"
+      ],
+      "workflows": [
+        "minimax-h3-gguf/txt2vid.json",
+        "minimax-h3-gguf/img2vid.json",
+        "minimax-h3-gguf/video-edit.json",
+        "minimax-h3-gguf/ref-images.json",
+        "minimax-h3-gguf/first-frame.json",
+        "minimax-h3-gguf/fflf.json",
+        "minimax-h3-gguf/sing.json",
+        "minimax-h3-gguf/speak.json",
+        "minimax-h3-gguf/director.json"
+      ],
+      "custom_nodes": [
+        "ComfyUI-GGUF",
+        "ComfyUI-MiniMaxH3-Director",
+        "ComfyUI-Pixaroma",
+        "ComfyUI-VideoHelperSuite",
+        "ComfyUI-tbox",
+        "rgthree-comfy"
+      ],
+      "models": [
+        "MiniMax-H3-Ref2VA-Q3_K_M.gguf",
+        "MiniMax-H3-FL2VA-Q3_K_M.gguf",
+        "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+        "minimax_h3_video_vae_fp16.safetensors",
+        "minimax_h3_audio_vae_fp32.safetensors"
+      ],
+      "notes": "The same nine workflows on the Q3_K_M quant - 15.6 GB a UNet instead of 19.5 - which is the smallest published for this model. Shares the text encoder and both VAEs with the full build, so having both costs one extra file per UNet."
+    },
+    {
       "id": "flux-krea",
       "label": "FLUX Krea",
       "pack": "booster",
