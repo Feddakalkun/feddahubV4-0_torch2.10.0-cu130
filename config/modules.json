@@ -209,8 +209,8 @@
         "ComfyUI-GGUF",
         "ComfyUI-MiniMaxH3-Director",
         "ComfyUI-Pixaroma",
-        "ComfyUI-VideoHelperSuite",
         "ComfyUI-tbox",
+        "ComfyUI-VideoHelperSuite",
         "rgthree-comfy"
       ],
       "models": [
