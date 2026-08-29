@@ -219,7 +219,34 @@ async def set_folders(req: FoldersRequest) -> Dict[str, Any]:
 
 
 class SecretRequest(BaseModel):
-    value: str = ""
+    """A saved credential, under whichever name the caller uses for it.
+
+    The dialog posts `{"token": ...}` for Hugging Face and `{"api_key": ...}`
+    for the others - v3's request models, and the shape it was written
+    against. v4 asked for `value`, which is a field none of them send: with a
+    default of "" the unknown key was ignored, the token saved as empty, and
+    the pill went straight back to "HF Token Missing" with no error anywhere.
+    A silent success is worse than a rejection.
+
+    All three are accepted rather than picking one, because all three are
+    already in use and renaming a field in the dialog would break the other
+    two endpoints in the same way.
+    """
+    # None, not "": an empty string is a deliberate "remove the saved key",
+    # and a body carrying no recognised field at all is a caller sending the
+    # wrong shape. Those must not look the same - telling them apart is what
+    # turns this bug into a 400 instead of a key that vanishes quietly.
+    value: Optional[str] = None
+    token: Optional[str] = None
+    api_key: Optional[str] = None
+
+    def secret(self) -> str:
+        for candidate in (self.token, self.api_key, self.value):
+            if candidate is not None:
+                return candidate.strip()
+        raise HTTPException(
+            status_code=400,
+            detail="No credential in the request. Expected one of: token, api_key, value.")
 
 
 def _secret_status(key: str) -> Dict[str, Any]:
@@ -234,8 +261,9 @@ async def hf_token_status() -> Dict[str, Any]:
 
 @app.post("/api/settings/hf-token")
 async def set_hf_token(req: SecretRequest) -> Dict[str, Any]:
-    _save_runtime_settings({"hf_token": req.value.strip()})
-    return {"success": True, "configured": bool(req.value.strip())}
+    secret = req.secret()
+    _save_runtime_settings({"hf_token": secret})
+    return {"success": True, "configured": bool(secret)}
 
 
 @app.get("/api/settings/civitai-key/status")
@@ -245,8 +273,9 @@ async def civitai_key_status() -> Dict[str, Any]:
 
 @app.post("/api/settings/civitai-key")
 async def set_civitai_key(req: SecretRequest) -> Dict[str, Any]:
-    _save_runtime_settings({"civitai_key": req.value.strip()})
-    return {"success": True, "configured": bool(req.value.strip())}
+    secret = req.secret()
+    _save_runtime_settings({"civitai_key": secret})
+    return {"success": True, "configured": bool(secret)}
 
 
 # ---------------------------------------------------------------- modules
