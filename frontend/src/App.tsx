@@ -11,6 +11,7 @@ import { ModelDownloadProvider } from './contexts/ModelDownloadContext';
 import { GalleryPage } from './pages/GalleryPage';
 import { ModuleUnavailablePage } from './pages/ModuleUnavailablePage';
 import { WorkflowPage } from './pages/WorkflowPage';
+import { MiniMaxDirectorPage } from './pages/MiniMaxDirectorPage';
 import {
   ACTIVE_TAB_STORAGE_KEY,
   APP_VERSION_LABEL,
@@ -273,6 +274,14 @@ function FeddaApp() {
       );
     }
     if (activeTab === 'gallery') return <GalleryPage />;
+    // Director is a storyboard, and a storyboard is not a list of fields.
+    // It still renders through WorkflowPage - this only supplies the editor
+    // that sits above the generated controls. Both the full-weight and the
+    // GGUF twin take it; they differ in one loader node, not in what the
+    // page is.
+    if (activeTab.startsWith('minimax-h3-director')) {
+      return <MiniMaxDirectorPage workflowId={activeTab} />;
+    }
     return <WorkflowPage workflowId={activeTab} />;
   };
 

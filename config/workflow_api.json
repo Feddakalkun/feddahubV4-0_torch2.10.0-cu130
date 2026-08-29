@@ -964,6 +964,44 @@
     "description": "A timeline of shots, each with its own moment and prompt, rendered as one clip.",
     "_timeline": "timeline_data on node 5 is the storyboard itself - 1681 characters of JSON written by the node's own visual editor in ComfyUI. It is deliberately not exposed: a textarea holding that is not an editor, and the graph's own value is a working storyboard to start from. Driving it properly means porting the timeline editor, which is its own piece of work.",
     "inputs": {
+      "prompt": {
+        "node_id": "5",
+        "input_key": "local_prompts",
+        "label": "Shot prompts",
+        "control": "text",
+        "multiline": true,
+        "_why": "One prompt per shot, separated by \" | \". Pairs with Shot lengths - three prompts want three lengths."
+      },
+      "segment_lengths": {
+        "node_id": "5",
+        "input_key": "segment_lengths",
+        "label": "Shot lengths (frames)",
+        "control": "text",
+        "_why": "Comma separated, one per prompt: \"36,48,36\" at 24 fps is 1.5s, 2s, 1.5s."
+      },
+      "timeline": {
+        "node_id": "5",
+        "input_key": "timeline_data",
+        "label": "Timeline (JSON)",
+        "control": "text",
+        "multiline": true,
+        "_why": "The node's own state, written by its visual editor. The overall prompt, the soundscape and the character slots live only in here, so it is exposed raw rather than left unreachable. Porting the editor is its own piece of work."
+      },
+      "frame_rate": {
+        "node_id": "5",
+        "input_key": "frame_rate",
+        "label": "Frame rate"
+      },
+      "width": {
+        "node_id": "5",
+        "input_key": "custom_width",
+        "label": "Width"
+      },
+      "height": {
+        "node_id": "5",
+        "input_key": "custom_height",
+        "label": "Height"
+      },
       "duration_seconds": {
         "node_id": "5",
         "input_key": "duration_seconds",
@@ -1926,6 +1964,44 @@
     "description": "A timeline of shots, each with its own moment and prompt, rendered as one clip. Quantised build, for cards with less VRAM.",
     "_timeline": "timeline_data on node 5 is the storyboard itself - 1681 characters of JSON written by the node's own visual editor in ComfyUI. It is deliberately not exposed: a textarea holding that is not an editor, and the graph's own value is a working storyboard to start from. Driving it properly means porting the timeline editor, which is its own piece of work.",
     "inputs": {
+      "prompt": {
+        "node_id": "5",
+        "input_key": "local_prompts",
+        "label": "Shot prompts",
+        "control": "text",
+        "multiline": true,
+        "_why": "One prompt per shot, separated by \" | \". Pairs with Shot lengths - three prompts want three lengths."
+      },
+      "segment_lengths": {
+        "node_id": "5",
+        "input_key": "segment_lengths",
+        "label": "Shot lengths (frames)",
+        "control": "text",
+        "_why": "Comma separated, one per prompt: \"36,48,36\" at 24 fps is 1.5s, 2s, 1.5s."
+      },
+      "timeline": {
+        "node_id": "5",
+        "input_key": "timeline_data",
+        "label": "Timeline (JSON)",
+        "control": "text",
+        "multiline": true,
+        "_why": "The node's own state, written by its visual editor. The overall prompt, the soundscape and the character slots live only in here, so it is exposed raw rather than left unreachable. Porting the editor is its own piece of work."
+      },
+      "frame_rate": {
+        "node_id": "5",
+        "input_key": "frame_rate",
+        "label": "Frame rate"
+      },
+      "width": {
+        "node_id": "5",
+        "input_key": "custom_width",
+        "label": "Width"
+      },
+      "height": {
+        "node_id": "5",
+        "input_key": "custom_height",
+        "label": "Height"
+      },
       "duration_seconds": {
         "node_id": "5",
         "input_key": "duration_seconds",

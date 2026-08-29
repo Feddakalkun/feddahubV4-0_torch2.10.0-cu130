@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { AlertCircle, Loader2, Sparkles } from 'lucide-react';
 import { WorkflowShell } from '../components/layout/WorkflowShell';
 import { FieldControl } from '../components/controls/FieldControl';
@@ -31,6 +31,21 @@ import type { FieldValue, WorkflowField, WorkflowSchema } from '../types/workflo
 
 interface WorkflowPageProps {
   workflowId: string;
+  /**
+   * Three hooks for the one workflow a list of fields cannot describe.
+   *
+   * MiniMax Director is a storyboard: shots you drag, references you drop.
+   * v3 answered that with a second page of eleven hundred lines carrying its
+   * own submit, its own model banner and its own output pane, and the two
+   * pages drifted. These let the storyboard sit above the generated controls
+   * and own the inputs it drives, while everything else - the schema, the
+   * missing-model banner, generate, cancel, outputs - stays here.
+   */
+  extraTop?: ReactNode;
+  /** Merged over the field values at submit. Wins on a clash. */
+  extraParams?: () => Record<string, unknown>;
+  /** Field keys the custom UI drives, so they are not drawn twice. */
+  hideKeys?: string[];
 }
 
 const seedValues = (fields: WorkflowField[]): Record<string, FieldValue> => {
@@ -42,7 +57,9 @@ const seedValues = (fields: WorkflowField[]): Record<string, FieldValue> => {
   return out;
 };
 
-export const WorkflowPage = ({ workflowId }: WorkflowPageProps) => {
+export const WorkflowPage = ({
+  workflowId, extraTop, extraParams, hideKeys,
+}: WorkflowPageProps) => {
   const { toast } = useToast();
   const { state } = useComfyExecution();
 
@@ -113,7 +130,7 @@ export const WorkflowPage = ({ workflowId }: WorkflowPageProps) => {
     setIsGenerating(true);
     setImages([]);
     try {
-      const params: Record<string, unknown> = { ...values };
+      const params: Record<string, unknown> = { ...values, ...(extraParams?.() ?? {}) };
       if (hasLoraField) {
         // The graph's Power Lora Loader is a placeholder the backend deletes
         // and rebuilds as _lora_0, _lora_1, ... so the count is ours to choose.
@@ -212,8 +229,10 @@ export const WorkflowPage = ({ workflowId }: WorkflowPageProps) => {
   // Long text gets its own row; everything else shares the control grid. This
   // is layout by control type rather than by field name, so a workflow nobody
   // has written yet still lands somewhere sensible.
-  const prose = schema.fields.filter((f) => f.control === 'text' && f.multiline);
-  const compact = schema.fields.filter(
+  const hidden = new Set(hideKeys ?? []);
+  const shown = schema.fields.filter((f) => !hidden.has(f.key));
+  const prose = shown.filter((f) => f.control === 'text' && f.multiline);
+  const compact = shown.filter(
     (f) => f.control !== 'lora' && !(f.control === 'text' && f.multiline),
   );
   const loraField = schema.fields.find((f) => f.control === 'lora');
@@ -224,7 +243,7 @@ export const WorkflowPage = ({ workflowId }: WorkflowPageProps) => {
   // ComfyUI then tried to open its own input folder as a file and failed
   // several nodes in, with a permission error naming a directory - a
   // message that says nothing about the picture nobody chose.
-  const missing = schema.fields.filter(
+  const missing = shown.filter(
     (f) => f.required && !String(values[f.key] ?? '').trim(),
   );
 
@@ -257,6 +276,8 @@ export const WorkflowPage = ({ workflowId }: WorkflowPageProps) => {
       }
     >
       <div className="workflow-cockpit workflow-cockpit-stack">
+        {extraTop}
+
         {prose.map((field) => (
           <FieldControl
             key={field.key}
