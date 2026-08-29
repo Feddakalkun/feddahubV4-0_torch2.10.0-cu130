@@ -98,8 +98,16 @@ export function useWorkflowDownloadStatus(workflowId: string): WorkflowDownloadS
   // Without it the bytes climb on disk while the banner shows nothing, and the
   // 409 telling the user to "watch the progress bar" points at a bar that never
   // appears. Anything still missing is reason enough to watch.
-  const hasMissingFiles = preflight.some((f) => !f.exists);
-  const pollingActive = isDownloaderNode || manualDownloading || hasMissingFiles;
+  // A file that cannot progress must not keep the poll alive. A gated model
+  // never arrives, so "something is still missing" stayed true forever and the
+  // backend took a request every two seconds for the rest of the session.
+  // Anything blocked is subtracted; if that leaves nothing, there is nothing to
+  // watch and the reason is already on screen.
+  const blocked = liveFiles.filter((f) => f.error).map((f) => f.filename);
+  const canStillArrive = preflight.some(
+    (f) => !f.exists && !blocked.includes(f.filename),
+  );
+  const pollingActive = isDownloaderNode || manualDownloading || canStillArrive;
   useEffect(() => {
     if (!pollingActive) {
       setLiveFiles([]);

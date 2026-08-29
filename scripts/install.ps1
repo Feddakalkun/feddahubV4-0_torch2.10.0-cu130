@@ -787,6 +787,17 @@ if (Test-Path $StylesSrc) {
 }
 
 # Bundled LoRAs
+# styles.csv. Load Styles CSV reads it from ComfyUI's own root and prints
+# "No styles.csv found" per run without it - and the Style picker on every
+# Z-Image workflow has nothing to offer.
+$StylesSrc = Join-Path $RootPath "assets\styles.csv"
+if (Test-Path $StylesSrc) {
+    Copy-Item -Path $StylesSrc -Destination $ComfyDir -Force
+    Write-Step "styles.csv installed." "Green"
+} else {
+    Write-Step "assets\styles.csv missing - the Style picker will be empty." "Yellow"
+}
+
 $SrcLoras = Join-Path $RootPath "assets\loras\z-image"
 $DstLoras = Join-Path $ComfyDir "models\loras\z-image"
 if (Test-Path $SrcLoras) {
