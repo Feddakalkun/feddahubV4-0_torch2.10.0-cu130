@@ -662,6 +662,30 @@ if (Test-Path $FrontendDir) {
 
 }
 
+
+# A pack may have downgraded something on its way in. One list, run at both
+# install and update time, so a fix cannot land on a fresh install and quietly
+# not on an updated one.
+$FixDeps = Join-Path $RootPath "scriptsix_deps.ps1"
+if (Test-Path $FixDeps) {
+    & powershell -NoProfile -ExecutionPolicy Bypass -File $FixDeps -PyExe "$PyExe"
+}
+
+# ============================================================================
+# 2b. ASSETS THAT LIVE OUTSIDE THE CLONE
+# ============================================================================
+# A few files the app ships have to end up somewhere git does not manage, and
+# a pull therefore never places them. styles.csv is the one that bites: Load
+# Styles CSV reads it from ComfyUI's own root, so an install that updates
+# instead of reinstalling had the file sitting in assets\ and ComfyUI logging
+# "No styles.csv found" on every run - which is exactly what happened. Copied
+# every update, because the shipped list changes with the app.
+$StylesSrc = Join-Path $RootPath "assets\styles.csv"
+if (Test-Path $StylesSrc) {
+    Copy-Item -Path $StylesSrc -Destination $ComfyDir -Force
+    Write-Host "  styles.csv refreshed." -ForegroundColor Gray
+}
+
 # ============================================================================
 # 3. SYNC COMFYUI REQUIREMENTS
 # ============================================================================

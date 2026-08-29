@@ -58,7 +58,10 @@
   },
   "20": {
     "class_type": "CR Conditioning Mixer",
-    "inputs": {},
+    "inputs": {
+      "mix_method": "Concatenate",
+      "average_strength": 1
+    },
     "_meta": {
       "title": "CR Conditioning Mixer"
     }
@@ -79,6 +82,8 @@
   "25": {
     "class_type": "CR Conditioning Mixer",
     "inputs": {
+      "mix_method": "Concatenate",
+      "average_strength": 1,
       "conditioning_1": [
         "20",
         0
@@ -146,7 +151,9 @@
   },
   "44": {
     "class_type": "UnetLoaderGGUF",
-    "inputs": {},
+    "inputs": {
+      "unet_name": "flux1-krea-dev-Q8_0.gguf"
+    },
     "_meta": {
       "title": "UnetLoaderGGUF"
     }

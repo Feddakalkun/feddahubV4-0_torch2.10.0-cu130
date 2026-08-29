@@ -284,7 +284,9 @@
   },
   "250": {
     "class_type": "UnetLoaderGGUF",
-    "inputs": {},
+    "inputs": {
+      "unet_name": "flux1-krea-dev-Q8_0.gguf"
+    },
     "_meta": {
       "title": "UnetLoaderGGUF"
     }

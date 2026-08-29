@@ -71,6 +71,66 @@ class ModelDownloader:
                 "url": "https://huggingface.co/alibaba-pai/Z-Image-Turbo-Fun-Controlnet-Union/resolve/main/Z-Image-Turbo-Fun-Controlnet-Union.safetensors",
                 "min_bytes": 10 * 1024 * 1024,
             },
+            # ---------------------------------------------------------------
+            # FLUX Krea. Sizes are what the server reported when these were
+            # added, and they are here so a wrong file is obvious rather than
+            # merely slow.
+            # ---------------------------------------------------------------
+
+            # 11.3 GB. Gated: Black Forest Labs asks you to accept the licence
+            # first. Comfy-Org publishes a repackaged fp8_scaled build openly,
+            # and it is deliberately not used here - the graph loads this at
+            # weight_dtype fp8_e4m3fn, so feeding it an already-scaled file
+            # would quantise twice and lose quality for no reason anyone could
+            # see from the UI.
+            "flux1-krea-dev.safetensors": {
+                "relative_dir": Path("unet"),
+                "url": "https://huggingface.co/black-forest-labs/FLUX.1-Krea-dev/resolve/main/flux1-krea-dev.safetensors",
+                "min_bytes": 100 * 1024 * 1024,
+                "gated": True,
+            },
+
+            # 12.1 GB. What five of the six Krea graphs actually load - the
+            # quantised build, which is the point of the GGUF variants. city96
+            # gates its copy; QuantStack serves the same quantisation openly.
+            "flux1-krea-dev-Q8_0.gguf": {
+                "relative_dir": Path("unet"),
+                "url": "https://huggingface.co/QuantStack/FLUX.1-Krea-dev-GGUF/resolve/main/flux1-krea-dev-Q8_0.gguf",
+                "min_bytes": 100 * 1024 * 1024,
+            },
+
+            # 319 MB. The FLUX autoencoder. Black Forest Labs gates its own
+            # copy, so this comes from the Lumina 2.0 repack, which carries the
+            # same file - checked byte for byte against a known-good local copy
+            # rather than assumed: 335304388 both.
+            "ae.safetensors": {
+                "relative_dir": Path("vae"),
+                "url": "https://huggingface.co/Comfy-Org/Lumina_Image_2.0_Repackaged/resolve/main/split_files/vae/ae.safetensors",
+                "min_bytes": 100 * 1024 * 1024,
+            },
+
+            # 4.6 GB text encoder.
+            "t5xxl_fp8_e4m3fn.safetensors": {
+                "relative_dir": Path("clip"),
+                "url": "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp8_e4m3fn.safetensors",
+                "min_bytes": 100 * 1024 * 1024,
+            },
+
+            # 234 MB. The graph calls it clip_l-for-gguf; upstream it is just
+            # clip_l, and the same bytes either way - the downloader saves
+            # under the destination name, so the rename costs nothing.
+            "clip_l-for-gguf.safetensors": {
+                "relative_dir": Path("clip"),
+                "url": "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors",
+                "min_bytes": 10 * 1024 * 1024,
+            },
+
+            # 4.0 GB. One ControlNet serving depth, pose and normal alike.
+            "FLUX.1-dev-ControlNet-Union-Pro-2.0.safetensors": {
+                "relative_dir": Path("controlnet"),
+                "url": "https://huggingface.co/Shakker-Labs/FLUX.1-dev-ControlNet-Union-Pro-2.0/resolve/main/diffusion_pytorch_model.safetensors",
+                "min_bytes": 100 * 1024 * 1024,
+            },
             # The name the ControlNet graph actually asks for. Its repo is
             # gated: without an accepted licence and a Hugging Face token the
             # URL answers 401, which is why this needs a source of its own

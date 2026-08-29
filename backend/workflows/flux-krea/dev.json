@@ -24,7 +24,10 @@
   },
   "108": {
     "class_type": "CR Conditioning Mixer",
-    "inputs": {},
+    "inputs": {
+      "mix_method": "Concatenate",
+      "average_strength": 1
+    },
     "_meta": {
       "title": "CR Conditioning Mixer"
     }
@@ -32,6 +35,8 @@
   "111": {
     "class_type": "CR Conditioning Mixer",
     "inputs": {
+      "mix_method": "Concatenate",
+      "average_strength": 1,
       "conditioning_1": [
         "108",
         0
