@@ -66,13 +66,27 @@ interface WorkflowPageProps {
  */
 const randomSeed = () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
 
-const seedValues = (fields: WorkflowField[]): Record<string, FieldValue> => {
+/**
+ * What a workflow opens on.
+ *
+ * The example wins over the graph's own value. A converted graph carries
+ * whatever its author last typed - on Z-Image txt2img that is "Breathtaking
+ * Award-winningreliastic woman on a horse", typos and all - and that is the
+ * first thing anyone reads. The example is written for the model in front of
+ * them, so it is the better default and it teaches the right shape of prompt
+ * by being there.
+ */
+const seedValues = (
+  fields: WorkflowField[],
+  example: Record<string, FieldValue> = {},
+): Record<string, FieldValue> => {
   const out: Record<string, FieldValue> = {};
   for (const field of fields) {
     if (field.control === 'lora') continue;
-    out[field.key] = field.role === 'seed'
-      ? randomSeed()
-      : (field.default ?? (field.control === 'number' ? 0 : '')) as FieldValue;
+    if (field.role === 'seed') { out[field.key] = randomSeed(); continue; }
+    out[field.key] = (example[field.key]
+      ?? field.default
+      ?? (field.control === 'number' ? 0 : '')) as FieldValue;
   }
   return out;
 };
@@ -106,7 +120,7 @@ export const WorkflowPage = ({
         const data: WorkflowSchema = await response.json();
         if (cancelled) return;
         setSchema(data);
-        setValues(seedValues(data.fields));
+        setValues(seedValues(data.fields, data.example ?? {}));
       } catch (error) {
         if (!cancelled) {
           setLoadError(error instanceof Error ? error.message : 'Could not read this workflow');
@@ -297,23 +311,6 @@ export const WorkflowPage = ({
     >
       <div className="workflow-cockpit workflow-cockpit-stack">
         {extraTop}
-
-        {/* One click to a prompt written for this particular model. The
-            seed is left alone: an example is a starting point, not a
-            reproduction, and handing back the same picture every time is
-            the opposite of useful. */}
-        {Object.keys(schema.example ?? {}).length > 0 && (
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => setValues((current) => ({ ...current, ...schema.example }))}
-            className="self-start rounded-lg border border-white/10 px-3 py-1.5 text-[11px]
-                       text-white/45 transition hover:border-violet-400/40 hover:text-white/85
-                       disabled:opacity-40"
-          >
-            Load an example prompt
-          </button>
-        )}
 
         {prose.map((field) => (
           <FieldControl
