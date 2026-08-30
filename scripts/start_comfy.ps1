@@ -153,6 +153,16 @@ if (Test-Path $SettingsFile) {
     }
 }
 
+# ComfyUI creates these on demand, and some nodes read them at import instead.
+# ComfyUI_Comfyroll_CustomNodes lists output/ inside INPUT_TYPES, so a missing
+# folder raises during /object_info - ComfyUI catches it per node and carries
+# on, which means one node type quietly vanishes from the list and the error is
+# logged on every single call.
+foreach ($Dir in @("output", "input", "temp")) {
+    $Path = Join-Path $RootPath "ComfyUI\$Dir"
+    if (-not (Test-Path $Path)) { New-Item -ItemType Directory -Force $Path | Out-Null }
+}
+
 $ComfyProc = Start-Process -FilePath $Python `
     -ArgumentList "-s `"$ComfyMain`" --windows-standalone-build --port 8199 --disable-cuda-malloc --preview-method auto$ComfyExtraArgs" `
     -PassThru -NoNewWindow `

@@ -151,14 +151,14 @@ export const FEDDA_MODEL_GROUPS: FeddaModelGroup[] = [
     id: 'minimax-h3-full',
     family: 'minimax-h3',
     label: 'Standard',
-    description: 'Full weights. 19.5 GB a model - wants 24 GB of VRAM or more.',
+    description: 'Full weights, 19.5 GB. Faster whenever it fits, and past about 130 frames it is the better of two bad options.',
     Icon: Clapperboard,
   },
   {
     id: 'minimax-h3-gguf',
     family: 'minimax-h3',
     label: 'GGUF',
-    description: 'Quantised to 15.6 GB, the smallest published. For smaller cards.',
+    description: 'Quantised to 15.6 GB. Wins when the full build will not fit - short clips, or a card under 24 GB.',
     Icon: Clapperboard,
   },
 ];
