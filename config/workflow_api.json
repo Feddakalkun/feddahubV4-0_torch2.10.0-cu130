@@ -1126,6 +1126,66 @@
           "stretch to fit",
           "pad"
         ]
+      },
+      "start_frame": {
+        "node_id": "5",
+        "input_key": "start_frame",
+        "label": "Start frame",
+        "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
+      },
+      "end_frame": {
+        "node_id": "5",
+        "input_key": "end_frame",
+        "label": "End frame",
+        "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
+      },
+      "duration_frames": {
+        "node_id": "5",
+        "input_key": "duration_frames",
+        "label": "Frames",
+        "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
+      },
+      "img_compression": {
+        "node_id": "5",
+        "input_key": "img_compression",
+        "label": "Keyframe compression",
+        "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
+      },
+      "divisible_by": {
+        "node_id": "5",
+        "input_key": "divisible_by",
+        "label": "Snap to",
+        "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
+      },
+      "display_mode": {
+        "node_id": "5",
+        "input_key": "display_mode",
+        "label": "Timeline units",
+        "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
+      },
+      "use_custom_audio": {
+        "node_id": "5",
+        "input_key": "use_custom_audio",
+        "label": "Use reference audio",
+        "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
+      },
+      "use_custom_motion": {
+        "node_id": "5",
+        "input_key": "use_custom_motion",
+        "label": "Use reference video",
+        "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
+      },
+      "override_audio": {
+        "node_id": "5",
+        "input_key": "override_audio",
+        "label": "Replace audio",
+        "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
+      },
+      "ref_image_notes": {
+        "node_id": "5",
+        "input_key": "ref_image_notes",
+        "label": "Reference notes",
+        "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
       }
     }
   },
@@ -2208,6 +2268,66 @@
           "stretch to fit",
           "pad"
         ]
+      },
+      "start_frame": {
+        "node_id": "5",
+        "input_key": "start_frame",
+        "label": "Start frame",
+        "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
+      },
+      "end_frame": {
+        "node_id": "5",
+        "input_key": "end_frame",
+        "label": "End frame",
+        "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
+      },
+      "duration_frames": {
+        "node_id": "5",
+        "input_key": "duration_frames",
+        "label": "Frames",
+        "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
+      },
+      "img_compression": {
+        "node_id": "5",
+        "input_key": "img_compression",
+        "label": "Keyframe compression",
+        "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
+      },
+      "divisible_by": {
+        "node_id": "5",
+        "input_key": "divisible_by",
+        "label": "Snap to",
+        "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
+      },
+      "display_mode": {
+        "node_id": "5",
+        "input_key": "display_mode",
+        "label": "Timeline units",
+        "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
+      },
+      "use_custom_audio": {
+        "node_id": "5",
+        "input_key": "use_custom_audio",
+        "label": "Use reference audio",
+        "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
+      },
+      "use_custom_motion": {
+        "node_id": "5",
+        "input_key": "use_custom_motion",
+        "label": "Use reference video",
+        "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
+      },
+      "override_audio": {
+        "node_id": "5",
+        "input_key": "override_audio",
+        "label": "Replace audio",
+        "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
+      },
+      "ref_image_notes": {
+        "node_id": "5",
+        "input_key": "ref_image_notes",
+        "label": "Reference notes",
+        "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
       }
     }
   },

@@ -234,6 +234,17 @@ class WorkflowService:
             if input_info.get("type") == "loras" and input_key not in effective_params:
                 effective_params[input_key] = []
 
+        # A param the mapping does not name goes nowhere, and used to go
+        # nowhere quietly. Director sent nineteen and ten were dropped,
+        # among them the entire storyboard - so it rendered the shot list
+        # baked into the graph and looked like the page was being ignored.
+        unknown = [k for k in effective_params
+                   if k not in mapping.get("inputs", {})]
+        if unknown:
+            logger.warning("%s: %d param(s) have no mapping entry and were "
+                           "not written: %s", workflow_id, len(unknown),
+                           ", ".join(sorted(unknown)))
+
         for param_key, param_value in effective_params.items():
             if param_key in mapping["inputs"]:
                 input_info = mapping["inputs"][param_key]

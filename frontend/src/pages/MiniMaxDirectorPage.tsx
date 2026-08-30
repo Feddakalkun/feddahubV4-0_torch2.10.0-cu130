@@ -626,8 +626,8 @@ export const MiniMaxDirectorPage = ({ workflowId }: Props) => {
           return {
             width: shape.width,
             height: shape.height,
-            timeline_data: JSON.stringify(timeline),
-            local_prompts: segments.map((s) => s.prompt.trim()).join(' | '),
+            timeline: JSON.stringify(timeline),
+            prompt: segments.map((s) => s.prompt.trim()).join(' | '),
             segment_lengths: segments.map((s) => Math.max(1, s.length)).join(','),
             start_frame: 0,
             end_frame: totalFrames,
