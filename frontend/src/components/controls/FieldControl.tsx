@@ -139,7 +139,12 @@ export const FieldControl = ({ field, value, onChange, disabled }: Props) => {
 
       return (
         <div className="cockpit-panel">
-          <Head label={field.label} hint={String(num)} />
+          {/* -1 is the app's "pick one for me"; showing the number back
+              would be showing a sentinel where a seed goes. */}
+          <Head
+            label={field.label}
+            hint={isSeed && num < 0 ? 'random each run' : String(num)}
+          />
           {slidable ? (
             <input
               type="range"
@@ -163,10 +168,15 @@ export const FieldControl = ({ field, value, onChange, disabled }: Props) => {
                 disabled={disabled}
                 onChange={(e) => onChange(Number(e.target.value))}
               />
+              {/* The dice fixes a seed rather than randomising: -1 already
+                  gives a new one every run, and what you cannot do with it is
+                  repeat a picture you liked. This writes one down. */}
               {isSeed && (
                 <button
                   type="button"
-                  title="Random seed"
+                  title={num < 0
+                    ? 'Fix a seed, so this run can be repeated'
+                    : 'Roll a different seed'}
                   disabled={disabled}
                   className="px-2.5 py-2 shrink-0"
                   onClick={() => onChange(Math.floor(Math.random() * SEED_MAX))}

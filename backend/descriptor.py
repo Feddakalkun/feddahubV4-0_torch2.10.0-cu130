@@ -82,6 +82,12 @@ def load_object_info(path: Optional[str] = None) -> Dict[str, Any]:
         return {}
 
 
+# What a seed box holds when it has not been chosen. Not a magic number the
+# node knows - ComfyUI declares seeds as min 0 - but the value this app uses
+# between the page and /api/generate, which replaces it before submitting.
+SEED_RANDOM = -1
+
+
 def input_signature(object_info: Dict[str, Any], class_type: str,
                     input_key: str) -> Tuple[str, Dict[str, Any], List[Any]]:
     """What `object_info` says one input of one node class is.
@@ -282,9 +288,17 @@ def describe_input(key: str, spec: Dict[str, Any], graph: Dict[str, Any],
                       "default": value if isinstance(value, (int, float)) else 0})
         field.update(_number_bounds(kind or ("INT" if isinstance(value, int) else "FLOAT"), opts))
         # A seed is a number the user mostly wants re-rolled rather than typed,
-        # so the renderer puts a dice next to it. Same control, different affordance.
+        # so the renderer puts a dice next to it. Same control, different
+        # affordance.
+        #
+        # -1 means "pick one for me", and the page opens on it. A random
+        # number in the box looks chosen, so nothing tells you it will
+        # change; -1 says so. The node itself declares min 0 and would
+        # refuse it, so /api/generate swaps it for a real value on the way
+        # past and the graph never sees it.
         if key == "seed" or key.endswith("_seed"):
             field["role"] = "seed"
+            field["min"] = SEED_RANDOM
         return field
 
     # --- text last. `multiline` is the node's word, not a guess from the key.

@@ -13,6 +13,7 @@ See `descriptor.py`.
 import json
 import logging
 import os
+import random
 import sys
 import threading
 import time
@@ -603,6 +604,20 @@ async def generate(req: GenerateRequest) -> Dict[str, Any]:
         raise HTTPException(
             status_code=400,
             detail="Fill these in first: %s" % ", ".join(missing))
+
+    # -1 is this app's way of saying "pick one", and it stops here. ComfyUI
+    # declares a seed as min 0 and refuses anything below it, so the graph must
+    # never see the sentinel. Rolled per field, so a workflow with two seeds
+    # gets two different ones rather than the same value twice.
+    for field in graph_desc["fields"]:
+        if field.get("role") != "seed":
+            continue
+        try:
+            given = int(req.params.get(field["key"]))
+        except (TypeError, ValueError):
+            continue
+        if given < 0:
+            req.params[field["key"]] = random.randint(0, 2 ** 53 - 1)
 
     params = encoders.apply(mapping, req.params)
 

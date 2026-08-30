@@ -52,19 +52,18 @@ interface WorkflowPageProps {
 }
 
 /**
- * A fresh seed every time a workflow is opened.
+ * A seed box opens on -1, meaning "pick one for me".
  *
- * The graph's own seed is whatever number the author's last render happened to
- * use. Shipping it means every user starts from the same one, and pressing
- * Generate twice without touching anything returns the same picture - which
- * reads as the app being broken rather than as a seed doing its job. The dice
- * button is still there for deliberately going back to one.
+ * The graph's own seed is whatever number the author's last render happened
+ * to use, so every user started from the same one and two Generates without
+ * touching anything returned the same picture. Filling a random number in
+ * instead fixed that but hid it: a number in the box looks chosen, and
+ * nothing says it will be different next time. -1 says so.
  *
- * Kept under 2^53 so it survives JSON as an exact integer; ComfyUI accepts far
- * larger, but a seed that changes when it round-trips is worse than a smaller
- * space.
+ * /api/generate swaps it for a real value before submitting - ComfyUI
+ * declares a seed as min 0 and would refuse the sentinel.
  */
-const randomSeed = () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+const SEED_RANDOM = -1;
 
 /**
  * What a workflow opens on.
@@ -83,7 +82,7 @@ const seedValues = (
   const out: Record<string, FieldValue> = {};
   for (const field of fields) {
     if (field.control === 'lora') continue;
-    if (field.role === 'seed') { out[field.key] = randomSeed(); continue; }
+    if (field.role === 'seed') { out[field.key] = SEED_RANDOM; continue; }
     out[field.key] = (example[field.key]
       ?? field.default
       ?? (field.control === 'number' ? 0 : '')) as FieldValue;
