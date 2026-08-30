@@ -129,13 +129,19 @@ export const FieldControl = ({ field, value, onChange, disabled }: Props) => {
       const num = typeof value === 'number' ? value : Number(field.default ?? 0);
       const isSeed = field.role === 'seed';
 
-      // A slider needs a finite, meaningful range. `seed` is declared 0 to
-      // 2^64-1, which is not something to drag - so it keeps the number box and
-      // gains a dice instead. The node's own bounds decide which it gets.
-      const slidable = !isSeed
-        && typeof field.min === 'number'
-        && typeof field.max === 'number'
-        && field.max - field.min <= 100000;
+      // Two ranges, deliberately. The slider spans what people use; the box
+      // accepts anything the node does. Dragging across a node's own range -
+      // steps 1 to 10000, width 0 to 16384 - puts 25 of them under each pixel
+      // and the value you want cannot be pointed at.
+      const lo = field.ui_min ?? field.min;
+      const hi = field.ui_max ?? field.max;
+      const slidable = !isSeed && typeof lo === 'number' && typeof hi === 'number';
+
+      // A frame count said in the unit people think in. The rate comes off the
+      // graph, because LTX Prompt Relay counts at 25 and the rest at 24.
+      const seconds = field.unit === 'frames' && field.fps
+        ? `${(num / field.fps).toFixed(2)}s`
+        : null;
 
       return (
         <div className="cockpit-panel">
@@ -143,19 +149,36 @@ export const FieldControl = ({ field, value, onChange, disabled }: Props) => {
               would be showing a sentinel where a seed goes. */}
           <Head
             label={field.label}
-            hint={isSeed && num < 0 ? 'random each run' : String(num)}
+            hint={isSeed && num < 0
+              ? 'random each run'
+              : seconds ? `${num}f · ${seconds}` : String(num)}
           />
           {slidable ? (
-            <input
-              type="range"
-              className="cockpit-range"
-              min={field.min}
-              max={field.max}
-              step={field.step ?? 1}
-              value={num}
-              disabled={disabled}
-              onChange={(e) => onChange(Number(e.target.value))}
-            />
+            <div className="flex items-center gap-2">
+              <input
+                type="range"
+                className="cockpit-range flex-1"
+                min={lo}
+                max={hi}
+                step={field.ui_step ?? field.step ?? 1}
+                value={Math.min(Math.max(num, lo as number), hi as number)}
+                disabled={disabled}
+                onChange={(e) => onChange(Number(e.target.value))}
+              />
+              {/* The exact value, typed. The slider is for finding one;
+                  this is for knowing which one you have. */}
+              <input
+                type="number"
+                className="fedda-input w-20 shrink-0 rounded-lg px-2 py-1 text-right
+                           text-[12px] text-white/90"
+                min={field.min}
+                max={field.max}
+                step={field.step ?? 1}
+                value={num}
+                disabled={disabled}
+                onChange={(e) => onChange(Number(e.target.value))}
+              />
+            </div>
           ) : (
             <div className={cn('flex items-center gap-2', isSeed && 'cockpit-seed-row')}>
               <input

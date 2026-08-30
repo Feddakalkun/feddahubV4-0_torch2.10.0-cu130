@@ -70,6 +70,13 @@ export interface WorkflowField {
    * face. The backend applies it; the frontend only sends the value.
    */
   node_ids?: string[];
+  /** What the slider should span - what people use, not what the node allows. */
+  ui_min?: number;
+  ui_max?: number;
+  ui_step?: number;
+  /** 'frames', with the rate it is counted at, so the control can show seconds. */
+  unit?: string;
+  fps?: number;
 }
 
 export interface WorkflowSchema {

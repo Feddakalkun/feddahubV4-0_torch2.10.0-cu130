@@ -141,6 +141,23 @@ def _is_file_slot(class_type: str, value: Any, node_known: bool) -> bool:
     return "load" in class_type.lower()
 
 
+def _frame_rate(graph: Dict[str, Any]) -> Optional[float]:
+    """The rate this graph counts frames at, from whichever node states it.
+
+    Read rather than assumed: LTX Prompt Relay runs at 25 and everything else
+    here at 24, and showing 5.2s beside a number that means 4.96s is a worse
+    kind of wrong than showing nothing.
+    """
+    for name in ("frame_rate", "fps"):
+        for node in graph.values():
+            if not isinstance(node, dict):
+                continue
+            value = (node.get("inputs") or {}).get(name)
+            if isinstance(value, (int, float)) and 1 <= value <= 240:
+                return float(value)
+    return None
+
+
 def _graph_value(graph: Dict[str, Any], node_id: str, input_key: str) -> Any:
     """The literal this input currently holds, or None if it is wired.
 
@@ -153,14 +170,88 @@ def _graph_value(graph: Dict[str, Any], node_id: str, input_key: str) -> Any:
     return None if isinstance(value, list) else value
 
 
-def _number_bounds(kind: str, opts: Dict[str, Any]) -> Dict[str, Any]:
-    """Range and step for a numeric control, as the node declares them."""
+# What a slider should span, per input, against what the node will accept.
+#
+# These are two different questions and the code answered only one. A node
+# declares the range it will not reject - steps 1 to 10000, width 0 to 16384,
+# and `easy int` simply says -999999 to 999999 - and driving a slider from that
+# puts 25 steps, or 41 pixels, or 5000 of whatever it is, under every pixel of
+# travel. The value you want is unreachable by pointing at it.
+#
+# So the slider spans what people actually use, and the box beside it still
+# accepts anything the node does. Keys are matched exactly first, then by
+# suffix, so `upscale_steps` inherits `steps`.
+_UI_RANGES: Dict[str, Tuple[float, float, float]] = {
+    # sampling
+    "steps": (1, 60, 1),
+    "cfg": (1, 15, 0.1),
+    "denoise": (0, 1, 0.01),
+    "guidance": (0, 10, 0.1),
+    # canvas. 32 is what most of these snap to anyway.
+    "width": (256, 2048, 32),
+    "height": (256, 2048, 32),
+    "longest_side": (512, 2048, 32),
+    "size": (256, 2048, 32),
+    # time
+    "fps": (8, 60, 1),
+    "frame_rate": (8, 60, 1),
+    "length": (5, 360, 1),
+    "duration_frames": (5, 360, 1),
+    "start_frame": (0, 360, 1),
+    "end_frame": (5, 360, 1),
+    "duration_seconds": (0.5, 15, 0.1),
+    "start_second": (0, 15, 0.1),
+    "end_second": (0.5, 15, 0.1),
+    "skip": (0, 60, 1),
+    # model-specific knobs, at the ranges their own guides give
+    "shift_video": (1, 30, 0.5),
+    "shift_audio": (0.5, 15, 0.5),
+    "img_compression": (0, 100, 1),
+    "upscale_by": (1, 4, 0.05),
+    "strength": (0, 2, 0.01),
+    "confidence": (0.05, 0.95, 0.01),
+    "control_start": (0, 1, 0.01),
+    "control_end": (0, 1, 0.01),
+    "divisible_by": (8, 64, 8),
+}
+
+# Frames are what the node counts and seconds are what a person means, so a
+# frame field carries the rate beside it and the control shows both.
+_FRAME_FIELDS = ("length", "duration_frames", "start_frame", "end_frame",
+                 "frames", "frame_load_cap")
+
+
+def _ui_range(key: str) -> Optional[Tuple[float, float, float]]:
+    low = key.lower()
+    if low in _UI_RANGES:
+        return _UI_RANGES[low]
+    for name, span in _UI_RANGES.items():
+        if low.endswith("_" + name) or low.startswith(name + "_"):
+            return span
+    return None
+
+
+def _number_bounds(kind: str, opts: Dict[str, Any],
+                   key: str = "") -> Dict[str, Any]:
+    """What the node will accept, and separately what the slider should span."""
     out: Dict[str, Any] = {}
     for src, dst in (("min", "min"), ("max", "max"), ("step", "step")):
         if src in opts and isinstance(opts[src], (int, float)):
             out[dst] = opts[src]
     if "step" not in out:
         out["step"] = 1 if kind == "INT" else 0.01
+
+    span = _ui_range(key)
+    if span:
+        lo, hi, step = span
+        # Never widen past what the node accepts - the box would offer a value
+        # ComfyUI then refuses.
+        if isinstance(out.get("min"), (int, float)):
+            lo = max(lo, out["min"])
+        if isinstance(out.get("max"), (int, float)):
+            hi = min(hi, out["max"])
+        if hi > lo:
+            out.update({"ui_min": lo, "ui_max": hi, "ui_step": step})
     return out
 
 
@@ -240,7 +331,7 @@ def describe_input(key: str, spec: Dict[str, Any], graph: Dict[str, Any],
         else:
             field["default"] = value
         if override == "number":
-            field.update(_number_bounds(kind or "INT", opts))
+            field.update(_number_bounds(kind or "INT", opts, key))
         return field
 
     # --- an upload, before anything else: a loader's filename is a STRING and
@@ -286,7 +377,8 @@ def describe_input(key: str, spec: Dict[str, Any], graph: Dict[str, Any],
     if kind in ("INT", "FLOAT") or declared == "number" or isinstance(value, (int, float)):
         field.update({"control": "number",
                       "default": value if isinstance(value, (int, float)) else 0})
-        field.update(_number_bounds(kind or ("INT" if isinstance(value, int) else "FLOAT"), opts))
+        field.update(_number_bounds(
+            kind or ("INT" if isinstance(value, int) else "FLOAT"), opts, key))
         # A seed is a number the user mostly wants re-rolled rather than typed,
         # so the renderer puts a dice next to it. Same control, different
         # affordance.
@@ -299,6 +391,11 @@ def describe_input(key: str, spec: Dict[str, Any], graph: Dict[str, Any],
         if key == "seed" or key.endswith("_seed"):
             field["role"] = "seed"
             field["min"] = SEED_RANDOM
+        elif key.lower() in _FRAME_FIELDS:
+            rate = _frame_rate(graph)
+            if rate:
+                field["unit"] = "frames"
+                field["fps"] = rate
         return field
 
     # --- text last. `multiline` is the node's word, not a guess from the key.
