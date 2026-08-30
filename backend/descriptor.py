@@ -190,7 +190,7 @@ _UI_RANGES: Dict[str, Tuple[float, float, float]] = {
     # canvas. 32 is what most of these snap to anyway.
     "width": (256, 2048, 32),
     "height": (256, 2048, 32),
-    "longest_side": (512, 2048, 32),
+    "longest_side": (256, 2048, 32),
     "size": (256, 2048, 32),
     # time
     "fps": (8, 60, 1),

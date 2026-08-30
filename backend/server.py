@@ -403,6 +403,27 @@ async def workflow_schema(workflow_id: str) -> Dict[str, Any]:
     return descriptor.describe_workflow(workflow_id, mapping, graph, object_info())
 
 
+# Smaller builds of a model a graph already names. Keyed by what the graph
+# carries, so the dialog can offer them beside it without the mapping or the
+# graph mentioning them at all.
+#
+# MiniMax ships at Q3_K_M, which is 15.6 GB and wants a 24 GB card. These are
+# the same model between 8 and 11 GB, and downloading one is what makes the
+# workflow's model picker useful on a 12 GB card.
+_SMALLER_BUILDS: Dict[str, List[str]] = {
+    "MiniMax-H3-FL2VA-Q3_K_M.gguf": [
+        "minimax_h3_fl2va_pruned-UD-Q3_K_XL.gguf",
+        "minimax_h3_fl2va_pruned-UD-Q2_K_XL.gguf",
+        "minimax_h3_fl2va_pruned-Q4_K.gguf",
+    ],
+    "MiniMax-H3-Ref2VA-Q3_K_M.gguf": [
+        "minimax_h3_ref2va_pruned-UD-Q3_K_XL.gguf",
+        "minimax_h3_ref2va_pruned-UD-Q2_K_XL.gguf",
+        "minimax_h3_ref2va_pruned-Q4_K.gguf",
+    ],
+}
+
+
 def _workflow_models(workflow_id: str) -> List[Dict[str, Any]]:
     """Every model this workflow needs, and where each one already is.
 
@@ -468,6 +489,29 @@ def _workflow_models(workflow_id: str) -> List[Dict[str, Any]]:
             **({"no_source": True, "note": note} if note else {}),
         })
 
+    # Smaller builds of whatever this graph loads, offered rather than needed.
+    # `optional` keeps them out of the missing count and out of the way of a
+    # run; the dialog lists them under their own heading.
+    for name in [f["filename"] for f in list(files)]:
+        for alt in _SMALLER_BUILDS.get(name, []):
+            if alt.lower() in seen:
+                continue
+            spec = model_downloader.spec_for(alt)
+            if not spec:
+                continue
+            seen.add(alt.lower())
+            found = model_links.find_anywhere(alt, ROOT_DIR, extra)
+            files.append({
+                "filename": alt,
+                "folder": str(spec["relative_dir"]).replace("\\", "/"),
+                "url": str(spec.get("url") or ""),
+                "path": str(model_downloader._dest_path_for_spec(spec, alt)),
+                "exists": found is not None,
+                "size_bytes": found.stat().st_size if found else 0,
+                "optional": True,
+                "alternative_to": name,
+            })
+
     # A graph may also declare downloads inline through a
     # HuggingFaceDownloader node. None of the six do today.
     for item in model_links.parse_download_links(graph, ROOT_DIR, extra):
@@ -501,7 +545,8 @@ async def workflow_model_status(workflow_id: str) -> Dict[str, Any]:
         model_links.load_graph(path), ROOT_DIR,
         str(_runtime_settings().get("extra_models_path") or ""))
         if path else {})
-    return {"files": files, "ready": all(f["exists"] for f in files),
+    return {"files": files,
+            "ready": all(f["exists"] for f in files if not f.get("optional")),
             "vram": vram}
 
 
@@ -529,7 +574,9 @@ async def workflow_download_models(workflow_id: str) -> Dict[str, Any]:
     token = str(_runtime_settings().get("hf_token") or "").strip()
     started, already = [], []
     for item in files:
-        if item["exists"]:
+        if item["exists"] or item.get("optional"):
+            # An optional build is downloaded on request, never by
+            # "fetch what is missing" - it is an alternative, not a gap.
             already.append(item["filename"])
             continue
         if not item.get("url"):
@@ -547,6 +594,30 @@ async def workflow_download_models(workflow_id: str) -> Dict[str, Any]:
     logger.info("download %s: %d starting, %d already here",
                 workflow_id, len(started), len(already))
     return {"success": True, "started": started, "already_present": already}
+
+
+@app.post("/api/models/fetch/{filename}")
+async def fetch_one_model(filename: str) -> Dict[str, Any]:
+    """Download one named model.
+
+    The workflow-level download fetches what is missing, which is right for a
+    gap and wrong for a choice: a smaller build of a model you already have is
+    not missing, it is an alternative, and asking for it has to be possible
+    without pretending otherwise.
+    """
+    spec = model_downloader.spec_for(filename)
+    if not spec or not spec.get("url"):
+        raise HTTPException(status_code=404,
+                            detail="Nothing knows where to download %r." % filename)
+    token = str(_runtime_settings().get("hf_token") or "").strip()
+    headers = ({"Authorization": f"Bearer {token}"}
+               if token and "huggingface.co" in str(spec["url"]) else None)
+    dest = model_downloader._dest_path_for_spec(spec, filename)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    state = model_downloader.start_url_download(
+        str(spec["url"]), dest, filename, headers=headers)
+    logger.info("fetch %s: %s", filename, state)
+    return {"success": True, "filename": filename, "state": state}
 
 
 @app.get("/api/models/status/{filename}")

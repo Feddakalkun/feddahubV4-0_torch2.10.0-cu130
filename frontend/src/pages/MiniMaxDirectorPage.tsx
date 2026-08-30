@@ -126,12 +126,33 @@ const shotsOf = (p: Preset, total = DEFAULT_CLIP): Segment[] => {
   }));
 };
 
-/** The shapes H3 is actually run at, as one question instead of two sliders. */
+/**
+ * The shapes H3 is run at, as one question instead of two sliders - now with a
+ * smaller size of each.
+ *
+ * Pixel count is the lever that shortens a render: activations and compute
+ * both scale with it, where clip length costs time alone. 960x544 is 47% of
+ * the pixels of 1344x768 and every dimension stays divisible by 32, which is
+ * what the node snaps to anyway.
+ */
 const SHAPES = {
   landscape: { width: 1344, height: 768 },
+  'landscape-small': { width: 960, height: 544 },
   portrait: { width: 768, height: 1344 },
+  'portrait-small': { width: 544, height: 960 },
   square: { width: 1024, height: 1024 },
+  'square-small': { width: 704, height: 704 },
 } as const;
+
+/** What each shape is called on its button. */
+const SHAPE_LABELS: Record<keyof typeof SHAPES, string> = {
+  landscape: 'Landscape',
+  'landscape-small': 'Landscape small',
+  portrait: 'Portrait',
+  'portrait-small': 'Portrait small',
+  square: 'Square',
+  'square-small': 'Square small',
+};
 
 // Parked until the walkthrough covers the whole UI rather than this one page.
 export const TOUR_STEPS_PARKED: unknown[] = [
@@ -665,8 +686,17 @@ export const MiniMaxDirectorPage = ({ workflowId }: Props) => {
         // The storyboard drives these; drawing them as boxes too would be two
         // editors for one value. shape covers width and height, so those go as
         // well - everything else on this workflow still comes from the schema.
-        hideKeys={['prompt', 'segment_lengths', 'timeline', 'width', 'height',
-                   'frame_rate', 'duration_seconds', 'start_second', 'end_second']}
+        hideKeys={[
+          // the storyboard writes these
+          'prompt', 'segment_lengths', 'timeline',
+          'width', 'height', 'frame_rate',
+          'duration_seconds', 'start_second', 'end_second',
+          'start_frame', 'end_frame', 'duration_frames',
+          'use_custom_audio', 'use_custom_motion',
+          // node plumbing, not a decision anyone makes
+          'divisible_by', 'display_mode', 'img_compression',
+          'override_audio', 'ref_image_notes',
+        ]}
                 extraParams={(values) => {
           const timeline = buildTimeline(scenePrompt);
           const shape = SHAPES[canvasShape] ?? SHAPES.landscape;
@@ -731,12 +761,12 @@ export const MiniMaxDirectorPage = ({ workflowId }: Props) => {
                     key={key}
                     type="button"
                     onClick={() => setCanvasShape(key)}
-                    className={`rounded-md border px-2.5 py-1 text-[11px] capitalize transition ${
+                    className={`rounded-md border px-2.5 py-1 text-[11px] transition ${
                       canvasShape === key
                         ? 'border-sky-500/40 bg-sky-500/15 text-sky-200'
                         : 'border-white/10 text-white/45 hover:text-white/80'}`}
                   >
-                    {key}
+                    {SHAPE_LABELS[key]}
                   </button>
                 ))}
                 <span className="ml-1 text-[10px] text-white/30">

@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { AlertTriangle, CheckCircle2, DownloadCloud, Loader2, X } from 'lucide-react';
 import { useWorkflowDownloadStatus } from '../../hooks/useWorkflowDownloadStatus';
 import { useComfyExecution } from '../../contexts/ComfyExecutionContext';
+import { BACKEND_API } from '../../config/api';
 
 /**
  * Full model inventory for one workflow.
@@ -25,6 +26,14 @@ interface ModelStatusModalProps {
 }
 
 export const ModelStatusModal = ({ workflowId, workflowLabel, onClose }: ModelStatusModalProps) => {
+  const fetchOne = async (filename: string) => {
+    try {
+      await fetch(
+        `${BACKEND_API.BASE_URL}/api/models/fetch/${encodeURIComponent(filename)}`,
+        { method: 'POST' },
+      );
+    } catch { /* the row keeps saying Get; nothing else changes */ }
+  };
   const { isDownloaderNode } = useComfyExecution();
   const { preflight, liveFiles, missingCount, fetchableCount, allReady, checked,
     manualDownloading, startDownload } = useWorkflowDownloadStatus(workflowId);
@@ -121,7 +130,7 @@ export const ModelStatusModal = ({ workflowId, workflowLabel, onClose }: ModelSt
                 </tr>
               </thead>
               <tbody>
-                {rows.map((r) => (
+                {rows.filter((r) => !r.optional).map((r) => (
                   <tr key={`${r.folder}/${r.filename}`} className="border-t border-white/5">
                     <td className="max-w-[320px] px-5 py-2.5">
                       <div className="truncate font-mono text-[11px] text-zinc-300" title={r.filename}>
@@ -166,6 +175,58 @@ export const ModelStatusModal = ({ workflowId, workflowLabel, onClose }: ModelSt
                     </td>
                   </tr>
                 ))}
+                {/* Alternatives to something above, not gaps. A smaller build
+                    of a model you already have is a choice, so it gets its own
+                    heading and its own button rather than joining the count of
+                    what is missing. */}
+                {rows.some((r) => r.optional) && (
+                  <>
+                    <tr>
+                      <td colSpan={4} className="px-5 pb-1 pt-4">
+                        <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/25">
+                          Smaller builds — optional
+                        </div>
+                        <div className="mt-0.5 text-[10px] text-white/30">
+                          The same model, quantised further. Download one and it appears in
+                          this workflow's model picker.
+                        </div>
+                      </td>
+                    </tr>
+                    {rows.filter((r) => r.optional).map((r) => (
+                      <tr key={`${r.folder}/${r.filename}`} className="border-t border-white/5">
+                        <td className="max-w-[320px] px-5 py-2.5">
+                          <div className="truncate font-mono text-[11px] text-zinc-400" title={r.filename}>
+                            {r.filename}
+                          </div>
+                        </td>
+                        <td className="px-3 py-2.5">
+                          <span className="rounded border border-white/8 bg-white/[0.03] px-1.5 py-0.5 font-mono text-[10px] text-white/35">
+                            {r.folder || '—'}
+                          </span>
+                        </td>
+                        <td className="px-3 py-2.5 text-right font-mono text-[10px] text-white/40">
+                          {fmtBytes(r.total)}
+                        </td>
+                        <td className="px-5 py-2.5 text-right">
+                          {r.exists ? (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-400/80">
+                              <CheckCircle2 className="h-3 w-3" /> Ready
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => { void fetchOne(r.filename); }}
+                              className="rounded border border-white/10 px-2 py-1 text-[10px] font-semibold
+                                         text-white/45 transition hover:border-violet-400/40 hover:text-white/85"
+                            >
+                              Get
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </>
+                )}
               </tbody>
             </table>
           )}

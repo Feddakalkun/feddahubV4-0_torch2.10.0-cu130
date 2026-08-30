@@ -18,6 +18,8 @@ export interface PreflightFileStatus {
   folder: string;
   exists: boolean;
   size_bytes: number;
+  /** An alternative to another model rather than a requirement of its own. */
+  optional?: boolean;
   /** Set when pressing Download will not fetch this one, and why. */
   note?: string;
 }
@@ -58,13 +60,14 @@ export function useWorkflowDownloadStatus(workflowId: string): WorkflowDownloadS
         `${BACKEND_API.BASE_URL}/api/workflow/model-status/${encodeURIComponent(workflowId)}`
       );
       if (!resp.ok) return;
-      const data: { files?: Array<{ filename?: unknown; folder?: unknown; exists?: unknown; size_bytes?: unknown; note?: unknown }>;
+      const data: { files?: Array<{ filename?: unknown; folder?: unknown; exists?: unknown; size_bytes?: unknown; note?: unknown; optional?: unknown }>;
         vram?: { peak_gb?: number } } = await resp.json();
       const files: PreflightFileStatus[] = (data.files ?? []).map((f) => ({
         filename: String(f.filename ?? ''),
         folder: String(f.folder ?? ''),
         exists: Boolean(f.exists),
         size_bytes: Number(f.size_bytes ?? 0),
+        optional: Boolean((f as { optional?: unknown }).optional),
         note: f.note ? String(f.note) : undefined,
       }));
       setPreflight(files);
@@ -136,7 +139,7 @@ export function useWorkflowDownloadStatus(workflowId: string): WorkflowDownloadS
   // watch and the reason is already on screen.
   const blocked = liveFiles.filter((f) => f.error).map((f) => f.filename);
   const canStillArrive = preflight.some(
-    (f) => !f.exists && !f.note && !blocked.includes(f.filename),
+    (f) => !f.exists && !f.note && !f.optional && !blocked.includes(f.filename),
   );
   const pollingActive = isDownloaderNode || manualDownloading || canStillArrive;
   useEffect(() => {
@@ -186,11 +189,11 @@ export function useWorkflowDownloadStatus(workflowId: string): WorkflowDownloadS
     };
   }, [pollingActive, manualDownloading, workflowId, fetchPreflight, track]);
 
-  const missingCount = preflight.filter((f) => !f.exists).length;
+  const missingCount = preflight.filter((f) => !f.exists && !f.optional).length;
   // A file a node pack brings, or one with no source at all, is missing but
   // not fetchable. Offering Download for those is offering a button that
   // cannot do anything.
-  const fetchableCount = preflight.filter((f) => !f.exists && !f.note).length;
+  const fetchableCount = preflight.filter((f) => !f.exists && !f.note && !f.optional).length;
 
   return {
     vram,
