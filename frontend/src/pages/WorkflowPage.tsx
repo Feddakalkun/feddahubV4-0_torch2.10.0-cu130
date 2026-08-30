@@ -51,11 +51,28 @@ interface WorkflowPageProps {
   hideKeys?: string[];
 }
 
+/**
+ * A fresh seed every time a workflow is opened.
+ *
+ * The graph's own seed is whatever number the author's last render happened to
+ * use. Shipping it means every user starts from the same one, and pressing
+ * Generate twice without touching anything returns the same picture - which
+ * reads as the app being broken rather than as a seed doing its job. The dice
+ * button is still there for deliberately going back to one.
+ *
+ * Kept under 2^53 so it survives JSON as an exact integer; ComfyUI accepts far
+ * larger, but a seed that changes when it round-trips is worse than a smaller
+ * space.
+ */
+const randomSeed = () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+
 const seedValues = (fields: WorkflowField[]): Record<string, FieldValue> => {
   const out: Record<string, FieldValue> = {};
   for (const field of fields) {
     if (field.control === 'lora') continue;
-    out[field.key] = (field.default ?? (field.control === 'number' ? 0 : '')) as FieldValue;
+    out[field.key] = field.role === 'seed'
+      ? randomSeed()
+      : (field.default ?? (field.control === 'number' ? 0 : '')) as FieldValue;
   }
   return out;
 };
@@ -280,6 +297,23 @@ export const WorkflowPage = ({
     >
       <div className="workflow-cockpit workflow-cockpit-stack">
         {extraTop}
+
+        {/* One click to a prompt written for this particular model. The
+            seed is left alone: an example is a starting point, not a
+            reproduction, and handing back the same picture every time is
+            the opposite of useful. */}
+        {Object.keys(schema.example ?? {}).length > 0 && (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => setValues((current) => ({ ...current, ...schema.example }))}
+            className="self-start rounded-lg border border-white/10 px-3 py-1.5 text-[11px]
+                       text-white/45 transition hover:border-violet-400/40 hover:text-white/85
+                       disabled:opacity-40"
+          >
+            Load an example prompt
+          </button>
+        )}
 
         {prose.map((field) => (
           <FieldControl

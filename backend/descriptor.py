@@ -325,4 +325,11 @@ def describe_workflow(workflow_id: str, spec: Dict[str, Any],
         "module": spec.get("module", ""),
         "makes": "video" if makes_video(spec, graph) else "image",
         "fields": fields,
+        # A worked example, keyed by field. Written per model rather than
+        # per workflow family, because the four models here want genuinely
+        # different prompts - Z-Image a long positives-only brief, FLUX Krea
+        # a photographic paragraph, MiniMax H3 a three-field document with
+        # timestamped shots, LTX one flowing paragraph. An example that
+        # ignores that teaches the wrong habit on 39 of the 40 pages.
+        "example": spec.get("example") or {},
     }

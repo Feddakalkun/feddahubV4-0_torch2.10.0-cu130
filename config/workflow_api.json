@@ -55,6 +55,9 @@
         "type": "loras",
         "label": "LoRAs"
       }
+    },
+    "example": {
+      "prompt": "A half-human half-rabbit young woman standing in a sunlit ceramics studio. Soft grey-brown fur runs along her forearms and the line of her jaw, and two long upright rabbit ears rise from her dark hair, thin enough that the morning sun passes through them and lights the inner shell a warm translucent pink. Her eyes are amber with round human pupils, her expression calm and a little amused. She wears a heavy linen apron over a cream knit sweater with the sleeves pushed to the elbow, and pale clay has dried in streaks across her fingers and one cheekbone. She is turned three-quarters toward a north-facing window with one ear tilted back, as though listening to something behind her. Low morning light rakes across the workbench, catching airborne dust and the fine down on her face. Shelves of unglazed pots recede behind her into soft focus. The palette is warm and muted - oatmeal, terracotta, pale sage. Skin and fur both hold real texture: visible pores, individual hairs, the small asymmetries of a real face. Framed chest-up with clear room above her ears, as an unhurried portrait taken on a fast 85mm lens."
     }
   },
   "z-image-img2img": {
@@ -103,6 +106,9 @@
         "type": "loras",
         "label": "LoRAs"
       }
+    },
+    "example": {
+      "prompt": "Keep the pose, framing and composition of the source image and render the same young woman as half human, half rabbit. Give her two long upright rabbit ears rising from her hair, thin at the tips and warmly translucent where light passes through, and soft grey-brown fur along her forearms and jawline that blends into skin at the cheek. Her eyes become amber with round human pupils. Everything else stays as it is: the same clothing, the same light, the same background, the same distance from camera. Keep skin and fur photographic, with visible pores, stray hairs and a natural slight asymmetry, and let the existing light in the picture fall across the new ears as it falls on everything else."
     }
   },
   "z-image-controlnet": {
@@ -191,6 +197,9 @@
         "type": "loras",
         "label": "LoRAs"
       }
+    },
+    "example": {
+      "prompt": "A half-human half-rabbit young woman in the pose of the reference, photographed on a rooftop at dusk. Soft grey-brown fur runs along her forearms and jaw, and two long rabbit ears rise from her hair, one upright and one bent at the tip, thin enough to glow warm where the last of the sun passes through them. She wears a cropped charcoal jacket over a white tee, and the city behind her is out of focus, its lights beginning to come on. Cool blue shadows against the warm rim light on her shoulders and ear tips. Skin and fur both hold visible texture. Shot on a fast 50mm lens, chest-up, with room above her ears."
     }
   },
   "z-image-inpaint": {
@@ -236,6 +245,9 @@
         "type": "loras",
         "label": "LoRAs"
       }
+    },
+    "example": {
+      "prompt": "Fill the masked area with two long upright rabbit ears rising from the young woman's hair, matching this photograph exactly. The ears are covered in soft grey-brown fur, darker at the tips, and thin enough that the scene's light passes through the inner shell and lights it a warm translucent pink. They sit naturally where the hair parts, with a few strands falling across the base, and cast soft shadows consistent with the light already in the picture. Match the existing grain, colour temperature, depth of field and lens character so the ears read as part of the original exposure rather than an addition."
     }
   },
   "z-image-inpaint-automask": {
@@ -314,6 +326,9 @@
         "type": "loras",
         "label": "LoRAs"
       }
+    },
+    "example": {
+      "prompt": "A half-human half-rabbit young woman: soft grey-brown fur along the jaw and forearms, two long upright rabbit ears rising from her hair with warmly translucent inner shells, and calm amber eyes with round human pupils. Keep the pose, the framing and the light of the photograph exactly as they are, and keep every texture photographic - individual hairs, visible pores, natural asymmetry - so the result reads as one continuous exposure."
     }
   },
   "z-image-detailed": {
@@ -378,6 +393,9 @@
         "type": "loras",
         "label": "LoRAs"
       }
+    },
+    "example": {
+      "prompt": "A close portrait of a half-human half-rabbit young woman, lit by a single window to her left. Soft grey-brown fur runs from her temple down along her jaw and thins into skin at the cheek; two long rabbit ears rise from dark hair, the inner shells warm and translucent where the light passes through. Her eyes are amber with round human pupils and a clear catchlight in each. She wears a loose oatmeal sweater. Every texture is photographic and precise: individual hairs at the hairline and along the ear edges, visible pores across the nose and cheeks, the faint down on her upper lip, small natural asymmetries between the two sides of her face. Colours are warm and low in saturation. Framed head and shoulders on an 85mm lens at f/2, with the far wall falling into soft blur, and clear space above her ears."
     }
   },
   "minimax-h3-txt2vid": {
@@ -444,6 +462,9 @@
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
+    },
+    "example": {
+      "prompt": "[Shot 1] Live-action, cinematic. A medium shot frames a young woman who is half human and half rabbit, standing at a market stall before dawn. Two long grey-brown rabbit ears rise from her hair, the inner shells warm and translucent under a hanging bulb. She ties an apron behind her back, and one ear swivels toward a sound off-frame. [Shot 2] At 00:03.000, the camera cuts to a close-up of her hands setting out apples, fur soft along her wrists, before she looks up and (S1) says: <d>[English] We open in ten minutes.</d>\nAudio: canvas awnings shifting in a light wind, crates set down on stone, distant gulls.\nMusic: a slow upright bass with brushed drums, low in the mix."
     }
   },
   "minimax-h3-img2vid": {
@@ -520,6 +541,9 @@
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
+    },
+    "example": {
+      "prompt": "[Shot 1] Live-action, cinematic. The young woman in the reference stands still, then breathes and turns her head slowly toward the camera; her long rabbit ears swivel a moment after her head, one tilting back to listen. Light moves across the fur along her jaw as she turns. The camera pushes in slowly with small amplitude. She (S1) says: <d>[English] You found me.</d>\nAudio: a quiet room, cloth shifting, one distant door.\nMusic: N/A"
     }
   },
   "minimax-h3-video-edit": {
@@ -572,6 +596,9 @@
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
+    },
+    "example": {
+      "prompt": "[Shot 1] Live-action, cinematic. Keep the movement and framing of the source clip exactly, and change the subject into a young woman who is half human and half rabbit: two long grey-brown ears rising from her hair and swivelling with her head, fine fur along her jaw and forearms, amber eyes with round pupils. The lighting, the camera move and the background stay as they are.\nAudio: unchanged from the source.\nMusic: N/A"
     }
   },
   "minimax-h3-ref-images": {
@@ -678,6 +705,9 @@
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
+    },
+    "example": {
+      "prompt": "[Shot 1] Live-action, cinematic. A medium shot of the young woman from the reference images - same face, same long grey-brown rabbit ears, same amber eyes - now walking through a night market. Lantern light crosses her face in bands as she passes. Her ears turn independently toward sounds on either side. [Shot 2] At 00:04.000, the shot cuts to a closer angle as she stops, looks directly at the camera and (S1) says: <d>[English] It is quieter this way.</d>\nAudio: crowd murmur, sizzling from a food stall, a bicycle bell.\nMusic: a soft synth pad under the ambience."
     }
   },
   "minimax-h3-first-frame": {
@@ -741,6 +771,9 @@
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
+    },
+    "example": {
+      "prompt": "[Shot 1] Live-action, cinematic. Beginning from the supplied frame, the young woman with long rabbit ears lifts her head and looks out of frame left; her ears rise and turn to follow. She takes one step forward into stronger light, and the inner shells of her ears glow warm as the sun passes through them. The camera tracks with her at walking pace.\nAudio: gravel underfoot, wind through dry grass, one bird call.\nMusic: a single sustained string note swelling slowly."
     }
   },
   "minimax-h3-fflf": {
@@ -809,6 +842,9 @@
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
+    },
+    "example": {
+      "prompt": "[Shot 1] Live-action, cinematic. The young woman with long rabbit ears begins seated with her head lowered, then rises and turns toward the window in one continuous movement, her ears lifting as she stands. Light shifts from cool shadow to warm afternoon across her face and fur as she reaches the last frame's pose. The camera rises with her, holding her at chest height throughout.\nAudio: a chair scraping back, footsteps on floorboards, a curtain moving.\nMusic: a slow piano figure, sparse."
     }
   },
   "minimax-h3-sing": {
@@ -882,6 +918,9 @@
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
+    },
+    "example": {
+      "prompt": "[Shot 1] Live-action, cinematic. A close shot of the young woman with long rabbit ears, seated at an upright piano in a small room lit by one lamp. She sings with the supplied audio, her mouth shaped to every word, her ears lifting on the held notes. The camera holds still at eye level throughout.\nAudio: piano hammers and pedal, the room's own reverb.\nMusic: the supplied performance."
     }
   },
   "minimax-h3-speak": {
@@ -955,6 +994,9 @@
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
+    },
+    "example": {
+      "prompt": "[Shot 1] Live-action, cinematic. A medium close-up of the young woman with long rabbit ears, facing the camera in a bright kitchen. She speaks the supplied audio, her lips synchronised to every word, her ears shifting slightly as she emphasises a phrase, one hand coming up briefly. The camera holds still at eye level.\nAudio: a quiet room tone, a kettle beginning to tick.\nMusic: N/A"
     }
   },
   "minimax-h3-director": {
@@ -1138,6 +1180,9 @@
         "type": "loras",
         "label": "LoRAs"
       }
+    },
+    "example": {
+      "prompt": "A candid editorial portrait of a young woman who is half human and half rabbit, taken in a greenhouse in late afternoon. Two long rabbit ears rise from her dark hair, their inner shells lit warm and translucent by low sun coming through the glass; fine grey-brown fur runs along her jaw and forearms and blends into skin at the cheekbone. She wears a faded green work shirt with the sleeves rolled, and holds a seedling tray against her hip. Shot on a 50mm lens at f/1.8 from just below eye level, so the leaves in the foreground fall into soft blur and the humid light hazes the background. Muted palette of moss, rust and bone. Natural skin with visible pores and flyaway hairs, no retouching, the slightly imperfect framing of a photograph taken quickly."
     }
   },
   "flux-krea-dev": {
@@ -1191,6 +1236,9 @@
         "type": "loras",
         "label": "LoRAs"
       }
+    },
+    "example": {
+      "prompt": "A studio portrait of a young woman who is half human and half rabbit, lit by a single large softbox to camera left and a weak fill on the right. Two long rabbit ears rise from her hair, thin enough that the key light passes through the inner shells and turns them warm pink; soft grey-brown fur runs along her jaw and the backs of her forearms. She wears a black turtleneck against a grey seamless backdrop. Shot on an 85mm lens at f/4 at eye level, sharp from the eyelashes to the ear tips, with the fall-off of a real softbox across her cheek. Neutral colour, deep shadow detail, visible skin texture and individual hairs, the honest look of an unretouched frame."
     }
   },
   "flux-krea-img2img": {
@@ -1244,6 +1292,9 @@
         "input_key": "denoise",
         "label": "Denoise"
       }
+    },
+    "example": {
+      "prompt": "Rework this photograph so the same young woman is half human and half rabbit, keeping her pose, her clothing and the original light. Two long rabbit ears rise from her hair, their inner shells warm and translucent where the scene's light passes through, and fine grey-brown fur runs along her jaw and forearms, thinning into skin at the cheek. Keep the lens character, the depth of field and the grain of the original frame, so the change reads as something that was always in the photograph."
     }
   },
   "flux-krea-depth": {
@@ -1312,6 +1363,9 @@
         "type": "loras",
         "label": "LoRAs"
       }
+    },
+    "example": {
+      "prompt": "A half-human half-rabbit young woman standing where the depth map places her, photographed in a cold stairwell lit from a window above. Two long rabbit ears rise from her hair, catching the hard top light along their edges; soft grey-brown fur runs along her jaw and forearms. She wears a heavy grey coat. Shot on a 35mm lens at f/2.8 from slightly below, the concrete behind her falling away into shadow. Cool desaturated palette, hard-edged light, visible skin texture and stray hairs."
     }
   },
   "flux-krea-openpose": {
@@ -1365,6 +1419,9 @@
         "type": "loras",
         "label": "LoRAs"
       }
+    },
+    "example": {
+      "prompt": "A half-human half-rabbit young woman in exactly the pose of the reference skeleton, photographed on a beach at first light. Two long rabbit ears rise from her wind-blown hair, one bent at the tip, glowing warm where the low sun passes through them; fine grey-brown fur runs along her forearms and jaw. She wears an oversized cream cable-knit over swimwear. Shot on a 35mm lens at f/2.8 at chest height, the wet sand behind her a soft mirror of the sky. Pale pink and grey palette, long shadows, real skin texture with sand on her shins."
     }
   },
   "flux-krea-normal": {
@@ -1418,6 +1475,9 @@
         "type": "loras",
         "label": "LoRAs"
       }
+    },
+    "example": {
+      "prompt": "A half-human half-rabbit young woman, her form following the surface detail of the normal map, photographed in a dim workshop lit by one bare bulb overhead. Two long rabbit ears rise from her hair, the light raking across their fur and picking out every ridge and fold; soft grey-brown fur runs along her jaw and the backs of her hands. She wears a canvas apron over a dark tee. Shot on a 50mm lens at f/2 slightly above eye level, hard top light and deep shadow, warm tungsten colour, every texture from skin pores to worn wood clearly resolved."
     }
   },
   "minimax-h3-txt2vid-gguf": {
@@ -1484,6 +1544,9 @@
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
+    },
+    "example": {
+      "prompt": "[Shot 1] Live-action, cinematic. A medium shot frames a young woman who is half human and half rabbit, standing at a market stall before dawn. Two long grey-brown rabbit ears rise from her hair, the inner shells warm and translucent under a hanging bulb. She ties an apron behind her back, and one ear swivels toward a sound off-frame. [Shot 2] At 00:03.000, the camera cuts to a close-up of her hands setting out apples, fur soft along her wrists, before she looks up and (S1) says: <d>[English] We open in ten minutes.</d>\nAudio: canvas awnings shifting in a light wind, crates set down on stone, distant gulls.\nMusic: a slow upright bass with brushed drums, low in the mix."
     }
   },
   "minimax-h3-img2vid-gguf": {
@@ -1560,6 +1623,9 @@
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
+    },
+    "example": {
+      "prompt": "[Shot 1] Live-action, cinematic. The young woman in the reference stands still, then breathes and turns her head slowly toward the camera; her long rabbit ears swivel a moment after her head, one tilting back to listen. Light moves across the fur along her jaw as she turns. The camera pushes in slowly with small amplitude. She (S1) says: <d>[English] You found me.</d>\nAudio: a quiet room, cloth shifting, one distant door.\nMusic: N/A"
     }
   },
   "minimax-h3-video-edit-gguf": {
@@ -1612,6 +1678,9 @@
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
+    },
+    "example": {
+      "prompt": "[Shot 1] Live-action, cinematic. Keep the movement and framing of the source clip exactly, and change the subject into a young woman who is half human and half rabbit: two long grey-brown ears rising from her hair and swivelling with her head, fine fur along her jaw and forearms, amber eyes with round pupils. The lighting, the camera move and the background stay as they are.\nAudio: unchanged from the source.\nMusic: N/A"
     }
   },
   "minimax-h3-ref-images-gguf": {
@@ -1718,6 +1787,9 @@
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
+    },
+    "example": {
+      "prompt": "[Shot 1] Live-action, cinematic. A medium shot of the young woman from the reference images - same face, same long grey-brown rabbit ears, same amber eyes - now walking through a night market. Lantern light crosses her face in bands as she passes. Her ears turn independently toward sounds on either side. [Shot 2] At 00:04.000, the shot cuts to a closer angle as she stops, looks directly at the camera and (S1) says: <d>[English] It is quieter this way.</d>\nAudio: crowd murmur, sizzling from a food stall, a bicycle bell.\nMusic: a soft synth pad under the ambience."
     }
   },
   "minimax-h3-first-frame-gguf": {
@@ -1781,6 +1853,9 @@
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
+    },
+    "example": {
+      "prompt": "[Shot 1] Live-action, cinematic. Beginning from the supplied frame, the young woman with long rabbit ears lifts her head and looks out of frame left; her ears rise and turn to follow. She takes one step forward into stronger light, and the inner shells of her ears glow warm as the sun passes through them. The camera tracks with her at walking pace.\nAudio: gravel underfoot, wind through dry grass, one bird call.\nMusic: a single sustained string note swelling slowly."
     }
   },
   "minimax-h3-fflf-gguf": {
@@ -1849,6 +1924,9 @@
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
+    },
+    "example": {
+      "prompt": "[Shot 1] Live-action, cinematic. The young woman with long rabbit ears begins seated with her head lowered, then rises and turns toward the window in one continuous movement, her ears lifting as she stands. Light shifts from cool shadow to warm afternoon across her face and fur as she reaches the last frame's pose. The camera rises with her, holding her at chest height throughout.\nAudio: a chair scraping back, footsteps on floorboards, a curtain moving.\nMusic: a slow piano figure, sparse."
     }
   },
   "minimax-h3-sing-gguf": {
@@ -1922,6 +2000,9 @@
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
+    },
+    "example": {
+      "prompt": "[Shot 1] Live-action, cinematic. A close shot of the young woman with long rabbit ears, seated at an upright piano in a small room lit by one lamp. She sings with the supplied audio, her mouth shaped to every word, her ears lifting on the held notes. The camera holds still at eye level throughout.\nAudio: piano hammers and pedal, the room's own reverb.\nMusic: the supplied performance."
     }
   },
   "minimax-h3-speak-gguf": {
@@ -1995,6 +2076,9 @@
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
       }
+    },
+    "example": {
+      "prompt": "[Shot 1] Live-action, cinematic. A medium close-up of the young woman with long rabbit ears, facing the camera in a bright kitchen. She speaks the supplied audio, her lips synchronised to every word, her ears shifting slightly as she emphasises a phrase, one hand coming up briefly. The camera holds still at eye level.\nAudio: a quiet room tone, a kettle beginning to tick.\nMusic: N/A"
     }
   },
   "minimax-h3-director-gguf": {
@@ -2183,6 +2267,9 @@
         "input_key": "steps",
         "label": "Steps"
       }
+    },
+    "example": {
+      "prompt": "A young woman who is half human and half rabbit stands at the end of a wooden pier. A low-angle medium shot frames her against an overcast sky. Flat morning light, a palette of slate grey and pale rose, wet planks and damp fur catching a dull sheen. She pulls her coat closed, then turns her head to the left as her long grey-brown ears swivel a moment behind the movement, and takes one step toward the water. The camera pushes in slowly and steadily throughout."
     }
   },
   "ltx-23-img2vid": {
@@ -2240,6 +2327,9 @@
         "input_key": "steps",
         "label": "Steps"
       }
+    },
+    "example": {
+      "prompt": "The young woman with long rabbit ears from the reference image stands where she is. A medium close-up holds her at eye level. The scene keeps its own light and colour, warm and slightly hazy, with fine fur texture along her jaw. She breathes, blinks, and turns her face toward the light; her ears lift and rotate a beat after her head. The camera holds still with a faint handheld drift."
     }
   },
   "ltx-23-image-audio2vid": {
@@ -2304,6 +2394,9 @@
         "input_key": "steps",
         "label": "Steps"
       }
+    },
+    "example": {
+      "prompt": "A young woman who is half human and half rabbit sits in front of a microphone in a small padded room. A medium close-up frames her from the chest up at eye level. Warm low light, deep shadow behind her, soft fur catching the edge of a lamp. She speaks the supplied audio, her mouth matching every word, her long ears tilting slightly as she emphasises a phrase. The camera holds completely still."
     }
   },
   "ltx-23-flf": {
@@ -2366,6 +2459,9 @@
         "input_key": "steps",
         "label": "Steps"
       }
+    },
+    "example": {
+      "prompt": "A young woman who is half human and half rabbit moves from the first frame to the last. A medium shot holds her at chest height. Cool interior light warms as she crosses the room, her grey-brown fur picking up the change. She rises from a crouch, turns, and walks toward the window in one continuous movement, her long ears lifting as she straightens. The camera tracks alongside her at walking pace."
     }
   },
   "ltx-23-vid2vid-prompt": {
@@ -2428,6 +2524,9 @@
         "input_key": "steps",
         "label": "Steps"
       }
+    },
+    "example": {
+      "prompt": "A young woman who is half human and half rabbit, in place of the subject in the source clip. The shot scale, angle and camera move stay exactly as they are. Her fur is soft grey-brown along the jaw and forearms and two long ears rise from her hair, moving with her head. The existing light and colour of the clip carry across unchanged. She performs the same action from beginning to end."
     }
   },
   "ltx-23-vid2vid-reference": {
@@ -2495,6 +2594,9 @@
         "input_key": "noise_seed",
         "label": "Seed"
       }
+    },
+    "example": {
+      "prompt": "The young woman from the reference image, half human and half rabbit, performing the motion of the source clip. Her face, her amber eyes and her long grey-brown ears stay exactly as the reference shows them. The shot scale and camera move follow the source, and the scene keeps its own light, a warm key from the left against cool shadow. Her ears move with her head through every beat of the action."
     }
   },
   "ltx-23-outpaint": {
@@ -2567,6 +2669,9 @@
         "input_key": "steps",
         "label": "Steps"
       }
+    },
+    "example": {
+      "prompt": "The scene continues past the edges of the original frame. A young woman who is half human and half rabbit stands at the centre, and a wide shot now reveals the room around her: bare boards, a tall window to the left, shelves along the far wall. The new space carries the same soft daylight, the same dust in the air and the same muted palette as the source. She stays still, her long ears turning slightly. The camera holds its original move."
     }
   },
   "ltx-23-edit-anything": {
@@ -2639,6 +2744,9 @@
         "input_key": "value",
         "label": "Skip (seconds)"
       }
+    },
+    "example": {
+      "prompt": "Change only the subject of the clip into a young woman who is half human and half rabbit: two long grey-brown ears rising from her hair and moving with her head, fine fur along her jaw and forearms, amber eyes with round pupils. Everything else in the shot is untouched - the same framing, the same light, the same background, the same camera move - and she performs the same action through to the end."
     }
   },
   "ltx-23-prompt-relay": {
@@ -2687,6 +2795,10 @@
         "input_key": "noise_seed",
         "label": "Seed"
       }
+    },
+    "example": {
+      "prompt": "A young woman who is half human and half rabbit walks through a city at night, filmed in one continuous take. A medium tracking shot follows her at walking pace. Wet asphalt, neon reflections, a palette of teal and sodium orange, fine fur along her jaw catching the light as she passes each sign.",
+      "timeline": "{\"segments\": [{\"prompt\": \"she walks toward the camera, ears upright, hands in her coat pockets\", \"length\": 36, \"color\": \"#4f8edc\"}, {\"prompt\": \"she glances left as a tram passes, her ears turning with the sound\", \"length\": 36, \"color\": \"#e07b3a\"}, {\"prompt\": \"she stops under a sign and looks up, the light warm on her face\", \"length\": 24, \"color\": \"#d9534f\"}, {\"prompt\": \"she turns and walks away from the camera into the crowd\", \"length\": 24, \"color\": \"#5cb85c\"}]}"
     }
   },
   "ltx-23-first-frame-styler": {
@@ -2732,6 +2844,9 @@
         "input_key": "cfg",
         "label": "CFG Scale"
       }
+    },
+    "example": {
+      "prompt": "A young woman who is half human and half rabbit, restyled as a painted illustration: soft gouache texture, visible brush edges, flat warm light. Her two long ears and the fur along her jaw keep their shape exactly, and the composition of the frame is unchanged."
     }
   }
 }

@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import {
-  Plus, Trash2, Copy, HelpCircle, Wand2,
+  Plus, Trash2, Copy, Wand2,
   Image as ImageIcon, Film, Music, X,
 } from 'lucide-react';
 import { WorkflowPage } from './WorkflowPage';
@@ -9,7 +9,6 @@ import { useToast } from '../components/ui/Toast';
 import { BACKEND_API } from '../config/api';
 import { usePersistentState } from '../hooks/usePersistentState';
 import { DirectorTimeline } from '../components/workflows/DirectorTimeline';
-import { Tour, type TourStep } from '../components/ui/Tour';
 
 /**
  * MiniMax H3 Director - a storyboard, not a prompt box.
@@ -126,7 +125,8 @@ const SHAPES = {
   square: { width: 1024, height: 1024 },
 } as const;
 
-const TOUR_STEPS: TourStep[] = [
+// Parked until the walkthrough covers the whole UI rather than this one page.
+export const TOUR_STEPS_PARKED: unknown[] = [
   {
     title: 'MiniMax Director',
     body: 'Want to direct? Most video tools give you one prompt and one shot. This one gives you a '
@@ -171,7 +171,6 @@ const TOUR_STEPS: TourStep[] = [
   },
 ];
 
-
 /**
  * Starting points. Three shots each, 41 frames apiece - 123, which the model
  * rounds to 124, so none of them opens on a warning.
@@ -193,6 +192,24 @@ type Preset = {
 };
 
 const PRESETS: Preset[] = [
+  {
+    name: 'Bunny',
+    prompt: 'Live-action, cinematic. A young woman who is half human and half rabbit - '
+      + 'two long grey-brown ears rising from dark hair, their inner shells warm and '
+      + 'translucent, fine fur along her jaw and forearms, amber eyes with round pupils. '
+      + 'A greenhouse at first light, humid air, 50mm, shallow depth of field, muted moss '
+      + 'and rust.',
+    soundscape: 'rain on glass overhead, a watering can set down, one blackbird outside',
+    music: 'a slow piano figure, sparse, low in the mix',
+    shots: [
+      'medium shot: she moves along a bench of seedlings, touching each tray, her ears '
+        + 'turning independently toward the rain on the glass above her',
+      'cut to a close-up of her hands lifting a seedling into the light, fur soft along her '
+        + 'wrists, before she looks up and says: "This one made it."',
+      'cut to a wide shot from the far end of the greenhouse, she stands still in the middle '
+        + 'of the frame as the rain eases and light comes through the glass behind her',
+    ],
+  },
   {
     name: 'Desert',
     prompt: 'Cinematic desert chase, late afternoon golden hour, anamorphic lens, '
@@ -340,7 +357,6 @@ export const MiniMaxDirectorPage = ({ workflowId }: Props) => {
   const [showChars, setShowChars] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const [captioning, setCaptioning] = useState<number | null>(null);
-  const [tourOpen, setTourOpen] = useState(false);
   const [preset, setPreset] = usePersistentState('mmx_director_preset', 0);
   // Bumped when a preset is loaded, and used as WorkflowPage's key. The global
   // prompt lives in that component's persisted state, so the only way to
@@ -521,7 +537,6 @@ export const MiniMaxDirectorPage = ({ workflowId }: Props) => {
   const refFiles = refImages + motion.length + audio.length;
   const motionSeconds = motion.reduce((n, c) => n + c.length, 0) / fps;
 
-
   /** The whole editor as the node wants it. One place, so nothing can drift. */
   const buildTimeline = (globalPrompt: string) => {
     let cursor = 0;
@@ -588,24 +603,6 @@ export const MiniMaxDirectorPage = ({ workflowId }: Props) => {
 
   return (
     <>
-      {tourOpen
-        ? <Tour steps={TOUR_STEPS} storageKey="minimax-h3-director" open
-                onClose={() => setTourOpen(false)} />
-        : <Tour steps={TOUR_STEPS} storageKey="minimax-h3-director" auto />}
-
-      <button
-        type="button"
-        onClick={() => setTourOpen(true)}
-        title="Show the walkthrough again"
-        className="fixed bottom-5 right-5 z-40 flex items-center gap-1.5 rounded-full border
-                   border-white/10 bg-[#0b0c12]/90 px-3 py-2 text-[10px] font-bold uppercase
-                   tracking-widest text-white/45 shadow-lg backdrop-blur transition
-                   hover:border-violet-400/40 hover:text-white/85"
-      >
-        <HelpCircle className="h-3.5 w-3.5" />
-        How this works
-      </button>
-
       <input
         ref={fileInput} type="file" className="hidden"
         onChange={(e) => {
@@ -875,7 +872,6 @@ export const MiniMaxDirectorPage = ({ workflowId }: Props) => {
                   Add shot
                 </button>
               </div>
-
 
             </div>
           </div>

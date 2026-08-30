@@ -79,6 +79,8 @@ export interface WorkflowSchema {
   module?: string;
   makes: 'image' | 'video';
   fields: WorkflowField[];
+  /** A worked prompt for this model, keyed by field. Empty when none. */
+  example?: Record<string, FieldValue>;
 }
 
 export type FieldValue = string | number | boolean | AudioValue | null;
