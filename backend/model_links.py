@@ -319,6 +319,72 @@ def find_anywhere(filename: str, root_dir: Path,
     return None
 
 
+# ComfyUI's own reserve, from comfy/model_management.minimum_inference_memory():
+# 0.8 GB plus 600 MB on Windows for the shared-VRAM issue. A constant - it does
+# not grow with the clip.
+_COMFY_RESERVE_GB = 0.8 + 0.6
+
+# Activations, generously. ComfyUI computes these as
+#   area * dtype_size * 0.01 * memory_usage_factor   (comfy/model_base.py)
+# and for MiniMax H3 at 1344x768 that is 0.29 GB at 124 frames and 0.82 GB at
+# 360. Under a gigabyte across the whole range, so one number covers it without
+# modelling every latent format. Being half a gigabyte out here does not change
+# any answer; being wrong about the weights would.
+_ACTIVATION_GB = 1.0
+
+# Loaders whose file sits in VRAM while the model runs, against those that are
+# loaded, used and freed before the model is. A text encoder is the second kind,
+# which is why the peak is the larger of the two rather than their sum - adding
+# them said Z-Image needs 17.7 GB when it needs 13.8.
+_UNET_KEYS = ("unet_name",)
+_ENCODER_KEYS = ("clip_name", "clip_name1", "clip_name2")
+
+
+def vram_estimate(graph: Dict[str, Any], root_dir: Path,
+                  extra_models_path: str = "") -> Dict[str, Any]:
+    """Roughly what this graph needs resident, in GB.
+
+    Sizes come off disk rather than a table, so they are exact for anything
+    already downloaded and the estimate simply says less when they are not.
+
+    A text encoder pinned to the CPU is not counted: it never reaches the card.
+    """
+    unets: List[float] = []
+    encoder = 0.0
+    known = True
+    for node in graph.values():
+        if not isinstance(node, dict):
+            continue
+        inputs = node.get("inputs") or {}
+        on_cpu = str(inputs.get("device") or "") == "cpu"
+        for key, value in inputs.items():
+            if not isinstance(value, str) or not value:
+                continue
+            is_unet = key in _UNET_KEYS
+            is_enc = key in _ENCODER_KEYS
+            if not (is_unet or is_enc):
+                continue
+            name = value.replace("\\", "/").rsplit("/", 1)[-1]
+            found = find_anywhere(name, root_dir, extra_models_path)
+            if found is None:
+                known = False
+                continue
+            gb = found.stat().st_size / 1024 ** 3
+            if is_unet:
+                unets.append(gb)
+            elif not on_cpu:
+                encoder += gb
+    # Several UNet loaders in one graph are almost always alternatives rather
+    # than a chain - Director wires both fl2va and ref2va and its own
+    # pick_model() runs exactly one, chosen by the references switch. Summing
+    # them said 41.5 GB for a graph that needs 21.9, which would tell someone
+    # with the right card that they cannot run it.
+    unet = max(unets) if unets else 0.0
+    peak = max(unet, encoder) + _ACTIVATION_GB + _COMFY_RESERVE_GB
+    return {"peak_gb": round(peak, 1), "unet_gb": round(unet, 1),
+            "encoder_gb": round(encoder, 1), "complete": known}
+
+
 def load_graph(path: str) -> Dict[str, Any]:
     """A workflow file as a dict, or empty when it cannot be read."""
     try:

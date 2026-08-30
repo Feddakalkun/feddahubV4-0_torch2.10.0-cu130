@@ -151,14 +151,14 @@ export const FEDDA_MODEL_GROUPS: FeddaModelGroup[] = [
     id: 'minimax-h3-full',
     family: 'minimax-h3',
     label: 'Standard',
-    description: 'Full weights, 19.5 GB. Faster whenever it fits, and past about 130 frames it is the better of two bad options.',
+    description: 'Full weights. Wants about 22 GB resident - a 24 GB card holds it, anything smaller streams.',
     Icon: Clapperboard,
   },
   {
     id: 'minimax-h3-gguf',
     family: 'minimax-h3',
     label: 'GGUF',
-    description: 'Quantised to 15.6 GB. Wins when the full build will not fit - short clips, or a card under 24 GB.',
+    description: 'Quantised. About 17 GB resident instead of 22, and no quality difference worth the name.',
     Icon: Clapperboard,
   },
 ];

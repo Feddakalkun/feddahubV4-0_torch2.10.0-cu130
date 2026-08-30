@@ -493,7 +493,16 @@ async def workflow_model_status(workflow_id: str) -> Dict[str, Any]:
     re-downloading twenty gigabytes it had.
     """
     files = _workflow_models(workflow_id)
-    return {"files": files, "ready": all(f["exists"] for f in files)}
+    # What it will want resident, beside what the card has. The page can then
+    # say "this fits" or "this will stream" before a run rather than after.
+    mapping = workflow_service.load_mapping().get(workflow_id) or {}
+    path = workflow_service.get_workflow_path(mapping.get("filename", ""))
+    vram = (model_links.vram_estimate(
+        model_links.load_graph(path), ROOT_DIR,
+        str(_runtime_settings().get("extra_models_path") or ""))
+        if path else {})
+    return {"files": files, "ready": all(f["exists"] for f in files),
+            "vram": vram}
 
 
 @app.get("/api/workflow/download-live-progress/{workflow_id}")
