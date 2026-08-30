@@ -650,7 +650,7 @@ export const TopSystemStrip = () => {
 
             {([
               ['extra_models_path', 'Extra models folder',
-               'A second ComfyUI models folder to read from. FEDDA never writes here - downloads always go to its own folder.'],
+               'A ComfyUI models folder, or just a folder of LoRAs - both are read. FEDDA never writes here; downloads always go to its own folder.'],
               ['output_path', 'Output folder', 'Where generated images and video are saved.'],
               ['input_path', 'Input folder', 'Where uploaded source files are staged.'],
             ] as const).map(([key, label, help]) => (

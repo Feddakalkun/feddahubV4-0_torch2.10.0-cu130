@@ -91,6 +91,36 @@ if (Test-Path $SettingsFile) {
                 "    ipadapter: ipadapter/",
                 "    inpaint: inpaint/"
             )
+            # Two shapes reach this box, and only one of them worked.
+            #
+            # A ComfyUI models tree has loras/, checkpoints/, vae/ and the rest
+            # underneath, and every mapping above is written relative to
+            # base_path - so it finds them. A LoRA library is not that: it is a
+            # folder of .safetensors sorted by character or concept, and
+            # `loras: loras/` then points at a directory that does not exist.
+            # ComfyUI reports nothing, the picker says "Search 1 LoRAs..." on a
+            # machine holding 211, and Settings > Folders looks broken.
+            #
+            # So: if none of the standard subfolders is there, the folder is
+            # taken to be a LoRA library and searched as one. Only loras gets
+            # the extra path - mapping every type to ./ would put the same 211
+            # files in the checkpoint and VAE pickers too.
+            $Known = @("loras", "checkpoints", "vae", "unet", "diffusion_models",
+                       "controlnet", "clip", "text_encoders", "upscale_models",
+                       "embeddings", "clip_vision")
+            $LooksLikeTree = $false
+            foreach ($k in $Known) {
+                if (Test-Path (Join-Path $ExtraModels $k)) { $LooksLikeTree = $true; break }
+            }
+            $UserFolders = $Folders
+            if (-not $LooksLikeTree) {
+                $UserFolders = $Folders | ForEach-Object {
+                    if ($_ -eq "    loras: loras/") { "    loras: |`n        loras/`n        ./" }
+                    else { $_ }
+                }
+                Write-Host "  Extra models:  read as a LoRA library (no models subfolders found)" -ForegroundColor DarkGray
+            }
+
             $Yaml = (@(
                 "# Written by run.ps1 from config/runtime_settings.json.",
                 "# Edits here are replaced on every launch - use Settings > Folders.",
@@ -104,7 +134,7 @@ if (Test-Path $SettingsFile) {
                 "",
                 "user_models:",
                 "    base_path: $ExtraModels"
-            ) + $Folders) -join "`n"
+            ) + $UserFolders) -join "`n"
             # Not Set-Content -Encoding UTF8: in Windows PowerShell 5.1
             # that writes a BOM, and ComfyUI feeds this file straight to
             # PyYAML, which fails on the first character with
