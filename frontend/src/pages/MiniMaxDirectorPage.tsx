@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Plus, Trash2, Copy, Wand2,
   Image as ImageIcon, Film, Music, X,
@@ -60,6 +60,22 @@ const LONG_CLIP_LENGTHS = clipLengths(TRAINED_MAX_FRAMES + 1, LONGEST_OFFERED);
  * rounding each share independently loses or gains frames and the clip stops
  * being a legal length.
  */
+/**
+ * Roughly what the activations cost, in bytes per pixel-frame.
+ *
+ * Calibrated on one measured run, not derived: 243 frames at 1344x768 on a
+ * 3090 left ComfyUI 6661 MB usable for weights out of a ~22 GB free card,
+ * so about 15.3 GB went to activations for 250.8M pixel-frames.
+ *
+ * An estimate is enough here. The question is not how many megabytes but
+ * whether the model will sit on the card or stream over PCIe, and those two
+ * are 40 seconds a step apart.
+ */
+const ACTIVATION_BYTES_PER_PIXEL_FRAME = 61;
+
+/** What the two MiniMax builds weigh, from config/model_downloader.py. */
+const WEIGHTS_GB = { gguf: 15.6, full: 19.5 };
+
 const MIN_SHOT = 8;
 const share = (total: number, count: number): number[] => {
   const base = Math.max(MIN_SHOT, Math.floor(total / count));
@@ -109,7 +125,14 @@ const emptySubject = (): Subject => ({
  * anything.
  */
 /** Shots from a preset, laid end to end at the length H3 renders cleanly. */
-const DEFAULT_CLIP = 124;   // 5.17s, the shortest comfortable length on the grid
+/**
+ * 124 frames, 5.17s. The shortest comfortable length on the 17k+5 grid, and
+ * the default because memory here is not linear: attention is quadratic in
+ * sequence length, so 243 frames is not twice the cost of 124 but nearer
+ * four times it. On a 24 GB card 243 leaves ComfyUI about 6.6 GB for a
+ * 15.6 GB model, and the remaining 9 GB streams over PCIe every step.
+ */
+const DEFAULT_CLIP = 124;
 
 const shotsOf = (p: Preset, total = DEFAULT_CLIP): Segment[] => {
   const parts = share(total, p.shots.length);
@@ -364,9 +387,38 @@ export const MiniMaxDirectorPage = ({ workflowId }: Props) => {
   // and let it mount again.
   const [presetNonce, setPresetNonce] = useState(0);
   const [clip, setClip] = usePersistentState('mmx_director_clip', DEFAULT_CLIP);
+  const [vramGb, setVramGb] = useState<number | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    fetch(`${BACKEND_API.BASE_URL}/api/hardware/stats`)
+      .then((r) => r.json())
+      .then((d) => {
+        const total = Number(d?.vram_total ?? 0);
+        if (alive && total > 0) setVramGb(total / 1024 ** 3);
+      })
+      .catch(() => { /* no card reported: the estimate simply is not shown */ });
+    return () => { alive = false; };
+  }, []);
 
   const fileInput = useRef<HTMLInputElement | null>(null);
   const pending = useRef<((filename: string) => void) | null>(null);
+
+  /**
+   * Weights plus activations against the card, so the choice that decides it
+   * is next to the number it produces. Deliberately not a hard stop: a long
+   * clip still renders, it just renders slowly, and that is the user's call
+   * to make knowingly rather than discover after twenty minutes.
+   */
+  const fit = useMemo(() => {
+    if (!vramGb) return null;
+    const shape = SHAPES[canvasShape] ?? SHAPES.landscape;
+    const activations = clip * shape.width * shape.height
+      * ACTIVATION_BYTES_PER_PIXEL_FRAME / 1024 ** 3;
+    const weights = workflowId.includes('gguf') ? WEIGHTS_GB.gguf : WEIGHTS_GB.full;
+    const needGb = weights + activations;
+    return { needGb, haveGb: vramGb, tight: needGb > vramGb };
+  }, [vramGb, clip, canvasShape, workflowId]);
 
   const totalFrames = useMemo(
     () => segments.reduce((n, s) => n + Math.max(1, s.length), 0), [segments]);
@@ -717,6 +769,20 @@ export const MiniMaxDirectorPage = ({ workflowId }: Props) => {
               </div>
 
               <div className="mb-1 flex flex-wrap items-center justify-end gap-2 text-[11px] text-white/45">
+                {fit && (
+                  <span
+                    className={fit.tight ? 'text-amber-300' : 'text-emerald-400/70'}
+                    title={fit.tight
+                      ? `About ${fit.needGb.toFixed(1)} GB of work against ${fit.haveGb.toFixed(0)} GB of card. `
+                        + 'ComfyUI will keep what fits and stream the rest from system memory, '
+                        + 'which costs far more per step than the extra frames do. A shorter clip '
+                        + 'or a smaller canvas is the lever.'
+                      : `About ${fit.needGb.toFixed(1)} GB against ${fit.haveGb.toFixed(0)} GB - this fits on the card.`}
+                  >
+                    {fit.tight ? `~${fit.needGb.toFixed(1)} GB - will stream` : `~${fit.needGb.toFixed(1)} GB - fits`}
+                  </span>
+                )}
+                {fit && <span className="text-white/25">·</span>}
                 <span>{segments.length} shots</span>
                 <span className="text-white/25">·</span>
                 <label className="flex items-center gap-1.5">
