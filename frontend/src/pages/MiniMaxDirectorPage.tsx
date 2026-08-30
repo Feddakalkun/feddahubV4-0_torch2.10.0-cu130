@@ -667,10 +667,21 @@ export const MiniMaxDirectorPage = ({ workflowId }: Props) => {
         // well - everything else on this workflow still comes from the schema.
         hideKeys={['prompt', 'segment_lengths', 'timeline', 'width', 'height',
                    'frame_rate', 'duration_seconds', 'start_second', 'end_second']}
-                extraParams={() => {
+                extraParams={(values) => {
           const timeline = buildTimeline(scenePrompt);
           const shape = SHAPES[canvasShape] ?? SHAPES.landscape;
+          // One model, not two. The graph wires an fl2va loader and a ref2va
+          // loader and the node runs exactly one of them, but both files are
+          // read - 31 GB where 15.6 is wanted, which is why the one that does
+          // run ends up loaded partially and streaming the rest every step.
+          // Both loaders get the build the references switch actually calls
+          // for, so ComfyUI reads one file and pick_model still picks right.
+          const wanted = refsOn ? values.model_build2 : values.model_build;
+          const bothLoaders = wanted
+            ? { model_build: wanted, model_build2: wanted }
+            : {};
           return {
+            ...bothLoaders,
             width: shape.width,
             height: shape.height,
             timeline: JSON.stringify(timeline),

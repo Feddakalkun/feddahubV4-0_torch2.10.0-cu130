@@ -22,7 +22,15 @@ export interface PreflightFileStatus {
   note?: string;
 }
 
+/** What this workflow wants resident, against what the card has. */
+export interface VramFit {
+  peakGb: number;
+  haveGb: number;
+  tight: boolean;
+}
+
 export interface WorkflowDownloadState {
+  vram: VramFit | null;
   preflight: PreflightFileStatus[];
   liveFiles: DownloadFileStatus[];
   missingCount: number;
@@ -38,6 +46,7 @@ export function useWorkflowDownloadStatus(workflowId: string): WorkflowDownloadS
   const { isDownloaderNode } = useComfyExecution();
   const { track } = useModelDownload();
   const [preflight, setPreflight] = useState<PreflightFileStatus[]>([]);
+  const [vram, setVram] = useState<VramFit | null>(null);
   const [liveFiles, setLiveFiles] = useState<DownloadFileStatus[]>([]);
   const [checked, setChecked] = useState(false);
   const [manualDownloading, setManualDownloading] = useState(false);
@@ -49,7 +58,8 @@ export function useWorkflowDownloadStatus(workflowId: string): WorkflowDownloadS
         `${BACKEND_API.BASE_URL}/api/workflow/model-status/${encodeURIComponent(workflowId)}`
       );
       if (!resp.ok) return;
-      const data: { files?: Array<{ filename?: unknown; folder?: unknown; exists?: unknown; size_bytes?: unknown; note?: unknown }> } = await resp.json();
+      const data: { files?: Array<{ filename?: unknown; folder?: unknown; exists?: unknown; size_bytes?: unknown; note?: unknown }>;
+        vram?: { peak_gb?: number } } = await resp.json();
       const files: PreflightFileStatus[] = (data.files ?? []).map((f) => ({
         filename: String(f.filename ?? ''),
         folder: String(f.folder ?? ''),
@@ -58,6 +68,15 @@ export function useWorkflowDownloadStatus(workflowId: string): WorkflowDownloadS
         note: f.note ? String(f.note) : undefined,
       }));
       setPreflight(files);
+      // The same request already carries it, so this costs nothing extra.
+      const peak = Number((data as { vram?: { peak_gb?: number } }).vram?.peak_gb ?? 0);
+      if (peak > 0) {
+        try {
+          const hw = await (await fetch(`${BACKEND_API.BASE_URL}/api/hardware/stats`)).json();
+          const haveGb = Number(hw?.vram_total ?? 0) / 1024 ** 3;
+          if (haveGb > 0) setVram({ peakGb: peak, haveGb, tight: peak > haveGb });
+        } catch { /* no card reported: the line simply is not shown */ }
+      }
       setChecked(true);
     } catch {
       // Network unavailable — silent, no crash
@@ -174,6 +193,7 @@ export function useWorkflowDownloadStatus(workflowId: string): WorkflowDownloadS
   const fetchableCount = preflight.filter((f) => !f.exists && !f.note).length;
 
   return {
+    vram,
     preflight,
     liveFiles,
     missingCount,

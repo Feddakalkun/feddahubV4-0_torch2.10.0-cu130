@@ -46,7 +46,8 @@ interface WorkflowPageProps {
    *  extraSections and used it for a collapsible advanced panel. */
   extraBottom?: ReactNode;
   /** Merged over the field values at submit. Wins on a clash. */
-  extraParams?: () => Record<string, unknown>;
+  /** Given the current field values, so a page can react to what is set. */
+  extraParams?: (values: Record<string, FieldValue>) => Record<string, unknown>;
   /** Field keys the custom UI drives, so they are not drawn twice. */
   hideKeys?: string[];
 }
@@ -163,7 +164,7 @@ export const WorkflowPage = ({
     setIsGenerating(true);
     setImages([]);
     try {
-      const params: Record<string, unknown> = { ...values, ...(extraParams?.() ?? {}) };
+      const params: Record<string, unknown> = { ...values, ...(extraParams?.(values) ?? {}) };
       if (hasLoraField) {
         // The graph's Power Lora Loader is a placeholder the backend deletes
         // and rebuilds as _lora_0, _lora_1, ... so the count is ours to choose.

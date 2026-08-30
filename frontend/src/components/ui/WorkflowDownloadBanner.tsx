@@ -25,7 +25,7 @@ export const WorkflowDownloadBanner = ({ workflowId }: { workflowId: string }) =
   // The banner answers "can I run this"; the modal answers everything else.
   const [detailOpen, setDetailOpen] = useState(false);
   const { isDownloaderNode } = useComfyExecution();
-  const { preflight, liveFiles, missingCount, allReady, checked, manualDownloading, startDownload } =
+  const { vram, preflight, liveFiles, missingCount, allReady, checked, manualDownloading, startDownload } =
     useWorkflowDownloadStatus(workflowId);
 
   // Active download (workflow run or manual pre-download) — live progress panel
@@ -106,6 +106,7 @@ export const WorkflowDownloadBanner = ({ workflowId }: { workflowId: string }) =
           <AlertTriangle className="h-3.5 w-3.5 text-amber-500/80 flex-shrink-0" />
           <span className="text-[11px] font-semibold text-amber-400/90">
             {missingCount} model{missingCount !== 1 ? 's' : ''} missing for this workflow
+            {vram && ` · about ${vram.peakGb.toFixed(1)} GB will want to be resident`}
           </span>
           <button
             type="button"
@@ -145,6 +146,23 @@ export const WorkflowDownloadBanner = ({ workflowId }: { workflowId: string }) =
           <span className="text-[10px] font-medium tracking-wide text-zinc-500">
             Models ready for this workflow
           </span>
+          {/* The other half of "can I run this". Same question as the file
+              check, one step later, so it belongs on the same line. */}
+          {vram && (
+            <span
+              className={`text-[10px] tracking-wide ${
+                vram.tight ? 'text-amber-400/80' : 'text-zinc-600'}`}
+              title={vram.tight
+                ? `About ${vram.peakGb.toFixed(1)} GB wants to be resident against `
+                  + `${vram.haveGb.toFixed(0)} GB of card. ComfyUI keeps what fits and streams `
+                  + 'the rest over PCIe every step - slow, but it runs. A smaller '
+                  + 'quantisation is the lever that actually moves this; clip length is not.'
+                : `About ${vram.peakGb.toFixed(1)} GB against ${vram.haveGb.toFixed(0)} GB of `
+                  + 'card - this stays on the GPU.'}
+            >
+              · ~{vram.peakGb.toFixed(1)} GB {vram.tight ? 'will stream' : 'on the card'}
+            </span>
+          )}
           <DetailsLink onOpen={() => setDetailOpen(true)} />
         </div>
         {detailOpen && <ModelStatusModal workflowId={workflowId} onClose={() => setDetailOpen(false)} />}

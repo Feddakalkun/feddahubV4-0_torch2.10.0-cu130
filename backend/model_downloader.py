@@ -50,6 +50,29 @@ class ModelDownloader:
             # 8 steps with cfg 1, which is a setting that only works with this
             # present - v3 baked it in and v4 arrived without it, so the same
             # eight steps were doing a job that normally takes twenty.
+            # The rest of the MiniMax turbo family. 1.96 GB each.
+
+            # The ref2v distill, for the six graphs that load ref2va. 4 steps.
+            "minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors": {
+                "relative_dir": Path("loras"),
+                "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/loras/minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors",
+                "min_bytes": 100 * 1024 * 1024,
+            },
+
+            # v1.0 of the fl2v distill, tuned at 768p. 4 steps.
+            "minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors": {
+                "relative_dir": Path("loras"),
+                "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/loras/minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors",
+                "min_bytes": 100 * 1024 * 1024,
+            },
+
+            # The same at 8 steps, which is what these graphs sample at.
+            "minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors": {
+                "relative_dir": Path("loras"),
+                "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/loras/minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors",
+                "min_bytes": 100 * 1024 * 1024,
+            },
+
             "minimax_h3_fl2v_lightx2v_turbo_4step_v0.1_comfy_resized_avg_rank_21_bf16.safetensors": {
                 "relative_dir": Path("loras"),
                 "url": "https://huggingface.co/Kijai/MiniMax-H3_comfy/resolve/main/loras/minimax_h3_fl2v_lightx2v_turbo_4step_v0.1_comfy_resized_avg_rank_21_bf16.safetensors",
@@ -64,6 +87,53 @@ class ModelDownloader:
             # The text encoder is deliberately not the GGUF one: these graphs
             # reuse qwen3vl_32b_minimax_h3_nvfp4_awq, so anyone who already has
             # MiniMax downloads one file rather than another 14.6 GB encoder.
+            # --- smaller MiniMax quants, for cards under 24 GB ----------
+            # Q3_K_M below is 15.6 GB and wants a 24 GB card. These are the
+            # same model at a third of that. Not in any graph by default -
+            # download one and it appears in the workflow's model picker.
+
+            # 8.1 GB. 8 GB cards. Dynamic quant - better than plain Q2 at the same size.
+            "minimax_h3_fl2va_pruned-UD-Q2_K_XL.gguf": {
+                "relative_dir": Path("unet"),
+                "url": "https://huggingface.co/unsloth/MiniMax-H3-GGUF/resolve/main/minimax_h3_fl2va_pruned-UD-Q2_K_XL.gguf",
+                "min_bytes": 1024 * 1024 * 1024,
+            },
+
+            # 8.1 GB. The ref2va half of the same.
+            "minimax_h3_ref2va_pruned-UD-Q2_K_XL.gguf": {
+                "relative_dir": Path("unet"),
+                "url": "https://huggingface.co/unsloth/MiniMax-H3-GGUF/resolve/main/minimax_h3_ref2va_pruned-UD-Q2_K_XL.gguf",
+                "min_bytes": 1024 * 1024 * 1024,
+            },
+
+            # 9.6 GB. 12 GB cards, and the best quality under 10 GB.
+            "minimax_h3_fl2va_pruned-UD-Q3_K_XL.gguf": {
+                "relative_dir": Path("unet"),
+                "url": "https://huggingface.co/unsloth/MiniMax-H3-GGUF/resolve/main/minimax_h3_fl2va_pruned-UD-Q3_K_XL.gguf",
+                "min_bytes": 1024 * 1024 * 1024,
+            },
+
+            # 9.6 GB. The ref2va half of the same.
+            "minimax_h3_ref2va_pruned-UD-Q3_K_XL.gguf": {
+                "relative_dir": Path("unet"),
+                "url": "https://huggingface.co/unsloth/MiniMax-H3-GGUF/resolve/main/minimax_h3_ref2va_pruned-UD-Q3_K_XL.gguf",
+                "min_bytes": 1024 * 1024 * 1024,
+            },
+
+            # 11.4 GB. 16 GB cards. Close to the full build.
+            "minimax_h3_fl2va_pruned-Q4_K.gguf": {
+                "relative_dir": Path("unet"),
+                "url": "https://huggingface.co/unsloth/MiniMax-H3-GGUF/resolve/main/minimax_h3_fl2va_pruned-Q4_K.gguf",
+                "min_bytes": 1024 * 1024 * 1024,
+            },
+
+            # 11.4 GB. The ref2va half of the same.
+            "minimax_h3_ref2va_pruned-Q4_K.gguf": {
+                "relative_dir": Path("unet"),
+                "url": "https://huggingface.co/unsloth/MiniMax-H3-GGUF/resolve/main/minimax_h3_ref2va_pruned-Q4_K.gguf",
+                "min_bytes": 1024 * 1024 * 1024,
+            },
+
             "MiniMax-H3-Ref2VA-Q3_K_M.gguf": {
                 "relative_dir": Path("unet"),
                 "url": "https://huggingface.co/Abiray/MiniMax-H3-GGUF/resolve/main/unet/MiniMax-H3-Ref2VA-Q3_K_M.gguf",

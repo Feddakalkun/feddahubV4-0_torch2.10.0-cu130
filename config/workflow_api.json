@@ -1603,6 +1603,13 @@
           "default"
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      },
+      "model_build": {
+        "node_id": "154",
+        "input_key": "unet_name",
+        "label": "Model build",
+        "control": "select",
+        "_why": "Which build of the model to load. The list is the .gguf files you have in models/unet - Q3_K_M is 15.6 GB and wants 24 GB of card, and the smaller builds go down to 6.7 GB. Download one from the model dialog and it appears here."
       }
     },
     "example": {
@@ -1682,6 +1689,13 @@
           "default"
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      },
+      "model_build": {
+        "node_id": "127",
+        "input_key": "unet_name",
+        "label": "Model build",
+        "control": "select",
+        "_why": "Which build of the model to load. The list is the .gguf files you have in models/unet - Q3_K_M is 15.6 GB and wants 24 GB of card, and the smaller builds go down to 6.7 GB. Download one from the model dialog and it appears here."
       }
     },
     "example": {
@@ -1737,6 +1751,13 @@
           "default"
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      },
+      "model_build": {
+        "node_id": "186",
+        "input_key": "unet_name",
+        "label": "Model build",
+        "control": "select",
+        "_why": "Which build of the model to load. The list is the .gguf files you have in models/unet - Q3_K_M is 15.6 GB and wants 24 GB of card, and the smaller builds go down to 6.7 GB. Download one from the model dialog and it appears here."
       }
     },
     "example": {
@@ -1846,6 +1867,13 @@
           "default"
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      },
+      "model_build": {
+        "node_id": "306",
+        "input_key": "unet_name",
+        "label": "Model build",
+        "control": "select",
+        "_why": "Which build of the model to load. The list is the .gguf files you have in models/unet - Q3_K_M is 15.6 GB and wants 24 GB of card, and the smaller builds go down to 6.7 GB. Download one from the model dialog and it appears here."
       }
     },
     "example": {
@@ -1912,6 +1940,13 @@
           "default"
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      },
+      "model_build": {
+        "node_id": "271",
+        "input_key": "unet_name",
+        "label": "Model build",
+        "control": "select",
+        "_why": "Which build of the model to load. The list is the .gguf files you have in models/unet - Q3_K_M is 15.6 GB and wants 24 GB of card, and the smaller builds go down to 6.7 GB. Download one from the model dialog and it appears here."
       }
     },
     "example": {
@@ -1983,6 +2018,13 @@
           "default"
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      },
+      "model_build": {
+        "node_id": "253",
+        "input_key": "unet_name",
+        "label": "Model build",
+        "control": "select",
+        "_why": "Which build of the model to load. The list is the .gguf files you have in models/unet - Q3_K_M is 15.6 GB and wants 24 GB of card, and the smaller builds go down to 6.7 GB. Download one from the model dialog and it appears here."
       }
     },
     "example": {
@@ -2059,6 +2101,13 @@
           "default"
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      },
+      "model_build": {
+        "node_id": "221",
+        "input_key": "unet_name",
+        "label": "Model build",
+        "control": "select",
+        "_why": "Which build of the model to load. The list is the .gguf files you have in models/unet - Q3_K_M is 15.6 GB and wants 24 GB of card, and the smaller builds go down to 6.7 GB. Download one from the model dialog and it appears here."
       }
     },
     "example": {
@@ -2135,6 +2184,13 @@
           "default"
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      },
+      "model_build": {
+        "node_id": "238",
+        "input_key": "unet_name",
+        "label": "Model build",
+        "control": "select",
+        "_why": "Which build of the model to load. The list is the .gguf files you have in models/unet - Q3_K_M is 15.6 GB and wants 24 GB of card, and the smaller builds go down to 6.7 GB. Download one from the model dialog and it appears here."
       }
     },
     "example": {
@@ -2328,6 +2384,20 @@
         "input_key": "ref_image_notes",
         "label": "Reference notes",
         "_why": "Driven by the storyboard, not typed. Present so prepare_payload will deliver it - a param the mapping does not name is silently dropped."
+      },
+      "model_build": {
+        "node_id": "1",
+        "input_key": "unet_name",
+        "label": "Model build (first frame)",
+        "control": "select",
+        "_why": "Which build of the model to load. The list is the .gguf files you have in models/unet - Q3_K_M is 15.6 GB and wants 24 GB of card, and the smaller builds go down to 6.7 GB. Download one from the model dialog and it appears here."
+      },
+      "model_build2": {
+        "node_id": "16",
+        "input_key": "unet_name",
+        "label": "Model build (reference)",
+        "control": "select",
+        "_why": "Which build of the model to load. The list is the .gguf files you have in models/unet - Q3_K_M is 15.6 GB and wants 24 GB of card, and the smaller builds go down to 6.7 GB. Download one from the model dialog and it appears here."
       }
     }
   },
