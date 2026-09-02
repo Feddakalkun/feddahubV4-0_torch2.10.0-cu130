@@ -158,6 +158,26 @@ async def health() -> Dict[str, Any]:
             "commit": _installed_commit()}
 
 
+@app.get("/api/queue")
+async def queue_depth() -> Dict[str, Any]:
+    """What ComfyUI is running and what is waiting behind it.
+
+    ComfyUI has always queued - submitting while a job runs adds to the line
+    rather than being refused. The app was the only thing preventing it, by
+    hiding Generate for the duration. This is what lets the button say how many
+    are waiting instead of just going away.
+    """
+    try:
+        response = requests.get(f"{COMFY_URL}/queue", timeout=5)
+        response.raise_for_status()
+        data = response.json()
+    except (requests.RequestException, ValueError):
+        return {"running": 0, "pending": 0, "available": False}
+    return {"running": len(data.get("queue_running") or []),
+            "pending": len(data.get("queue_pending") or []),
+            "available": True}
+
+
 @app.get("/api/system/comfy-status")
 async def comfy_status() -> Dict[str, Any]:
     try:

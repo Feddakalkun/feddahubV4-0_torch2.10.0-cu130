@@ -160,9 +160,12 @@ export const WorkflowPage = ({
 
   // --- running it ------------------------------------------------------------
   const submit = async () => {
-    if (!schema || isGenerating) return;
+    // isGenerating no longer blocks: a second press queues behind the first,
+    // which is what ComfyUI does with it anyway.
+    if (!schema) return;
+    const queueing = isGenerating || state === 'executing';
     setIsGenerating(true);
-    setImages([]);
+    if (!queueing) setImages([]);
     try {
       const params: Record<string, unknown> = { ...values, ...(extraParams?.(values) ?? {}) };
       if (hasLoraField) {
@@ -193,6 +196,24 @@ export const WorkflowPage = ({
       setIsGenerating(false);
     }
   };
+
+  // How many jobs are behind this one, asked of ComfyUI rather than counted
+  // here - other pages and the ComfyUI tab queue into the same line.
+  const [pending, setPending] = useState(0);
+  useEffect(() => {
+    // `busy` is computed further down, at render; the same condition, here.
+    if (!(isGenerating || state === 'executing')) { setPending(0); return undefined; }
+    let alive = true;
+    const tick = async () => {
+      try {
+        const d = await (await fetch(`${BACKEND_API.BASE_URL}/api/queue`)).json();
+        if (alive) setPending(Number(d?.pending ?? 0));
+      } catch { /* the count simply stops updating */ }
+    };
+    void tick();
+    const id = setInterval(tick, 3000);
+    return () => { alive = false; clearInterval(id); };
+  }, [state, isGenerating]);
 
   const cancel = async () => {
     const ok = await cancelGeneration(promptId);
@@ -358,24 +379,32 @@ export const WorkflowPage = ({
 
         {extraBottom}
 
-        {busy ? (
-          <button type="button" className="workflow-cancel-btn" onClick={cancel}>
-            Cancel
-          </button>
-        ) : (
+        {/* Both, while something is running. Queueing another is the normal
+            way to work - change one line, send it, keep going - and hiding
+            Generate for the duration was the only thing preventing it. */}
+        <div className={busy ? 'flex items-center gap-2' : undefined}>
           <button
             type="button"
-            className="workflow-cockpit-generate"
+            className="workflow-cockpit-generate flex-1"
             onClick={submit}
             disabled={missing.length > 0}
-            title={missing.length ? `Still needed: ${missing.map((f) => f.label).join(', ')}` : undefined}
+            title={missing.length
+              ? `Still needed: ${missing.map((f) => f.label).join(', ')}`
+              : busy ? 'Send another with the settings as they are now' : undefined}
           >
             <Sparkles className="h-4 w-4" />
             {missing.length
               ? `Add ${missing.map((f) => f.label).join(', ')}`
-              : 'Generate'}
+              : busy
+                ? (pending > 0 ? `Queue another · ${pending} waiting` : 'Queue another')
+                : 'Generate'}
           </button>
-        )}
+          {busy && (
+            <button type="button" className="workflow-cancel-btn" onClick={cancel}>
+              Cancel
+            </button>
+          )}
+        </div>
       </div>
     </WorkflowShell>
   );
