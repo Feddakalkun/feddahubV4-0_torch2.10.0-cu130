@@ -70,6 +70,8 @@ export interface WorkflowField {
    * face. The backend applies it; the frontend only sends the value.
    */
   node_ids?: string[];
+  /** Something the user should know about this field, shown under it. */
+  note?: string;
   /** What the slider should span - what people use, not what the node allows. */
   ui_min?: number;
   ui_max?: number;

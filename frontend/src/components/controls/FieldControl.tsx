@@ -45,7 +45,20 @@ const Head = ({ label, hint }: { label: string; hint?: string }) => (
   </div>
 );
 
-export const FieldControl = ({ field, value, onChange, disabled }: Props) => {
+export const FieldControl = (props: Props) => {
+  const drawn = <FieldBody {...props} />;
+  if (!props.field.note) return drawn;
+  return (
+    <div>
+      {drawn}
+      <p className="mt-1 px-1 text-[10px] leading-snug text-amber-300/70">
+        {props.field.note}
+      </p>
+    </div>
+  );
+};
+
+const FieldBody = ({ field, value, onChange, disabled }: Props) => {
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);

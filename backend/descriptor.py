@@ -357,6 +357,14 @@ def describe_input(key: str, spec: Dict[str, Any], graph: Dict[str, Any],
         field.update({"control": control, "options": options,
                       "default": value if value in options
                       else (options[0] if options else None)})
+        # The graph asked for something this install does not have. Falling
+        # back is right - ComfyUI would refuse the missing one - but doing
+        # it quietly is how a workflow drawn with a chosen style arrives set
+        # to the first option with nothing saying a choice was lost.
+        if value not in (None, "") and options and value not in options:
+            field["note"] = ("This workflow was built with %r, which is not "
+                             "installed here. Showing %r instead."
+                             % (value, options[0]))
         return field
 
     if kind == "BOOLEAN":
