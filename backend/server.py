@@ -768,18 +768,47 @@ async def cancel_generation() -> Dict[str, Any]:
 
 
 def _outputs_from_history(entry: Dict[str, Any]) -> List[str]:
-    """Every image the run wrote, as URLs the frontend can load."""
+    """Every file the run wrote, as URLs the frontend can load.
+
+    Reads any key holding a list of {filename: ...} rather than only "images".
+    ComfyUI lets each save node name its own output key, and the four in use
+    here do not agree: SaveImage and PixaromaSaveMp4 say "images", SaveVideo
+    says "videos", and VHS_VideoCombine says "gifs" whatever it actually wrote.
+
+    Seventeen of the forty graphs save through VHS_VideoCombine. Every one of
+    those runs finished, wrote its mp4, and showed nothing in the app - the file
+    was on disk and ComfyUI had reported it under a key this function did not
+    read. A run that succeeds and appears to have produced nothing is worse than
+    one that fails, because there is nothing to go and look up.
+
+    Naming the four keys would work until the next save node arrives with a
+    fifth. The shape is the reliable part, so that is what is matched.
+    """
     urls: List[str] = []
+    seen = set()
     for node_output in (entry.get("outputs") or {}).values():
-        for item in (node_output.get("images") or []):
-            filename = item.get("filename")
-            if not filename:
+        if not isinstance(node_output, dict):
+            continue
+        for items in node_output.values():
+            if not isinstance(items, list):
                 continue
-            urls.append(
-                f"{COMFY_URL}/view?filename={filename}"
-                f"&subfolder={item.get('subfolder', '')}"
-                f"&type={item.get('type', 'output')}"
-            )
+            for item in items:
+                if not isinstance(item, dict):
+                    continue
+                filename = item.get("filename")
+                if not filename:
+                    continue
+                url = (
+                    f"{COMFY_URL}/view?filename={filename}"
+                    f"&subfolder={item.get('subfolder', '')}"
+                    f"&type={item.get('type', 'output')}"
+                )
+                # A node can list one file under two keys; the strip must not
+                # show it twice.
+                if url in seen:
+                    continue
+                seen.add(url)
+                urls.append(url)
     return urls
 
 
