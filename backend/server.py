@@ -17,6 +17,7 @@ import random
 import sys
 import threading
 import time
+from collections import OrderedDict
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -782,6 +783,33 @@ def _outputs_from_history(entry: Dict[str, Any]) -> List[str]:
     return urls
 
 
+# Runs whose cache has already been released. The status endpoint is polled
+# every second or two, and asking ComfyUI to free memory on every poll would
+# be a flag set hundreds of times for one run.
+_released: "OrderedDict[str, bool]" = OrderedDict()
+
+
+def _release_cache(prompt_id: str) -> None:
+    """Hand cached VRAM back to the driver, once, when a run finishes.
+
+    `unload_models` stays false on purpose. This is the cheap half - free
+    blocks returned and a garbage collection - not throwing away weights that
+    the next run will only have to read from disk again.
+    """
+    if prompt_id in _released:
+        return
+    _released[prompt_id] = True
+    while len(_released) > 64:
+        _released.popitem(last=False)
+    try:
+        requests.post(f"{COMFY_URL}/free",
+                      json={"free_memory": True, "unload_models": False},
+                      timeout=5)
+    except requests.RequestException as exc:
+        # Not freeing is a slower next run, not a failure.
+        logger.debug("could not free ComfyUI cache (%s)", exc)
+
+
 @app.get("/api/generate/status/{prompt_id}")
 async def generation_status(prompt_id: str, workflow_id: str = "") -> Dict[str, Any]:
     try:
@@ -802,6 +830,7 @@ async def generation_status(prompt_id: str, workflow_id: str = "") -> Dict[str, 
 
     images = _outputs_from_history(entry)
     if status.get("completed") or images:
+        _release_cache(prompt_id)
         return {"status": "completed", "images": images, "prompt_id": prompt_id}
     return {"status": "running"}
 
