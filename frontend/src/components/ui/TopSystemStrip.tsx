@@ -58,6 +58,9 @@ export const TopSystemStrip = () => {
   const [folderSaved, setFolderSaved] = useState(false);
   const [restarting, setRestarting] = useState(false);
   const [restartNote, setRestartNote] = useState('');
+  // Separate from the note itself: the same line is a progress report, a
+  // success and a failure, and only one of those should read as good news.
+  const [restartDone, setRestartDone] = useState(false);
 
   useEffect(() => {
     if (!foldersOpen) return;
@@ -95,15 +98,30 @@ export const TopSystemStrip = () => {
    * asked again. The backend refuses while a job is queued, and that refusal is
    * what `busy` reports - it is worth showing rather than swallowing.
    */
+  /**
+   * Restart ComfyUI, and say where it has got to.
+   *
+   * The request does not return until ComfyUI is answering again, which takes
+   * the better part of a minute while it loads its nodes. So there are two
+   * things to say and the old handler said neither: nothing at all during the
+   * wait, and then "ComfyUI is restarting" once it had already finished - the
+   * one moment that sentence was untrue.
+   */
   const restartComfy = async () => {
     setRestarting(true);
-    setRestartNote('');
+    setRestartDone(false);
+    setRestartNote('Stopping ComfyUI and starting it again. This takes about half a minute.');
     try {
       const r = await fetch(`${BACKEND_API.BASE_URL}/api/comfy/restart`, { method: 'POST' });
       const d = await r.json().catch(() => ({}));
-      setRestartNote(d?.detail || (d?.success ? 'ComfyUI is restarting.' : 'Could not restart.'));
+      if (d?.success && d?.restarted) {
+        setRestartDone(true);
+        setRestartNote('ComfyUI is back, and it is using the folders you just saved.');
+      } else {
+        setRestartNote(d?.detail || 'Could not restart. Close FEDDA and start it again.');
+      }
     } catch {
-      setRestartNote('Could not reach the backend.');
+      setRestartNote('Could not reach the backend. Close FEDDA and start it again.');
     } finally {
       setRestarting(false);
     }
@@ -787,7 +805,9 @@ export const TopSystemStrip = () => {
               </p>
             )}
             {restartNote && (
-              <p className="mb-3 text-[11px] text-white/50">{restartNote}</p>
+              <p className={`mb-3 text-[11px] ${restartDone ? 'text-emerald-300' : 'text-white/50'}`}>
+                {restartNote}
+              </p>
             )}
 
             <div className="flex items-center justify-end gap-2">
