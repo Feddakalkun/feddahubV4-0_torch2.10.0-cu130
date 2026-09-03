@@ -281,6 +281,7 @@
     "ltx-23-first-frame-styler"
    ],
    "workflows": [
+    "ltx-23/t2v.json",
     "ltx-23/txt2vid.json",
     "ltx-23/img2vid.json",
     "ltx-23/image-audio2vid.json",

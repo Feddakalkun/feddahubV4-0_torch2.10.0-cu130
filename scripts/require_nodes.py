@@ -223,12 +223,39 @@ def main() -> None:
             mod["custom_nodes"] = new
             changed += 1
         print(f"     {mod.get('id'):<28} {len(files)} wf -> {len(new)} pack(s)")
+    # Every graph on disk has to belong to some module. A module's node list is
+    # derived from the graphs it claims, so one that nobody claims contributes
+    # nothing: its packs are never required, and the install that ships is
+    # missing whatever only that workflow needs.
+    #
+    # Not hypothetical. ltx-23/t2v.json was added to `tabs` and to the api
+    # mapping but not to `workflows` - three separate lists - and nothing said
+    # so. It went out in a release. It happened to be harmless, because its
+    # node types are a strict subset of the workflow it was derived from, but
+    # that was luck: the only reason it was noticed is that a count in this
+    # script's own output read 10 where the folder held 11.
+    claimed = set()
+    for mod in rows:
+        for entry in mod.get('workflows') or []:
+            target = WORKFLOWS / entry
+            for path in (sorted(target.rglob('*.json')) if target.is_dir()
+                         else ([target] if target.is_file() else [])):
+                claimed.add(path.resolve())
+    orphans = sorted(p for p in WORKFLOWS.rglob('*.json')
+                     if p.resolve() not in claimed)
+    if orphans:
+        print()
+        print('  graphs no module claims - their node packs are not required:')
+        for path in orphans:
+            print('     ' + path.relative_to(WORKFLOWS).as_posix())
     if changed and not args.check:
         MODULES.write_text(json.dumps(modules, indent=2, ensure_ascii=False) + "\n",
                            encoding="utf-8")
         print(f"  updated custom_nodes on {changed} module(s)")
     elif changed:
         sys.exit(f"{changed} module(s) have stale custom_nodes")
+    if orphans and args.check:
+        sys.exit(str(len(orphans)) + ' workflow graph(s) belong to no module')
 
 
 if __name__ == "__main__":
