@@ -14,6 +14,7 @@ import json
 import logging
 import os
 import random
+import subprocess
 import sys
 import threading
 import time
@@ -328,6 +329,58 @@ async def get_folders() -> Dict[str, Any]:
         # FEDDA restarts. The dialog says so rather than implying otherwise.
         "requires_restart": True,
     }
+
+
+class BrowseRequest(BaseModel):
+    """Where the picker should open, and what it should say at the top."""
+    start: str = ""
+    title: str = "Choose a folder"
+
+
+# Defined with `def`, not `async def`, on purpose: it blocks until somebody
+# clicks, and FastAPI runs a sync endpoint in its threadpool. As a coroutine it
+# would hold the event loop and freeze every other request in the app for as
+# long as the dialog stood open.
+@app.post("/api/settings/browse-folder")
+def browse_folder(req: BrowseRequest) -> Dict[str, Any]:
+    """Open Windows' own folder picker and return what was chosen.
+
+    The browser cannot do this. An `<input type="file" webkitdirectory>` gives
+    the page a list of names and a fake path; the real location is withheld
+    deliberately and no markup gets it back. Asking people to copy a path out
+    of Explorer and paste it in was the only thing left, and it is a poor thing
+    to ask.
+
+    The backend is the part that runs on the user's own machine, so it is the
+    part that can show a picker. Nothing is opened without a click here - the
+    dialog only ever appears in response to this request.
+    """
+    if os.name != "nt":
+        raise HTTPException(status_code=501,
+                            detail="The folder picker is Windows only")
+    script = ROOT_DIR / "scripts" / "pick_folder.ps1"
+    if not script.is_file():
+        raise HTTPException(status_code=500, detail="pick_folder.ps1 is missing")
+    try:
+        # -STA because Windows Forms needs a single-threaded apartment and
+        # returns nothing without one, which is indistinguishable from Cancel.
+        completed = subprocess.run(
+            ["powershell", "-NoProfile", "-STA", "-ExecutionPolicy", "Bypass",
+             "-File", str(script), "-Start", req.start, "-Title", req.title],
+            capture_output=True, text=True, timeout=600)
+    except subprocess.TimeoutExpired:
+        # Ten minutes means the dialog is open and forgotten, not that anything
+        # failed. Say so rather than reporting an error for a picker that is
+        # still sitting there.
+        return {"success": True, "cancelled": True}
+    except OSError as exc:
+        raise HTTPException(status_code=500,
+                            detail=f"Could not open the picker: {exc}")
+    chosen = (completed.stdout or "").strip().splitlines()
+    path = chosen[-1].strip() if chosen else ""
+    if not path:
+        return {"success": True, "cancelled": True}
+    return {"success": True, "cancelled": False, "path": path}
 
 
 @app.post("/api/settings/folders")

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Timer, Activity, Loader2, Trash2, Zap, DownloadCloud, Play, KeyRound, RotateCcw, FolderCog, X, Plus } from 'lucide-react';
+import { Timer, Activity, Loader2, Trash2, Zap, DownloadCloud, Play, KeyRound, RotateCcw, FolderCog, FolderOpen, X, Plus } from 'lucide-react';
 import { useComfyStatus } from '../../hooks/useComfyStatus';
 import { useComfyExecution } from '../../contexts/ComfyExecutionContext';
 import { BACKEND_API, CREDENTIALS_CHANGED, announceCredentialChange } from '../../config/api';
@@ -107,6 +107,31 @@ export const TopSystemStrip = () => {
     } finally {
       setRestarting(false);
     }
+  };
+
+  /**
+   * Ask the backend to show Windows' own folder picker.
+   *
+   * The browser cannot produce an absolute path - a directory input hands back
+   * names and a fake path, deliberately - so the picker runs where the files
+   * are. Returns the chosen path, or null if it was cancelled.
+   */
+  const [browsing, setBrowsing] = useState(false);
+  const browseFor = async (start: string, title: string): Promise<string | null> => {
+    setBrowsing(true); setFolderErr('');
+    try {
+      const r = await fetch(`${BACKEND_API.BASE_URL}/api/settings/browse-folder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ start, title }),
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d?.detail || 'Could not open the picker');
+      return d?.cancelled ? null : (d?.path || null);
+    } catch (e: any) {
+      setFolderErr(e?.message || 'Could not open the picker');
+      return null;
+    } finally { setBrowsing(false); }
   };
 
   const saveFolders = async () => {
@@ -682,6 +707,20 @@ export const TopSystemStrip = () => {
                     className="w-full rounded-lg fedda-input px-3 py-2 font-mono text-[11px] focus:border-emerald-500/40"
                   />
                   <button
+                    onClick={async () => {
+                      const picked = await browseFor(value, 'Choose a models or LoRA folder');
+                      if (!picked) return;
+                      const next = [...folders.extra_models_paths];
+                      next[i] = picked;
+                      setFolders({ ...folders, extra_models_paths: next });
+                    }}
+                    disabled={browsing}
+                    aria-label="Browse for this folder"
+                    className="shrink-0 rounded-lg border border-white/10 p-2 text-white/40 transition hover:border-white/25 hover:text-white/80 disabled:opacity-40"
+                  >
+                    <FolderOpen className="h-3.5 w-3.5" />
+                  </button>
+                  <button
                     onClick={() => setFolders({
                       ...folders,
                       extra_models_paths: folders.extra_models_paths.filter((_, j) => j !== i),
@@ -716,13 +755,27 @@ export const TopSystemStrip = () => {
             ] as const).map(([key, label, help]) => (
               <label key={key} className="mb-4 block">
                 <span className="mb-1 block text-[11px] font-semibold text-white/60">{label}</span>
-                <input
-                  value={(folders as any)[key] || ''}
-                  onChange={(e) => setFolders({ ...folders, [key]: e.target.value })}
-                  placeholder={folderDefaults[key] || 'Default'}
-                  spellCheck={false}
-                  className="w-full rounded-lg fedda-input px-3 py-2 font-mono text-[11px] focus:border-emerald-500/40"
-                />
+                <div className="flex items-center gap-1.5">
+                  <input
+                    value={(folders as any)[key] || ''}
+                    onChange={(e) => setFolders({ ...folders, [key]: e.target.value })}
+                    placeholder={folderDefaults[key] || 'Default'}
+                    spellCheck={false}
+                    className="w-full rounded-lg fedda-input px-3 py-2 font-mono text-[11px] focus:border-emerald-500/40"
+                  />
+                  <button
+                    onClick={async () => {
+                      const picked = await browseFor(
+                        (folders as any)[key] || folderDefaults[key] || '', label);
+                      if (picked) setFolders({ ...folders, [key]: picked });
+                    }}
+                    disabled={browsing}
+                    aria-label={`Browse for the ${label.toLowerCase()}`}
+                    className="shrink-0 rounded-lg border border-white/10 p-2 text-white/40 transition hover:border-white/25 hover:text-white/80 disabled:opacity-40"
+                  >
+                    <FolderOpen className="h-3.5 w-3.5" />
+                  </button>
+                </div>
                 <span className="mt-1 block text-[10px] leading-relaxed text-white/25">{help}</span>
               </label>
             ))}
