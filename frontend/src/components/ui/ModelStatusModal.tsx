@@ -141,7 +141,26 @@ export const ModelStatusModal = ({ workflowId, workflowLabel, onClose }: ModelSt
                           has not started - and the difference is the whole
                           answer to "why is nothing happening". */}
                       {!r.exists && r.note && (
-                        <div className="mt-1 text-[10px] leading-snug text-white/35">{r.note}</div>
+                        <div className="mt-1 text-[10px] leading-snug text-white/35">
+                          {r.note}
+                          {/* A licence has to be accepted by the person, not by
+                              the app - that is what a licence is. So the most
+                              this can do is put the page one click away instead
+                              of printing a URL to be selected and copied. */}
+                          {(r as any).licence_url ? (
+                            <>
+                              {' '}
+                              <a
+                                href={(r as any).licence_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-emerald-300 underline underline-offset-2 hover:text-emerald-200"
+                              >
+                                Open the licence page
+                              </a>
+                            </>
+                          ) : null}
+                        </div>
                       )}
                       {!r.exists && r.current > 0 && (
                         <div className="mt-1 h-[3px] w-full overflow-hidden rounded-full bg-white/5">

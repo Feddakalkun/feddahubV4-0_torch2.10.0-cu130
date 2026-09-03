@@ -606,6 +606,44 @@ _SMALLER_BUILDS: Dict[str, List[str]] = {
 }
 
 
+# A gated repo's answer for this machine's token, remembered for the session.
+# It is one network call and it cannot change without the user leaving the app
+# to accept a licence, so asking again on every render would be a round trip
+# per row for an answer that only moves when they come back.
+_GATE_ACCESS: Dict[str, bool] = {}
+
+
+def _gated_access(url: str) -> Optional[bool]:
+    """Does the saved token already open this repo? None when unknown.
+
+    Asked before the user presses anything. Being told to go and accept a
+    licence you accepted last week is worse than being told nothing - and the
+    only way to know is to try, so this tries with a HEAD rather than making
+    them start a download to find out.
+    """
+    if not url or "huggingface.co" not in url:
+        return None
+    if url in _GATE_ACCESS:
+        return _GATE_ACCESS[url]
+    token = str(_runtime_settings().get("hf_token") or "").strip()
+    if not token:
+        return False
+    try:
+        response = requests.head(
+            url, headers={"Authorization": f"Bearer {token}"},
+            allow_redirects=True, timeout=10)
+    except requests.RequestException:
+        return None                      # offline says nothing about the gate
+    ok = response.status_code not in (401, 403)
+    # Only a yes is remembered. Access is granted by the user leaving the app,
+    # accepting a licence and coming back, so a cached no would survive exactly
+    # the event it needs to notice - and the page would keep telling them to
+    # accept something they had just accepted. A yes cannot go stale that way.
+    if ok:
+        _GATE_ACCESS[url] = True
+    return ok
+
+
 def _workflow_models(workflow_id: str) -> List[Dict[str, Any]]:
     """Every model this workflow needs, and where each one already is.
 
@@ -673,9 +711,22 @@ def _workflow_models(workflow_id: str) -> List[Dict[str, Any]]:
         elif not spec:
             note = ("Nothing knows where to download this - it has no entry "
                     "in the model list.")
-        elif spec.get("gated"):
-            note = ("This one needs its licence accepted on Hugging Face and a "
-                    "token saved in the top bar. Download says which page.")
+        licence_url = ""
+        if spec and spec.get("gated"):
+            source = str(spec.get("url") or "")
+            repo = (source.split("/resolve/")[0] if "/resolve/" in source else "")
+            licence_url = repo
+            access = _gated_access(source)
+            if access is True:
+                note = ("Licence accepted on your account - this one is ready "
+                        "to download.")
+                licence_url = ""
+            elif str(_runtime_settings().get("hf_token") or "").strip():
+                note = ("Accept this model's licence on Hugging Face, then "
+                        "press Download. Your token is already saved.")
+            else:
+                note = ("Accept this model's licence on Hugging Face and save "
+                        "your token in the top bar, then press Download.")
 
         # A part-finished download is not nothing, and it was invisible. The
         # downloader resumes from .fedda_tmp with a Range request, so those
@@ -706,7 +757,7 @@ def _workflow_models(workflow_id: str) -> List[Dict[str, Any]]:
             "size_bytes": found.stat().st_size if found else 0,
             # Reported rather than dropped: a model the app will not fetch is
             # something the user has to know about, not something to hide.
-            **({"no_source": True, "note": note, "partial_gb": partial_gb} if note else {}),
+            **({"no_source": True, "note": note, "partial_gb": partial_gb, "licence_url": licence_url} if note else {}),
         })
 
     # Smaller builds of whatever this graph loads, offered rather than needed.
