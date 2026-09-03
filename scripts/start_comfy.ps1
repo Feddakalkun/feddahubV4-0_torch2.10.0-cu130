@@ -40,8 +40,19 @@ if (Test-Path $SettingsFile) {
         # FEDDA's own models tree is listed first on purpose. ComfyUI's
         # downloader nodes write to the first path for a folder type, so the
         # user's tree listed first would make FEDDA download into it.
-        $ExtraModels = "$($UserPaths.extra_models_path)".Trim()
-        if ($ExtraModels -and (Test-Path $ExtraModels)) {
+        # A list now: models end up on whichever drive had room, and one
+        # folder meant the rest were invisible. The superseded singular is
+        # still read so a settings file written before this keeps working.
+        $ExtraList = @()
+        if ($UserPaths.PSObject.Properties.Name -contains "extra_models_paths") {
+            $ExtraList = @($UserPaths.extra_models_paths)
+        }
+        if (-not $ExtraList -or $ExtraList.Count -eq 0) {
+            $ExtraList = @("$($UserPaths.extra_models_path)")
+        }
+        $ExtraList = @($ExtraList | ForEach-Object { "$_".Trim() } |
+                       Where-Object { $_ -and (Test-Path $_) })
+        if ($ExtraList.Count -gt 0) {
             $OwnModels = Join-Path $RootPath "ComfyUI\models"
             # base_path on its own adds nothing. ComfyUI pops base_path
             # and is_default, then adds one search path per remaining
@@ -108,17 +119,32 @@ if (Test-Path $SettingsFile) {
             $Known = @("loras", "checkpoints", "vae", "unet", "diffusion_models",
                        "controlnet", "clip", "text_encoders", "upscale_models",
                        "embeddings", "clip_vision")
-            $LooksLikeTree = $false
-            foreach ($k in $Known) {
-                if (Test-Path (Join-Path $ExtraModels $k)) { $LooksLikeTree = $true; break }
-            }
-            $UserFolders = $Folders
-            if (-not $LooksLikeTree) {
-                $UserFolders = $Folders | ForEach-Object {
-                    if ($_ -eq "    loras: loras/") { "    loras: |`n        loras/`n        ./" }
-                    else { $_ }
+
+            # Each folder is judged on its own. One drive may hold a full
+            # ComfyUI tree and the next just a pile of LoRAs, and deciding
+            # once for all of them would mis-read whichever came second.
+            $ExtraSections = @()
+            $Index = 0
+            foreach ($Dir in $ExtraList) {
+                $Index++
+                $LooksLikeTree = $false
+                foreach ($k in $Known) {
+                    if (Test-Path (Join-Path $Dir $k)) { $LooksLikeTree = $true; break }
                 }
-                Write-Host "  Extra models:  read as a LoRA library (no models subfolders found)" -ForegroundColor DarkGray
+                $UserFolders = $Folders
+                if (-not $LooksLikeTree) {
+                    $UserFolders = $Folders | ForEach-Object {
+                        if ($_ -eq "    loras: loras/") { "    loras: |`n        loras/`n        ./" }
+                        else { $_ }
+                    }
+                    Write-Host "  Extra models:  $Dir (LoRA library)" -ForegroundColor DarkGray
+                } else {
+                    Write-Host "  Extra models:  $Dir (read-only)" -ForegroundColor DarkGray
+                }
+                # Unique section names. Two sections sharing one key is not a
+                # merge in YAML - the second silently replaces the first, and
+                # every folder but the last would go unsearched.
+                $ExtraSections += @("", "user_models_${Index}:", "    base_path: $Dir") + $UserFolders
             }
 
             $Yaml = (@(
@@ -130,11 +156,7 @@ if (Test-Path $SettingsFile) {
                 "fedda:",
                 "    base_path: $OwnModels",
                 "    is_default: true"
-            ) + $Folders + @(
-                "",
-                "user_models:",
-                "    base_path: $ExtraModels"
-            ) + $UserFolders) -join "`n"
+            ) + $Folders + $ExtraSections) -join "`n"
             # Not Set-Content -Encoding UTF8: in Windows PowerShell 5.1
             # that writes a BOM, and ComfyUI feeds this file straight to
             # PyYAML, which fails on the first character with
@@ -146,7 +168,6 @@ if (Test-Path $SettingsFile) {
             $YamlPath = Join-Path $RootPath "ComfyUI\extra_model_paths.yaml"
             [System.IO.File]::WriteAllText(
                 $YamlPath, $Yaml, (New-Object System.Text.UTF8Encoding($false)))
-            Write-Host "  Extra models:  $ExtraModels (read-only)" -ForegroundColor DarkGray
         }
     } catch {
         Write-Host "  [WARN] Could not read folder settings - using defaults." -ForegroundColor Yellow

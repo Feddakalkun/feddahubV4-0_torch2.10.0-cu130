@@ -43,7 +43,38 @@ _remote_size_cache: Dict[str, int] = {}
 _PARTIAL_SUFFIXES = (".incomplete", ".part", ".tmp", ".fedda_tmp")
 
 
-def model_search_roots(root_dir: Path, extra_models_path: str = "") -> List[Path]:
+def extra_paths(value: Any) -> List[str]:
+    """The configured extra model folders, however they were stored.
+
+    One folder was never enough for anyone with a collection: models end up on
+    whichever drive had room at the time. The setting holds a list now, and a
+    plain string is still read as a list of one so an install written before
+    this keeps working without a migration step.
+
+    Blank entries are dropped and duplicates collapse, because a path listed
+    twice makes ComfyUI resolve every model through two identical roots.
+    """
+    if isinstance(value, str):
+        items = [value]
+    elif isinstance(value, (list, tuple)):
+        items = list(value)
+    else:
+        items = []
+    out: List[str] = []
+    seen = set()
+    for item in items:
+        text = str(item or "").strip()
+        if not text:
+            continue
+        key = text.rstrip("\/").lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(text)
+    return out
+
+
+def model_search_roots(root_dir: Path, extra_models_path: Any = "") -> List[Path]:
     """Every models directory ComfyUI will search, FEDDA's own first.
 
     ComfyUI is told about more than one root - ours, plus whatever Settings >
@@ -52,8 +83,7 @@ def model_search_roots(root_dir: Path, extra_models_path: str = "") -> List[Path
     a 20 GB UNet that was already on disk under another drive.
     """
     roots = [root_dir / "ComfyUI" / "models"]
-    extra = (extra_models_path or "").strip()
-    if extra:
+    for extra in extra_paths(extra_models_path):
         path = Path(extra)
         if path.is_dir() and path not in roots:
             roots.append(path)

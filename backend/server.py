@@ -250,18 +250,41 @@ def _save_runtime_settings(values: Dict[str, Any]) -> None:
 
 
 class FoldersRequest(BaseModel):
+    # Plural, and a list. Anyone with a collection has it spread over whatever
+    # drive had room at the time, and one folder meant re-downloading models
+    # already sitting on the machine.
+    extra_models_paths: List[str] = []
+    # The singular is still accepted so a page loaded before an update, or a
+    # settings file written by one, does not lose its folder on the next save.
     extra_models_path: str = ""
     output_path: str = ""
     input_path: str = ""
 
 
 def _folder_defaults() -> Dict[str, str]:
-    """What each folder is when the user has not chosen one."""
+    """What each single-value folder is when the user has not chosen one.
+
+    The extra model folders are a list and have no default, so they are not
+    here - see _extra_models_setting().
+    """
     return {
-        "extra_models_path": "",
         "output_path": str(ROOT_DIR / "ComfyUI" / "output"),
         "input_path": str(ROOT_DIR / "ComfyUI" / "input"),
     }
+
+
+def _extra_models_setting() -> List[str]:
+    """The configured extra model folders, reading either shape.
+
+    Installs written before the list existed hold a single string under the
+    singular key; both are read so an update never drops a folder somebody
+    already told us about.
+    """
+    settings = _runtime_settings()
+    value = settings.get("extra_models_paths")
+    if value is None:
+        value = settings.get("extra_models_path")
+    return model_links.extra_paths(value)
 
 
 def _check_folder(label: str, raw_value: str, needs_write: bool) -> str:
@@ -294,9 +317,12 @@ def _check_folder(label: str, raw_value: str, needs_write: bool) -> str:
 async def get_folders() -> Dict[str, Any]:
     settings = _runtime_settings()
     defaults = _folder_defaults()
+    paths: Dict[str, Any] = {
+        key: str(settings.get(key) or "").strip() for key in defaults}
+    paths["extra_models_paths"] = _extra_models_setting()
     return {
         "success": True,
-        "paths": {key: str(settings.get(key) or "").strip() for key in defaults},
+        "paths": paths,
         "defaults": defaults,
         # Every one of these is read at startup, so nothing changes until
         # FEDDA restarts. The dialog says so rather than implying otherwise.
@@ -306,7 +332,12 @@ async def get_folders() -> Dict[str, Any]:
 
 @app.post("/api/settings/folders")
 async def set_folders(req: FoldersRequest) -> Dict[str, Any]:
-    extra = _check_folder("Extra models", req.extra_models_path, needs_write=False)
+    # Both shapes are merged before validation, so a page still posting the
+    # singular adds to the list rather than replacing it with nothing.
+    wanted = model_links.extra_paths(
+        list(req.extra_models_paths) + [req.extra_models_path])
+    extras = [_check_folder("Extra models", one, needs_write=False) for one in wanted]
+    extras = model_links.extra_paths(extras)
     output = _check_folder("Output", req.output_path, needs_write=True)
     inp = _check_folder("Input", req.input_path, needs_write=True)
 
@@ -314,13 +345,19 @@ async def set_folders(req: FoldersRequest) -> Dict[str, Any]:
     # and listing it twice would make ComfyUI resolve every model through two
     # identical roots.
     own_models = (ROOT_DIR / "ComfyUI" / "models").resolve()
-    if extra and Path(extra).resolve() == own_models:
-        raise HTTPException(
-            status_code=400,
-            detail="Extra models: that is FEDDA's own models folder, which is already used")
+    for one in extras:
+        if Path(one).resolve() == own_models:
+            raise HTTPException(
+                status_code=400,
+                detail="Extra models: that is FEDDA's own models folder, which is already used")
 
-    paths = {"extra_models_path": extra, "output_path": output, "input_path": inp}
+    paths: Dict[str, Any] = {"extra_models_paths": extras,
+                             "output_path": output, "input_path": inp}
+    # The superseded singular is cleared rather than left behind, or a reader
+    # that still consults it would find a folder the user has since removed.
+    paths["extra_models_path"] = ""
     _save_runtime_settings(paths)
+    paths.pop("extra_models_path", None)
     return {"success": True, "paths": paths, "requires_restart": True}
 
 
@@ -484,7 +521,7 @@ def _workflow_models(workflow_id: str) -> List[Dict[str, Any]]:
     which is why reading only the graph, as the first version of this did,
     reported nothing to download while the wire was saturated.
     """
-    extra = str(_runtime_settings().get("extra_models_path") or "")
+    extra = _extra_models_setting()
     mapping = workflow_service.load_mapping().get(workflow_id)
     if not mapping:
         return []
@@ -593,7 +630,7 @@ async def workflow_model_status(workflow_id: str) -> Dict[str, Any]:
     path = workflow_service.get_workflow_path(mapping.get("filename", ""))
     vram = (model_links.vram_estimate(
         model_links.load_graph(path), ROOT_DIR,
-        str(_runtime_settings().get("extra_models_path") or ""))
+        _extra_models_setting())
         if path else {})
     return {"files": files,
             "ready": all(f["exists"] for f in files if not f.get("optional")),

@@ -7,6 +7,10 @@ import time
 from pathlib import Path
 from typing import Optional, Dict, List, Any
 
+# For extra_paths() only - the one place that decides what the extra
+# models setting means, so the downloader and the search agree.
+import model_links
+
 class ModelDownloader:
     def __init__(self, root_dir: Path):
         self.root_dir = root_dir
@@ -603,19 +607,24 @@ class ModelDownloader:
             return self.root_dir / spec["root_relative_path"]
         return self.comfy_models_dir / spec["relative_dir"] / filename
 
-    def _extra_models_dir(self) -> Optional[Path]:
-        """The library the user pointed at in Settings > Folders, if any."""
+    def _extra_models_dirs(self) -> List[Path]:
+        """The libraries the user pointed at in Settings > Folders.
+
+        A list, because models end up on whichever drive had room. Reads the
+        superseded singular key too, so an install written before the list
+        existed still has its folder honoured.
+        """
         try:
             settings = json.loads(
                 (self.root_dir / "config" / "runtime_settings.json")
                 .read_text(encoding="utf-8-sig"))
         except (OSError, ValueError):
-            return None
-        raw = str(settings.get("extra_models_path") or "").strip()
-        if not raw:
-            return None
-        path = Path(raw)
-        return path if path.is_dir() else None
+            return []
+        value = settings.get("extra_models_paths")
+        if value is None:
+            value = settings.get("extra_models_path")
+        return [p for p in (Path(x) for x in model_links.extra_paths(value))
+                if p.is_dir()]
 
     def _already_present(self, spec: Dict[str, Any], filename: str,
                          min_bytes: int) -> bool:
@@ -628,12 +637,14 @@ class ModelDownloader:
         """
         if self._is_valid_file(self._dest_path_for_spec(spec, filename), min_bytes):
             return True
-        extra = self._extra_models_dir()
-        if not extra or spec.get("root_relative_path"):
+        if spec.get("root_relative_path"):
             return False
-        # The same layout, one folder up: the yaml gives both trees the same
-        # folder names, so a spec's relative_dir applies to either.
-        return self._is_valid_file(extra / spec["relative_dir"] / filename, min_bytes)
+        # The same layout, one folder up: the yaml gives every tree the same
+        # folder names, so a spec's relative_dir applies to any of them.
+        for extra in self._extra_models_dirs():
+            if self._is_valid_file(extra / spec["relative_dir"] / filename, min_bytes):
+                return True
+        return False
 
     def _start_download_if_needed(self, filename: str, dest_path: Path, url: str, min_bytes: int,
                                   headers: Optional[dict] = None,

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Timer, Activity, Loader2, Trash2, Zap, DownloadCloud, Play, KeyRound, RotateCcw, FolderCog, X } from 'lucide-react';
+import { Timer, Activity, Loader2, Trash2, Zap, DownloadCloud, Play, KeyRound, RotateCcw, FolderCog, X, Plus } from 'lucide-react';
 import { useComfyStatus } from '../../hooks/useComfyStatus';
 import { useComfyExecution } from '../../contexts/ComfyExecutionContext';
 import { BACKEND_API, CREDENTIALS_CHANGED, announceCredentialChange } from '../../config/api';
@@ -47,7 +47,11 @@ export const TopSystemStrip = () => {
   // Folders the user may point elsewhere. Empty means the default, which the
   // backend supplies so the placeholder can show what "empty" actually means.
   const [foldersOpen, setFoldersOpen] = useState(false);
-  const [folders, setFolders] = useState({ extra_models_path: '', output_path: '', input_path: '' });
+  // extra_models_paths is a list: a collection ends up on whichever drive had
+  // room, and one folder meant the rest were invisible to the app.
+  const [folders, setFolders] = useState<{
+    extra_models_paths: string[]; output_path: string; input_path: string;
+  }>({ extra_models_paths: [], output_path: '', input_path: '' });
   const [folderDefaults, setFolderDefaults] = useState<Record<string, string>>({});
   const [folderErr, setFolderErr] = useState('');
   const [folderSaving, setFolderSaving] = useState(false);
@@ -67,7 +71,19 @@ export const TopSystemStrip = () => {
     try {
       const r = await fetch(`${BACKEND_API.BASE_URL}${BACKEND_API.ENDPOINTS.SETTINGS_FOLDERS}`);
       const d = await r.json();
-      if (d?.success) { setFolders(d.paths); setFolderDefaults(d.defaults || {}); }
+      if (d?.success) {
+        // An install written before the list existed answers with the
+        // singular; read both so its folder is not dropped on the next save.
+        const extras: string[] = Array.isArray(d.paths?.extra_models_paths)
+          ? d.paths.extra_models_paths
+          : [d.paths?.extra_models_path].filter(Boolean);
+        setFolders({
+          extra_models_paths: extras,
+          output_path: d.paths?.output_path || '',
+          input_path: d.paths?.input_path || '',
+        });
+        setFolderDefaults(d.defaults || {});
+      }
     } catch { setFolderErr('Could not read the current folders.'); }
   };
 
@@ -648,9 +664,53 @@ export const TopSystemStrip = () => {
               Leave a field empty to use the default. Changes apply the next time FEDDA starts.
             </p>
 
+            <div className="mb-4">
+              <span className="mb-1 block text-[11px] font-semibold text-white/60">
+                Extra model folders
+              </span>
+              {folders.extra_models_paths.map((value, i) => (
+                <div key={i} className="mb-1.5 flex items-center gap-1.5">
+                  <input
+                    value={value}
+                    onChange={(e) => {
+                      const next = [...folders.extra_models_paths];
+                      next[i] = e.target.value;
+                      setFolders({ ...folders, extra_models_paths: next });
+                    }}
+                    placeholder="D:\models  or  E:\LoRAs"
+                    spellCheck={false}
+                    className="w-full rounded-lg fedda-input px-3 py-2 font-mono text-[11px] focus:border-emerald-500/40"
+                  />
+                  <button
+                    onClick={() => setFolders({
+                      ...folders,
+                      extra_models_paths: folders.extra_models_paths.filter((_, j) => j !== i),
+                    })}
+                    aria-label="Remove this folder"
+                    className="shrink-0 rounded-lg border border-white/10 p-2 text-white/40 transition hover:border-white/25 hover:text-white/80"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ))}
+              <button
+                onClick={() => setFolders({
+                  ...folders,
+                  extra_models_paths: [...folders.extra_models_paths, ''],
+                })}
+                className="mt-1 inline-flex items-center gap-1.5 rounded-lg border border-white/15 px-2.5 py-1.5 text-[11px] font-semibold text-white/60 transition hover:border-white/30 hover:text-white"
+              >
+                <Plus className="h-3 w-3" />
+                Add a folder
+              </button>
+              <span className="mt-1.5 block text-[10px] leading-relaxed text-white/25">
+                A ComfyUI models folder, or just a folder of LoRAs - both are read,
+                and each one is judged on its own. Add as many as you like. FEDDA
+                never writes here; downloads always go to its own folder.
+              </span>
+            </div>
+
             {([
-              ['extra_models_path', 'Extra models folder',
-               'A ComfyUI models folder, or just a folder of LoRAs - both are read. FEDDA never writes here; downloads always go to its own folder.'],
               ['output_path', 'Output folder', 'Where generated images and video are saved.'],
               ['input_path', 'Input folder', 'Where uploaded source files are staged.'],
             ] as const).map(([key, label, help]) => (
