@@ -123,7 +123,6 @@
     "class_type": "LTXVImgToVideoInplaceKJ",
     "inputs": {
       "num_images": "1",
-      "strength_1": 1,
       "index_1": 0,
       "vae": [
         "5762",
@@ -136,7 +135,8 @@
       "num_images.image_1": [
         "5759",
         0
-      ]
+      ],
+      "num_images.strength_1": 1
     },
     "_meta": {
       "title": "LTXVImgToVideoInplaceKJ"

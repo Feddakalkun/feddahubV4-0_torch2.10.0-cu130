@@ -357,15 +357,15 @@
     "class_type": "ResizeImageMaskNode",
     "inputs": {
       "resize_type": "scale total pixels",
-      "megapixels": 1.12,
       "scale_method": "lanczos",
       "input": [
         "5256",
         0
-      ]
+      ],
+      "resize_type.megapixels": 1.12
     },
     "_meta": {
       "title": "set image size in megapixels"
     }
   }
-}
+}

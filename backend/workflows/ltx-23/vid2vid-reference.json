@@ -359,12 +359,12 @@
     "class_type": "ResizeImageMaskNode",
     "inputs": {
       "resize_type": "scale total pixels",
-      "megapixels": 1,
       "scale_method": "lanczos",
       "input": [
         "5548",
         0
-      ]
+      ],
+      "resize_type.megapixels": 1
     },
     "_meta": {
       "title": "ResizeImageMaskNode"

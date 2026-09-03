@@ -292,7 +292,6 @@
       "resize_type": "scale dimensions",
       "width": 640,
       "height": 360,
-      "crop": "center",
       "scale_method": "nearest-exact",
       "input": [
         "5613",
@@ -305,7 +304,8 @@
       "resize_type.height": [
         "5641",
         0
-      ]
+      ],
+      "resize_type.crop": "center"
     },
     "_meta": {
       "title": "ResizeImageMaskNode"
@@ -381,7 +381,6 @@
       "resize_type": "scale dimensions",
       "width": 640,
       "height": 360,
-      "crop": "center",
       "scale_method": "nearest-exact",
       "input": [
         "5614",
@@ -394,7 +393,8 @@
       "resize_type.height": [
         "5641",
         0
-      ]
+      ],
+      "resize_type.crop": "center"
     },
     "_meta": {
       "title": "ResizeImageMaskNode"

@@ -382,12 +382,12 @@
     "class_type": "ResizeImageMaskNode",
     "inputs": {
       "resize_type": "scale width",
-      "width": 720,
       "scale_method": "lanczos",
       "input": [
         "2004",
         0
-      ]
+      ],
+      "resize_type.width": 720
     },
     "_meta": {
       "title": "Video Size"

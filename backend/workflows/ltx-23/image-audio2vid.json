@@ -406,12 +406,12 @@
     "class_type": "ResizeImageMaskNode",
     "inputs": {
       "resize_type": "scale width",
-      "width": 1024,
       "scale_method": "lanczos",
       "input": [
         "5310",
         0
-      ]
+      ],
+      "resize_type.width": 1024
     },
     "_meta": {
       "title": "SET VIDEO WIDTH IN PIXELS"

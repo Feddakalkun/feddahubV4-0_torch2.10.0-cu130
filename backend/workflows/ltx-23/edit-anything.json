@@ -160,12 +160,6 @@
       ],
       "max_length": 512,
       "sampling_mode": "on",
-      "temperature": 0.7,
-      "top_k": 64,
-      "top_p": 0.95,
-      "min_p": 0.05,
-      "repetition_penalty": 1.05,
-      "seed": 0,
       "presence_penalty": 0,
       "thinking": false,
       "use_default_template": true,
@@ -176,7 +170,13 @@
       "image": [
         "5711",
         0
-      ]
+      ],
+      "sampling_mode.temperature": 0.7,
+      "sampling_mode.top_k": 64,
+      "sampling_mode.top_p": 0.95,
+      "sampling_mode.min_p": 0.05,
+      "sampling_mode.repetition_penalty": 1.05,
+      "sampling_mode.seed": 0
     },
     "_meta": {
       "title": "TextGenerate"
@@ -263,8 +263,6 @@
     "class_type": "LTXVAddGuideMulti",
     "inputs": {
       "num_guides": "1",
-      "frame_idx_1": 0,
-      "strength_1": 1,
       "positive": [
         "5741",
         0
@@ -284,7 +282,9 @@
       "num_guides.image_1": [
         "5708",
         0
-      ]
+      ],
+      "num_guides.frame_idx_1": 0,
+      "num_guides.strength_1": 1
     },
     "_meta": {
       "title": "LTXVAddGuideMulti"

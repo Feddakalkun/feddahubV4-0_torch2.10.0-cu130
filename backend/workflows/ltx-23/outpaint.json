@@ -359,7 +359,6 @@
     "class_type": "ResizeImageMaskNode",
     "inputs": {
       "resize_type": "match size",
-      "crop": "center",
       "scale_method": "area",
       "input": [
         "5679",
@@ -368,7 +367,8 @@
       "resize_type.match": [
         "5686",
         0
-      ]
+      ],
+      "resize_type.crop": "center"
     },
     "_meta": {
       "title": "ResizeImageMaskNode"
@@ -439,12 +439,12 @@
     "class_type": "ResizeImageMaskNode",
     "inputs": {
       "resize_type": "scale to multiple",
-      "multiple": 32,
       "scale_method": "area",
       "input": [
         "5700",
         0
-      ]
+      ],
+      "resize_type.multiple": 32
     },
     "_meta": {
       "title": "ResizeImageMaskNode"
