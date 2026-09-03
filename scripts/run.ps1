@@ -428,7 +428,7 @@ try {
     # Settings > Folders writes this when the user asks for a restart. Only
     # this loop can honour it: it owns $ComfyProc, and ComfyUI has no shutdown
     # route of its own for the backend to call.
-    $RestartFlag = Join-Path $RootPath "logsestart_comfy.flag"
+    $RestartFlag = Join-Path $RootPath "logs\restart_comfy.flag"
     if (Test-Path $RestartFlag) { Remove-Item $RestartFlag -Force -ErrorAction SilentlyContinue }
 
     # Pump service output until the frontend exits or Ctrl+C
