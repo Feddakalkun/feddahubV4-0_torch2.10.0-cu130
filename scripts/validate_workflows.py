@@ -137,6 +137,62 @@ def missing_required(graph, available):
     return out
 
 
+def dynamic_subinputs(graph, available):
+    """Sub-inputs of a dynamic combo that are missing or written flat.
+
+    A COMFY_DYNAMICCOMBO_V3 input carries sub-inputs of its own, and which ones
+    exist depends on the key chosen: ResizeImageMaskNode with resize_type
+    "scale width" requires a width, with "scale by multiplier" a multiplier.
+    The API format namespaces them as "<combo>.<sub>".
+
+    missing_required() above cannot see any of this. It compares the node's
+    top-level required names, where the combo itself is present and correct, and
+    reports the graph as sound. Eight of the ten LTX 2.3 graphs passed that
+    check while ComfyUI refused every one of them at submit:
+
+        Required input is missing: resize_type.width
+
+    Nothing runs, and the message names a node id rather than a control, so
+    there is nothing on the page to connect it to.
+
+    Two shapes are reported separately because they mean different things. A
+    sub-input sitting under its bare name is a conversion that flattened it, and
+    the value is right there to be moved. One absent altogether is a graph that
+    never carried it.
+    """
+    if not available:
+        return []
+    out = []
+    for node_id, node in (graph or {}).items():
+        if not isinstance(node, dict):
+            continue
+        spec = (available.get(node.get("class_type")) or {})
+        declared = {}
+        for section in ("required", "optional"):
+            declared.update((spec.get("input", {}) or {}).get(section) or {})
+        have = node.get("inputs") or {}
+        for name, decl in declared.items():
+            kind = decl[0] if isinstance(decl, list) and decl else decl
+            if kind != "COMFY_DYNAMICCOMBO_V3":
+                continue
+            chosen = have.get(name)
+            if not isinstance(chosen, str):
+                continue
+            opts = (decl[1] if isinstance(decl, list) and len(decl) > 1
+                    and isinstance(decl[1], dict) else {})
+            for option in opts.get("options") or []:
+                if option.get("key") != chosen:
+                    continue
+                subs = ((option.get("inputs") or {}).get("required") or {})
+                for sub_name in subs:
+                    dotted = "%s.%s" % (name, sub_name)
+                    if dotted in have:
+                        continue
+                    out.append((node_id, node.get("class_type"), dotted,
+                                "flat" if sub_name in have else "absent"))
+    return out
+
+
 def main() -> int:
     args = [a for a in sys.argv[1:] if a != "--strict"]
     strict = "--strict" in sys.argv
@@ -183,11 +239,17 @@ def main() -> int:
         elif missing:
             broken.append((wid, "MISSING %d node type(s)" % len(missing), ", ".join(missing[:8])))
         else:
-            gaps = missing_required(load_json(path), available_signatures())
+            graph = load_json(path)
+            gaps = missing_required(graph, available_signatures())
+            subs = dynamic_subinputs(graph, available_signatures())
             if gaps:
                 broken.append((wid, "MISSING %d required input(s)" % len(gaps),
                                ", ".join("%s.%s (node %s)" % (c, n, i)
                                          for i, c, n in gaps[:6])))
+            elif subs:
+                broken.append((wid, "MISSING %d dynamic sub-input(s)" % len(subs),
+                               ", ".join("%s on node %s (%s)" % (d, i, how)
+                                         for i, _c, d, how in subs[:6])))
             else:
                 ok += 1
 
