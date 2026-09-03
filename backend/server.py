@@ -571,8 +571,47 @@ async def workflow_schema(workflow_id: str) -> Dict[str, Any]:
         graph, ROOT_DIR, _extra_models_setting(), _card_vram_gb())
     if placement:
         overrides["encoder_device"] = placement
-    return descriptor.describe_workflow(
+    described = descriptor.describe_workflow(
         workflow_id, mapping, graph, object_info(), overrides)
+    _prefer_installed_builds(described, _extra_models_setting())
+    return described
+
+
+def _prefer_installed_builds(described: Dict[str, Any], extra: List[str]) -> None:
+    """Open a model picker on a build this machine actually has.
+
+    A graph is saved with whichever build its author was using, and the picker
+    lists every build the node knows about - installed or not. z-image-detailed
+    named SeedVR2's 7B sharp, fourteen gigabytes, on a machine already holding
+    the 3B. Nothing said so: ten options, one chosen, no indication that nine of
+    them were not there and that the tenth was a download.
+
+    The graph's own choice always wins when it is present, because it is the
+    one the workflow was built and tested against. This only speaks up when
+    that file is absent and something equivalent is not, and it says which.
+
+    Modifies in place; the caller has just built the fields.
+    """
+    for field in described.get("fields") or []:
+        options = field.get("options") or []
+        current = field.get("default")
+        if not options or not isinstance(current, str):
+            continue
+        # Model files only. A sampler name is a combo too and has nothing to
+        # do with the disk.
+        if not current.lower().endswith((".safetensors", ".gguf", ".pt", ".pth",
+                                         ".onnx", ".ckpt")):
+            continue
+        if model_links.find_anywhere(current, ROOT_DIR, extra) is not None:
+            continue
+        here = [o for o in options if isinstance(o, str)
+                and model_links.find_anywhere(o, ROOT_DIR, extra) is not None]
+        if not here:
+            continue
+        field["default"] = here[0]
+        field["note"] = (
+            "%s is not on this machine. Opened on %s, which is - change it "
+            "back and it will be downloaded." % (current, here[0]))
 
 
 # Smaller builds of a model a graph already names. Keyed by what the graph
