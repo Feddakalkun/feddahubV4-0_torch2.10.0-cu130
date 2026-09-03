@@ -132,7 +132,7 @@
     "inputs": {
       "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
       "type": "minimax",
-      "device": "cpu"
+      "device": "default"
     },
     "_meta": {
       "title": "CLIPLoader"
