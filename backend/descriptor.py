@@ -435,13 +435,33 @@ def makes_video(spec: Dict[str, Any], graph: Dict[str, Any]) -> bool:
 
 def describe_workflow(workflow_id: str, spec: Dict[str, Any],
                       graph: Dict[str, Any],
-                      object_info: Dict[str, Any]) -> Dict[str, Any]:
-    """The whole form for one workflow, in the mapping's own order."""
+                      object_info: Dict[str, Any],
+                      overrides: Optional[Dict[str, Dict[str, Any]]] = None
+                      ) -> Dict[str, Any]:
+    """The whole form for one workflow, in the mapping's own order.
+
+    `overrides` lets the caller settle a field this module cannot: what suits
+    the machine the app is running on. Nothing here knows how much VRAM the
+    card has or how large a model is on disk, and both decide where a text
+    encoder should run. The caller measures, this applies the answer, and the
+    note that comes with it is shown next to the control - so a default that
+    moved on its own still says why.
+    """
+    overrides = overrides or {}
     fields = []
     for key, field_spec in (spec.get("inputs") or {}).items():
         if not isinstance(field_spec, dict):
             continue
         entry = describe_input(key, field_spec, graph, object_info)
+        chosen = overrides.get(key)
+        if chosen and entry:
+            # Only over an option the control actually offers: a default the
+            # dropdown cannot show would render as empty.
+            options = entry.get("options") or []
+            if "default" in chosen and (not options or chosen["default"] in options):
+                entry["default"] = chosen["default"]
+                if chosen.get("note"):
+                    entry["note"] = chosen["note"]
         if entry:
             fields.append(entry)
     return {

@@ -415,6 +415,45 @@ def vram_estimate(graph: Dict[str, Any], root_dir: Path,
             "encoder_gb": round(encoder, 1), "complete": known}
 
 
+def encoder_placement(graph: Dict[str, Any], root_dir: Path,
+                      extra_models_path: Any = "",
+                      vram_gb: float = 0.0) -> Dict[str, Any]:
+    """Where this graph's text encoder should run on this particular card.
+
+    The setting that mattered most and was hardest to guess. MiniMax carries a
+    32B encoder of just under 15 GB. Forced onto the CPU it turned a three
+    minute clip into thirteen; loaded onto a card that cannot hold it, it has
+    to be streamed instead, which is its own kind of slow. The right answer is
+    different on a 24 GB card and an 8 GB one, and nobody should have to know
+    that to get a reasonable first run.
+
+    So it is measured rather than assumed: the encoder's real size on disk
+    against the card's real VRAM, with the same headroom vram_estimate uses.
+
+    Returns the choice and a sentence saying why, because a control that moves
+    on its own without explaining itself is worse than one that never moves.
+    An unknown card returns nothing and the graph's own value stands.
+    """
+    if not vram_gb:
+        return {}
+    estimate = vram_estimate(graph, root_dir, extra_models_path)
+    encoder = float(estimate.get("encoder_gb") or 0.0)
+    if encoder <= 0:
+        return {}
+    needed = encoder + _ACTIVATION_GB + _COMFY_RESERVE_GB
+    if needed <= vram_gb:
+        return {"default": "default",
+                "note": ("Your card has %.0f GB, and the text encoder needs about "
+                         "%.1f GB. Running it on the graphics card, which is "
+                         "several times faster than the processor."
+                         % (vram_gb, encoder))}
+    return {"default": "cpu",
+            "note": ("The text encoder needs about %.1f GB and your card has "
+                     "%.0f GB, so it runs on the processor instead. That is "
+                     "slower, but it leaves the card free for the model itself."
+                     % (encoder, vram_gb))}
+
+
 def load_graph(path: str) -> Dict[str, Any]:
     """A workflow file as a dict, or empty when it cannot be read."""
     try:

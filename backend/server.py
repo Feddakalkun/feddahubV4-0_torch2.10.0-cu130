@@ -467,6 +467,39 @@ async def list_workflows() -> Dict[str, Any]:
     return {"workflows": items}
 
 
+# The card's size, asked once. ComfyUI reports it and it does not change while
+# the app runs, so polling it per schema request would put a network round trip
+# in front of every page open for an answer that never moves.
+_CARD_VRAM_GB: Optional[float] = None
+
+
+def _card_vram_gb() -> float:
+    """How much VRAM this machine has, in GB, or 0 when it cannot be read.
+
+    Zero on purpose rather than a guess: every caller treats it as "do not
+    decide for the user", which is the right behaviour when the answer is
+    unknown. A wrong guess here would silently move settings on somebody's
+    machine on the strength of nothing.
+    """
+    global _CARD_VRAM_GB
+    if _CARD_VRAM_GB is not None:
+        return _CARD_VRAM_GB
+    total = 0.0
+    try:
+        response = requests.get(f"{COMFY_URL}/system_stats", timeout=3)
+        response.raise_for_status()
+        devices = response.json().get("devices") or []
+        if devices:
+            total = float(devices[0].get("vram_total") or 0) / 1024 ** 3
+    except (requests.RequestException, ValueError, TypeError, IndexError):
+        total = 0.0
+    # Not cached when it failed - ComfyUI may simply not be up yet, and the
+    # next page open should ask again rather than assume nothing forever.
+    if total > 0:
+        _CARD_VRAM_GB = total
+    return total
+
+
 @app.get("/api/workflow/schema/{workflow_id}")
 async def workflow_schema(workflow_id: str) -> Dict[str, Any]:
     """The controls this workflow needs, and what kind each one is.
@@ -477,7 +510,16 @@ async def workflow_schema(workflow_id: str) -> Dict[str, Any]:
     if not mapping:
         raise HTTPException(status_code=404, detail=f"unknown workflow '{workflow_id}'")
     graph = _load_graph(mapping)
-    return descriptor.describe_workflow(workflow_id, mapping, graph, object_info())
+    # Settled here rather than in the graph, because it depends on the machine
+    # rather than on the workflow: the same encoder belongs on the card in one
+    # house and on the processor in the next.
+    overrides: Dict[str, Dict[str, Any]] = {}
+    placement = model_links.encoder_placement(
+        graph, ROOT_DIR, _extra_models_setting(), _card_vram_gb())
+    if placement:
+        overrides["encoder_device"] = placement
+    return descriptor.describe_workflow(
+        workflow_id, mapping, graph, object_info(), overrides)
 
 
 # Smaller builds of a model a graph already names. Keyed by what the graph
