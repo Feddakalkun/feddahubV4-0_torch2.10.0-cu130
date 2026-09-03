@@ -639,10 +639,26 @@ def _workflow_models(workflow_id: str) -> List[Dict[str, Any]]:
         if spec and spec.get("relative_dir"):
             folder = str(spec["relative_dir"]).replace("\\", "/")
 
-        # The spec knows the exact folder, so ask there first and only walk
-        # the tree for files it does not place.
-        found = (model_links.find_existing_model(folder, name, ROOT_DIR, extra)
-                 if folder else None)
+        # A spec with root_relative_path puts its file at one exact place
+        # outside the models tree - DWPose lands in the controlnet_aux node's
+        # own ckpts folder, which is where that node looks for it. Neither the
+        # folder search nor the tree walk below goes there, so those files were
+        # downloaded correctly, reported missing anyway, and would have been
+        # downloaded again on every visit to the page.
+        #
+        # This asks the same question the downloader answers when it decides
+        # whether to fetch, so the two cannot disagree about the same file.
+        found = None
+        if spec and spec.get("root_relative_path"):
+            exact = ROOT_DIR / spec["root_relative_path"]
+            if exact.is_file():
+                found = exact
+
+        # Otherwise the spec knows the folder, so ask there and only walk the
+        # tree for files it does not place.
+        if found is None:
+            found = (model_links.find_existing_model(folder, name, ROOT_DIR, extra)
+                     if folder else None)
         if found is None:
             found = model_links.find_anywhere(name, ROOT_DIR, extra)
 
