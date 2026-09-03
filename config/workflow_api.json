@@ -860,6 +860,15 @@
           "default"
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      },
+      "duration_seconds": {
+        "node_id": "262",
+        "input_key": "DurationState",
+        "label": "Length (seconds)",
+        "control": "number",
+        "default": 5,
+        "encode": "pixaroma_duration",
+        "_why": "PixaromaDuration declares no inputs; its length lives in a hidden DurationState string the browser normally fills."
       }
     },
     "example": {
@@ -931,6 +940,15 @@
           "default"
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      },
+      "duration_seconds": {
+        "node_id": "250",
+        "input_key": "DurationState",
+        "label": "Length (seconds)",
+        "control": "number",
+        "default": 5,
+        "encode": "pixaroma_duration",
+        "_why": "PixaromaDuration declares no inputs; its length lives in a hidden DurationState string the browser normally fills."
       }
     },
     "example": {
@@ -1007,6 +1025,15 @@
           "default"
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      },
+      "duration_seconds": {
+        "node_id": "213",
+        "input_key": "DurationState",
+        "label": "Length (seconds)",
+        "control": "number",
+        "default": 5,
+        "encode": "pixaroma_duration",
+        "_why": "PixaromaDuration declares no inputs; its length lives in a hidden DurationState string the browser normally fills."
       }
     },
     "example": {
@@ -1083,6 +1110,15 @@
           "default"
         ],
         "_why": "Whether the 15.7 GB text encoder goes on the card. It cannot sit there beside the 19.5 GB UNet on 24 GB, so 'default' makes ComfyUI swap one for the other on every run; 'cpu' keeps the encoder off the GPU entirely and the UNet resident."
+      },
+      "duration_seconds": {
+        "node_id": "239",
+        "input_key": "DurationState",
+        "label": "Length (seconds)",
+        "control": "number",
+        "default": 5,
+        "encode": "pixaroma_duration",
+        "_why": "PixaromaDuration declares no inputs; its length lives in a hidden DurationState string the browser normally fills."
       }
     },
     "example": {
@@ -2037,6 +2073,15 @@
         "label": "Model build",
         "control": "select",
         "_why": "Which build of the model to load. The list is the .gguf files you have in models/unet - Q3_K_M is 15.6 GB and wants 24 GB of card, and the smaller builds go down to 6.7 GB. Download one from the model dialog and it appears here."
+      },
+      "duration_seconds": {
+        "node_id": "262",
+        "input_key": "DurationState",
+        "label": "Length (seconds)",
+        "control": "number",
+        "default": 5,
+        "encode": "pixaroma_duration",
+        "_why": "PixaromaDuration declares no inputs; its length lives in a hidden DurationState string the browser normally fills."
       }
     },
     "example": {
@@ -2115,6 +2160,15 @@
         "label": "Model build",
         "control": "select",
         "_why": "Which build of the model to load. The list is the .gguf files you have in models/unet - Q3_K_M is 15.6 GB and wants 24 GB of card, and the smaller builds go down to 6.7 GB. Download one from the model dialog and it appears here."
+      },
+      "duration_seconds": {
+        "node_id": "250",
+        "input_key": "DurationState",
+        "label": "Length (seconds)",
+        "control": "number",
+        "default": 5,
+        "encode": "pixaroma_duration",
+        "_why": "PixaromaDuration declares no inputs; its length lives in a hidden DurationState string the browser normally fills."
       }
     },
     "example": {
@@ -2198,6 +2252,15 @@
         "label": "Model build",
         "control": "select",
         "_why": "Which build of the model to load. The list is the .gguf files you have in models/unet - Q3_K_M is 15.6 GB and wants 24 GB of card, and the smaller builds go down to 6.7 GB. Download one from the model dialog and it appears here."
+      },
+      "duration_seconds": {
+        "node_id": "213",
+        "input_key": "DurationState",
+        "label": "Length (seconds)",
+        "control": "number",
+        "default": 5,
+        "encode": "pixaroma_duration",
+        "_why": "PixaromaDuration declares no inputs; its length lives in a hidden DurationState string the browser normally fills."
       }
     },
     "example": {
@@ -2281,6 +2344,15 @@
         "label": "Model build",
         "control": "select",
         "_why": "Which build of the model to load. The list is the .gguf files you have in models/unet - Q3_K_M is 15.6 GB and wants 24 GB of card, and the smaller builds go down to 6.7 GB. Download one from the model dialog and it appears here."
+      },
+      "duration_seconds": {
+        "node_id": "239",
+        "input_key": "DurationState",
+        "label": "Length (seconds)",
+        "control": "number",
+        "default": 5,
+        "encode": "pixaroma_duration",
+        "_why": "PixaromaDuration declares no inputs; its length lives in a hidden DurationState string the browser normally fills."
       }
     },
     "example": {

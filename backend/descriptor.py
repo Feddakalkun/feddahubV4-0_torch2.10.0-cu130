@@ -310,6 +310,13 @@ def describe_input(key: str, spec: Dict[str, Any], graph: Dict[str, Any],
     if value is None and "default" in opts:
         value = opts["default"]
 
+    # A default named in the mapping wins over both. It is what makes an
+    # `encode` entry usable: the graph then holds the node's shape rather than
+    # the control's, and a number box cannot open on PixaromaDuration's
+    # {"seconds": 5} JSON string.
+    if "default" in spec:
+        value = spec["default"]
+
     if override:
         field["control"] = override
         # Carry the presentation keys the control needs. `accept` on a file,

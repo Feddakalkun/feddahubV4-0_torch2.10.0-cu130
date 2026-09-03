@@ -58,7 +58,9 @@
   },
   "213": {
     "class_type": "PixaromaDuration",
-    "inputs": {},
+    "inputs": {
+      "DurationState": "{\"seconds\": 5}"
+    },
     "_meta": {
       "title": "1. Set Duration"
     }

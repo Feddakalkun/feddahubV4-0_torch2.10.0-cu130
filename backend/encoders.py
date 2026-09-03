@@ -67,9 +67,37 @@ def pixaroma_audio(value: Any) -> str:
     return json.dumps({"file": str(value or "")})
 
 
+def pixaroma_duration(value: Any) -> str:
+    """How long the clip should be, in seconds.
+
+    PixaromaDuration declares no inputs at all in object_info - the length, the
+    frame rate and the snapping recipe live on node.properties in the browser
+    and are packed into a hidden DurationState string at submit time. Converted
+    to API format the node arrives with empty inputs, so eight workflows had no
+    length control and ran at whatever the node falls back to.
+
+    Only the seconds are sent. parse_state() fills every key it does not find
+    from the node's own defaults, and those already describe MiniMax H3 - 24
+    fps, every 17th frame plus 5 - so repeating them here would be a second
+    copy of a recipe that can change under us.
+
+    The node snaps upward to a frame count the model accepts, which moves the
+    true length a little: 5 s at 24 fps becomes 124 frames, or 5.17 s. That is
+    the node's own behaviour and it reports both figures on its face.
+    """
+    try:
+        seconds = float(value)
+    except (TypeError, ValueError):
+        # A control that cannot be read must not silently become 0 seconds.
+        logger.warning("pixaroma_duration got %r, which is not a number", value)
+        return json.dumps({})
+    return json.dumps({"seconds": seconds})
+
+
 ENCODERS: Dict[str, Callable[[Any], Any]] = {
     "pixaroma_prompt": pixaroma_prompt,
     "pixaroma_audio": pixaroma_audio,
+    "pixaroma_duration": pixaroma_duration,
 }
 
 
