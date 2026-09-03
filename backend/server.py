@@ -153,10 +153,29 @@ def _installed_commit() -> str:
         return ""
 
 
+# Read once, at import, and never again. _installed_commit() asks git what is
+# in the working tree, which is not the same question as what this process is
+# running - after a pull the tree moves and the loaded code does not. Calling it
+# per request made /health report a commit whose code had never been imported,
+# and it did so twice in a row on 3 Sep 2026 while a fix sat unloaded: the
+# endpoint said the bug was fixed, the behaviour said otherwise, and the
+# endpoint was believed. A health check that overstates what is running is worse
+# than one that says nothing, because it is consulted precisely when something
+# looks wrong.
+_RUNNING_COMMIT = _installed_commit()
+
+
 @app.get("/health")
 async def health() -> Dict[str, Any]:
-    return {"status": "ok", "version": "4.0.0",
-            "commit": _installed_commit()}
+    tree = _installed_commit()
+    body: Dict[str, Any] = {"status": "ok", "version": "4.0.0",
+                            "commit": _RUNNING_COMMIT}
+    # Say so rather than let the difference be discovered by a fix that appears
+    # not to work.
+    if tree and tree != _RUNNING_COMMIT:
+        body["tree_commit"] = tree
+        body["restart_required"] = True
+    return body
 
 
 @app.get("/api/queue")
