@@ -482,6 +482,12 @@
         "node_id": "956",
         "input_key": "device",
         "label": "Text encoder on"
+      },
+      "upscaler_build": {
+        "node_id": "974",
+        "input_key": "model",
+        "label": "Upscaler build",
+        "_why": "SeedVR2 offers ten builds from 3B to 7B and the graph was saved on the largest. The node's own default is the 3B fp8, and the difference is an eleven gigabyte download."
       }
     },
     "example": {
