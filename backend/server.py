@@ -1056,6 +1056,53 @@ async def cancel_generation() -> Dict[str, Any]:
         return {"success": False, "detail": str(exc)}
 
 
+# Failures we can say something better about than the raw text. Keyed by a
+# fragment that identifies one, mapped to what the person can actually do.
+_KNOWN_FAILURES = [
+    ("failed to extract audio",
+     "That video has no sound track, and this workflow needs one. Add audio to "
+     "the clip, or pick a workflow that does not use it."),
+    ("reference videos need at least",
+     "That video is too short. MiniMax needs at least five frames, which is "
+     "about a fifth of a second."),
+    ("out of memory",
+     "The card ran out of memory. Try a smaller size or a shorter clip, or a "
+     "smaller build in the model picker."),
+]
+
+
+def _failure_detail(messages: List[Any]) -> str:
+    """Why a run failed, in a sentence rather than an event tuple.
+
+    ComfyUI reports a failure as ['execution_error', {...}], and this used to
+    hand the whole thing over with str(). The useful part is one field inside
+    that dict; everything around it is prompt ids and node bookkeeping. Worse,
+    a node that shells out puts the tool's entire output in the message - a
+    silent video failed with ffmpeg's version banner and configure line, which
+    tells a person nothing about the video they just chose.
+
+    So: the exception's own message, named by the node it came from, and for
+    the handful we have seen, a sentence saying what to do instead.
+    """
+    if not messages:
+        return "ComfyUI reported an error"
+    last = messages[-1]
+    info = last[1] if isinstance(last, (list, tuple)) and len(last) > 1 else last
+    if not isinstance(info, dict):
+        return str(last)[:400]
+    raw_message = str(info.get("exception_message") or "").strip()
+    node = str(info.get("node_type") or "")
+    low = raw_message.lower()
+    for fragment, plain in _KNOWN_FAILURES:
+        if fragment in low:
+            return plain
+    if not raw_message:
+        return "ComfyUI reported an error in %s" % (node or "one of the nodes")
+    # First line only. A traceback belongs in the log, not in a dialog.
+    first = raw_message.splitlines()[0].strip()
+    return ("%s: %s" % (node, first)) if node else first
+
+
 def _outputs_from_history(entry: Dict[str, Any]) -> List[str]:
     """Every file the run wrote, as URLs the frontend can load.
 
@@ -1143,8 +1190,8 @@ async def generation_status(prompt_id: str, workflow_id: str = "") -> Dict[str, 
 
     status = (entry.get("status") or {})
     if status.get("status_str") == "error":
-        messages = status.get("messages") or []
-        return {"status": "failed", "detail": str(messages[-1]) if messages else "ComfyUI reported an error"}
+        return {"status": "failed",
+                "detail": _failure_detail(status.get("messages") or [])}
 
     images = _outputs_from_history(entry)
     if status.get("completed") or images:
