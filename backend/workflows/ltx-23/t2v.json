@@ -1,0 +1,415 @@
+{
+  "5002": {
+    "class_type": "VAELoaderKJ",
+    "inputs": {
+      "vae_name": "LTX23_audio_vae_bf16.safetensors",
+      "device": "main_device",
+      "weight_dtype": "bf16"
+    },
+    "_meta": {
+      "title": "VAELoaderKJ"
+    }
+  },
+  "5003": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "LTX23_video_vae_bf16.safetensors"
+    },
+    "_meta": {
+      "title": "VAELoader"
+    }
+  },
+  "5004": {
+    "class_type": "DualCLIPLoader",
+    "inputs": {
+      "clip_name1": "gemma_3_12B_it.safetensors",
+      "clip_name2": "ltx-2.3_text_projection_bf16.safetensors",
+      "type": "ltxv",
+      "device": "default"
+    },
+    "_meta": {
+      "title": "DualCLIPLoader"
+    }
+  },
+  "5006": {
+    "class_type": "CM_FloatToInt",
+    "inputs": {
+      "a": [
+        "5008",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "CM_FloatToInt"
+    }
+  },
+  "5007": {
+    "class_type": "LTXVEmptyLatentAudio",
+    "inputs": {
+      "frames_number": [
+        "5028",
+        0
+      ],
+      "frame_rate": [
+        "5006",
+        0
+      ],
+      "batch_size": 1,
+      "audio_vae": [
+        "5002",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LTXVEmptyLatentAudio"
+    }
+  },
+  "5008": {
+    "class_type": "PrimitiveFloat",
+    "inputs": {
+      "value": 24
+    },
+    "_meta": {
+      "title": "fps"
+    }
+  },
+  "5009": {
+    "class_type": "LTXVConcatAVLatent",
+    "inputs": {
+      "video_latent": [
+        "5017",
+        0
+      ],
+      "audio_latent": [
+        "5007",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LTXVConcatAVLatent"
+    }
+  },
+  "5011": {
+    "class_type": "LTXVSeparateAVLatent",
+    "inputs": {
+      "av_latent": [
+        "5020",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LTXVSeparateAVLatent"
+    }
+  },
+  "5012": {
+    "class_type": "VAEDecodeTiled",
+    "inputs": {
+      "tile_size": 4096,
+      "overlap": 64,
+      "temporal_size": 512,
+      "temporal_overlap": 64,
+      "samples": [
+        "5011",
+        0
+      ],
+      "vae": [
+        "5003",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VAEDecodeTiled"
+    }
+  },
+  "5013": {
+    "class_type": "LTXVAudioVAEDecode",
+    "inputs": {
+      "samples": [
+        "5011",
+        1
+      ],
+      "audio_vae": [
+        "5002",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LTXVAudioVAEDecode"
+    }
+  },
+  "5014": {
+    "class_type": "LTXVConditioning",
+    "inputs": {
+      "frame_rate": [
+        "5008",
+        0
+      ],
+      "positive": [
+        "5023",
+        0
+      ],
+      "negative": [
+        "5021",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LTXVConditioning"
+    }
+  },
+  "5015": {
+    "class_type": "CFGGuider",
+    "inputs": {
+      "cfg": 1,
+      "model": [
+        "5791",
+        0
+      ],
+      "positive": [
+        "5014",
+        0
+      ],
+      "negative": [
+        "5014",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "CFGGuider"
+    }
+  },
+  "5017": {
+    "class_type": "EmptyLTXVLatentVideo",
+    "inputs": {
+      "width": 832,
+      "height": 480,
+      "length": [
+        "5028",
+        0
+      ],
+      "batch_size": 1
+    },
+    "_meta": {
+      "title": "EmptyLTXVLatentVideo"
+    }
+  },
+  "5018": {
+    "class_type": "easy mathInt",
+    "inputs": {
+      "a": [
+        "5025",
+        0
+      ],
+      "b": 24,
+      "operation": "multiply"
+    },
+    "_meta": {
+      "title": "easy mathInt"
+    }
+  },
+  "5019": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "euler"
+    },
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "5020": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "5024",
+        0
+      ],
+      "guider": [
+        "5015",
+        0
+      ],
+      "sampler": [
+        "5019",
+        0
+      ],
+      "sigmas": [
+        "5790",
+        0
+      ],
+      "latent_image": [
+        "5009",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "5021": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "pc game, console game, video game, cartoon, childish, ugly",
+      "clip": [
+        "5004",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "CLIP Text Encode (Negative Prompt)"
+    }
+  },
+  "5023": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "A cinematic scene of a 5-year-old child standing outdoors next to a playful dog, both completely covered in wet mud after playing. The environment looks like a backyard or park after rain, with puddles, soft natural daylight, and subtle reflections in the water. The child is smiling, slightly breathing from excitement, with messy hair and muddy clothes. The dog is happy, wagging its tail, also covered in mud.\n\nThe child looks at the camera and speaks naturally with expressive facial movement, accurate lip-sync, and a joyful tone. Subtle body movement, blinking, and realistic micro-expressions. The dog occasionally moves slightly (tail wag, small head movement).\n\nHighly realistic style, cinematic lighting, shallow depth of field, detailed mud texture on skin and fur, 4K quality. Gentle handheld camera feel or slow push-in for immersion. Natural physics, no distortion, consistent character identity.\n\nkid saying: \"hey mom, it was not me, it was the dog, i swear\"\nDog bark",
+      "clip": [
+        "5004",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "CLIP Text Encode (Positive Prompt)"
+    }
+  },
+  "5024": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 275
+    },
+    "_meta": {
+      "title": "RandomNoise"
+    }
+  },
+  "5025": {
+    "class_type": "easy int",
+    "inputs": {
+      "value": 7
+    },
+    "_meta": {
+      "title": "LENGTH IN SECONDS"
+    }
+  },
+  "5026": {
+    "class_type": "VHS_VideoCombine",
+    "inputs": {
+      "frame_rate": 24,
+      "loop_count": 0,
+      "filename_prefix": "VIDEO/LTX/txt2vid",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": true,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": true,
+      "videopreview": {
+        "hidden": false,
+        "paused": false,
+        "params": {
+          "filename": "txt2vid_00001-audio.mp4",
+          "subfolder": "VIDEO\\LTX",
+          "type": "output",
+          "format": "video/h264-mp4",
+          "frame_rate": 24,
+          "workflow": "txt2vid_00001.png",
+          "fullpath": "E:\\Studio-v342\\v344\\v345\\App\\ComfyUI\\output\\VIDEO\\LTX\\txt2vid_00001-audio.mp4"
+        }
+      },
+      "images": [
+        "5365",
+        0
+      ],
+      "audio": [
+        "5013",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "VHS_VideoCombine"
+    }
+  },
+  "5028": {
+    "class_type": "PrimitiveInt",
+    "inputs": {
+      "value": [
+        "5018",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "number of frames"
+    }
+  },
+  "5365": {
+    "class_type": "ImageScaleBy",
+    "inputs": {
+      "upscale_method": "lanczos",
+      "scale_by": 1.5,
+      "image": [
+        "5012",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "ImageScaleBy"
+    }
+  },
+  "5583": {
+    "class_type": "Power Lora Loader (rgthree)",
+    "inputs": {
+      "PowerLoraLoaderHeaderWidget": {
+        "type": "PowerLoraLoaderHeaderWidget"
+      },
+      "➕ Add Lora": "",
+      "model": [
+        "5898",
+        0
+      ],
+      "clip": [
+        "5004",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  },
+  "5790": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 4,
+      "denoise": 1,
+      "model": [
+        "5583",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "BasicScheduler"
+    }
+  },
+  "5791": {
+    "class_type": "PathchSageAttentionKJ",
+    "inputs": {
+      "sage_attention": "auto",
+      "allow_compile": false,
+      "model": [
+        "5583",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "PathchSageAttentionKJ"
+    }
+  },
+  "5898": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "ltx-2.3-22b-distilled-1.1-int8-ConvRot.safetensors",
+      "weight_dtype": "default"
+    },
+    "_meta": {
+      "title": "UNETLoader"
+    }
+  }
+}

@@ -528,12 +528,30 @@ export const FEDDA_MODULES: FeddaModule[] = [
     Icon: Clapperboard,
   },
   {
+    id: 'ltx-23-t2v',
+    sourceModuleId: 'ltx-23',
+    family: 'ltx-23',
+    area: 'video',
+    label: 'Text to Video',
+    description: 'A clip from nothing but a prompt. You choose the frame size.',
+    pack: 'booster',
+    tabs: ['ltx-23-t2v'],
+    workflows: ['ltx-23/t2v.json'],
+    defaultTab: 'ltx-23-t2v',
+    Icon: Clapperboard,
+  },
+  {
     id: 'ltx-23-txt2vid',
     sourceModuleId: 'ltx-23',
     family: 'ltx-23',
     area: 'video',
-    label: 'Text to Video (guided)',
-    description: 'A clip from a prompt, guided by one reference picture that also sets the frame size.',
+    // Not "guided": node 5005's bypass is wired to a PrimitiveBoolean that is
+    // true, and LTXVImgToVideoConditionOnly returns the latent untouched when
+    // bypassed. The picture is loaded, resized and preprocessed so that a width
+    // and a height can be read off it, and conditions nothing. Saying guided
+    // sold a steering control that does not exist.
+    label: 'Text to Video (sized by a picture)',
+    description: 'A clip from a prompt, at the size of a picture you supply. The picture sets the frame size and nothing else.',
     pack: 'booster',
     tabs: ['ltx-23-txt2vid'],
     workflows: ['ltx-23/txt2vid.json'],

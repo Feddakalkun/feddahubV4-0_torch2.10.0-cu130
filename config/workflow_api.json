@@ -2491,11 +2491,76 @@
       }
     }
   },
-  "ltx-23-txt2vid": {
+  "ltx-23-t2v": {
     "name": "LTX 2.3 Text to Video",
+    "filename": "ltx-23/t2v.json",
+    "module": "ltx-23",
+    "description": "A clip from nothing but a prompt. You choose the frame size.",
+    "inputs": {
+      "prompt": {
+        "node_id": "5023",
+        "input_key": "text",
+        "label": "Prompt",
+        "control": "text",
+        "multiline": true
+      },
+      "negative_prompt": {
+        "node_id": "5021",
+        "input_key": "text",
+        "label": "Negative prompt",
+        "control": "text",
+        "multiline": true
+      },
+      "cfg": {
+        "node_id": "5015",
+        "input_key": "cfg",
+        "label": "CFG Scale"
+      },
+      "sampler": {
+        "node_id": "5019",
+        "input_key": "sampler_name",
+        "label": "Sampler"
+      },
+      "seed": {
+        "node_id": "5024",
+        "input_key": "noise_seed",
+        "label": "Seed"
+      },
+      "length": {
+        "node_id": "5025",
+        "input_key": "value",
+        "label": "Length (seconds)"
+      },
+      "loras": {
+        "node_id": "5583",
+        "type": "loras",
+        "label": "LoRAs"
+      },
+      "steps": {
+        "node_id": "5790",
+        "input_key": "steps",
+        "label": "Steps"
+      },
+      "width": {
+        "node_id": "5017",
+        "input_key": "width",
+        "label": "Width"
+      },
+      "height": {
+        "node_id": "5017",
+        "input_key": "height",
+        "label": "Height"
+      }
+    },
+    "example": {
+      "prompt": "A young woman who is half human and half rabbit stands at the end of a wooden pier. A low-angle medium shot frames her against an overcast sky. Flat morning light, a palette of slate grey and pale rose, wet planks and damp fur catching a dull sheen. She pulls her coat closed, then turns her head to the left as her long grey-brown ears swivel a moment behind the movement, and takes one step toward the water. The camera pushes in slowly and steadily throughout."
+    }
+  },
+  "ltx-23-txt2vid": {
+    "name": "LTX 2.3 Text to Video (sized by a picture)",
     "filename": "ltx-23/txt2vid.json",
     "module": "ltx-23",
-    "description": "A clip from a prompt, guided by one reference picture that also sets the frame size.",
+    "description": "A clip from a prompt, at the size of a picture you supply. The picture sets the frame size and nothing else.",
     "inputs": {
       "prompt": {
         "node_id": "5023",

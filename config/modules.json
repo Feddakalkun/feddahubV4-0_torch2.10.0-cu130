@@ -1,314 +1,315 @@
 {
-  "version": 1,
-  "_note": "custom_nodes on every module is DERIVED by scripts/require_nodes.py --modules from that module's own workflows. Do not hand-edit it; the edit will be overwritten, and hand-keeping this list is exactly how v3 ended up installing sixty packs to use thirty-eight.",
-  "_workflows": "The `workflows` field holds graph FILES, relative to backend/workflows - require_nodes.py walks them to derive the packs above. Which workflow id belongs to which module is stated in config/workflow_api.json instead, by its `module` field.",
-  "modules": [
-    {
-      "id": "core-shell",
-      "label": "Core Shell",
-      "pack": "core",
-      "area": "core",
-      "enabled": true,
-      "tabs": [
-        "home",
-        "gallery",
-        "settings"
-      ],
-      "workflows": [],
-      "custom_nodes": [
-        "ComfyUI-Manager",
-        "ComfyUI-Studio-nodes"
-      ],
-      "models": [],
-      "notes": "The app itself: landing page, gallery, folders and keys. Ships no workflow, so it needs no node pack of its own beyond the two the app cannot work without."
-    },
-    {
-      "id": "z-image-core",
-      "label": "Z-Image Core",
-      "pack": "core",
-      "area": "image",
-      "enabled": true,
-      "tabs": [
-        "image",
-        "z-image-txt2img",
-        "z-image-img2img"
-      ],
-      "workflows": [
-        "z-image/txt2img.json",
-        "z-image/img2img.json"
-      ],
-      "custom_nodes": [
-        "comfy-image-saver",
-        "ComfyUI-Impact-Pack",
-        "ComfyUI-Impact-Subpack",
-        "ComfyUI-Manager",
-        "ComfyUI-Studio-nodes",
-        "rgthree-comfy"
-      ],
-      "models": [
-        "z_image_turbo_bf16.safetensors",
-        "z-image-vae.safetensors",
-        "qwen_3_4b.safetensors",
-        "bbox/face_yolov8m.pt",
-        "sam_vit_b_01ec64.pth"
-      ],
-      "notes": "Text to image and image to image on Z-Image Turbo, with LoRAs and a face pass. The smallest thing that generates a picture."
-    },
-    {
-      "id": "z-image-inpaint",
-      "label": "Z-Image Inpainting",
-      "pack": "booster",
-      "area": "image",
-      "enabled": true,
-      "tabs": [
-        "image",
-        "z-image-inpaint",
-        "z-image-inpaint-automask"
-      ],
-      "workflows": [
-        "z-image/inpaint.json",
-        "z-image/inpaint-automask.json"
-      ],
-      "custom_nodes": [
-        "comfy-image-saver",
-        "ComfyUI-Inpaint-CropAndStitch",
-        "ComfyUI_LayerStyle_Advance",
-        "rgthree-comfy"
-      ],
-      "models": [],
-      "notes": "Repaint part of an image, by hand mask or by automatic person masking."
-    },
-    {
-      "id": "z-image-control",
-      "label": "Z-Image ControlNet",
-      "pack": "booster",
-      "area": "image",
-      "enabled": true,
-      "tabs": [
-        "image",
-        "z-image-controlnet"
-      ],
-      "workflows": [
-        "z-image/controlnet.json"
-      ],
-      "custom_nodes": [
-        "comfy-image-saver",
-        "ComfyUI-Impact-Pack",
-        "ComfyUI-KJNodes",
-        "ComfyUI-Lotus",
-        "comfyui_controlnet_aux",
-        "rgthree-comfy"
-      ],
-      "models": [],
-      "notes": "Follow the shape of a reference image - pose, edges or depth - through the Z-Image ControlNet Union patch."
-    },
-    {
-      "id": "z-image-detailed",
-      "label": "Z-Image Detailed",
-      "pack": "booster",
-      "area": "image",
-      "enabled": true,
-      "tabs": [
-        "image",
-        "z-image-detailed"
-      ],
-      "workflows": [
-        "z-image/detailed.json"
-      ],
-      "custom_nodes": [
-        "comfy-image-saver",
-        "ComfyUI-Custom-Scripts",
-        "ComfyUI-DonutNodes",
-        "ComfyUI-Easy-Use",
-        "ComfyUI-Impact-Pack",
-        "ComfyUI-Impact-Subpack",
-        "ComfyUI-SeedVR2_VideoUpscaler",
-        "ComfyUI_essentials",
-        "ComfyUI_UltimateSDUpscale",
-        "Derfuu_ComfyUI_ModdedNodes",
-        "rgthree-comfy",
-        "was-node-suite-comfyui"
-      ],
-      "models": [],
-      "notes": "Text to image followed by a tiled UltimateSDUpscale pass."
-    },
-    {
-      "id": "minimax-h3",
-      "label": "MiniMax H3 Video",
-      "pack": "booster",
-      "area": "video",
-      "enabled": true,
-      "tabs": [
-        "video",
-        "minimax-h3-txt2vid",
-        "minimax-h3-img2vid",
-        "minimax-h3-video-edit",
-        "minimax-h3-ref-images",
-        "minimax-h3-first-frame",
-        "minimax-h3-fflf",
-        "minimax-h3-sing",
-        "minimax-h3-speak",
-        "minimax-h3-director"
-      ],
-      "workflows": [
-        "minimax-h3/txt2vid.json",
-        "minimax-h3/img2vid.json",
-        "minimax-h3/video-edit.json",
-        "minimax-h3/ref-images.json",
-        "minimax-h3/first-frame.json",
-        "minimax-h3/fflf.json",
-        "minimax-h3/sing.json",
-        "minimax-h3/speak.json",
-        "minimax-h3/director.json"
-      ],
-      "custom_nodes": [
-        "ComfyUI-MiniMaxH3-Director",
-        "ComfyUI-Pixaroma",
-        "ComfyUI-tbox",
-        "ComfyUI-VideoHelperSuite",
-        "rgthree-comfy"
-      ],
-      "models": [
-        "minimax_h3_ref2va_pruned_int8_convrot.safetensors",
-        "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
-        "minimax_h3_video_vae_fp16.safetensors",
-        "minimax_h3_audio_vae_fp32.safetensors"
-      ],
-      "notes": "Text to video with joint stereo audio. About 40 GB of models - twice the Z-Image core pack - which is why it is a booster."
-    },
-    {
-      "id": "minimax-h3-gguf",
-      "label": "MiniMax H3 Video (GGUF)",
-      "pack": "booster",
-      "area": "video",
-      "enabled": true,
-      "tabs": [
-        "video",
-        "minimax-h3-txt2vid-gguf",
-        "minimax-h3-img2vid-gguf",
-        "minimax-h3-video-edit-gguf",
-        "minimax-h3-ref-images-gguf",
-        "minimax-h3-first-frame-gguf",
-        "minimax-h3-fflf-gguf",
-        "minimax-h3-sing-gguf",
-        "minimax-h3-speak-gguf",
-        "minimax-h3-director-gguf"
-      ],
-      "workflows": [
-        "minimax-h3-gguf/txt2vid.json",
-        "minimax-h3-gguf/img2vid.json",
-        "minimax-h3-gguf/video-edit.json",
-        "minimax-h3-gguf/ref-images.json",
-        "minimax-h3-gguf/first-frame.json",
-        "minimax-h3-gguf/fflf.json",
-        "minimax-h3-gguf/sing.json",
-        "minimax-h3-gguf/speak.json",
-        "minimax-h3-gguf/director.json"
-      ],
-      "custom_nodes": [
-        "ComfyUI-GGUF",
-        "ComfyUI-MiniMaxH3-Director",
-        "ComfyUI-Pixaroma",
-        "ComfyUI-tbox",
-        "ComfyUI-VideoHelperSuite",
-        "rgthree-comfy"
-      ],
-      "models": [
-        "MiniMax-H3-Ref2VA-Q3_K_M.gguf",
-        "MiniMax-H3-FL2VA-Q3_K_M.gguf",
-        "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
-        "minimax_h3_video_vae_fp16.safetensors",
-        "minimax_h3_audio_vae_fp32.safetensors"
-      ],
-      "notes": "The same nine workflows on the Q3_K_M quant - 15.6 GB a UNet instead of 19.5 - which is the smallest published for this model. Shares the text encoder and both VAEs with the full build, so having both costs one extra file per UNet."
-    },
-    {
-      "id": "flux-krea",
-      "label": "FLUX Krea",
-      "pack": "booster",
-      "area": "image",
-      "enabled": true,
-      "tabs": [
-        "image",
-        "flux-krea-gguf",
-        "flux-krea-dev",
-        "flux-krea-img2img",
-        "flux-krea-depth",
-        "flux-krea-openpose",
-        "flux-krea-normal"
-      ],
-      "workflows": [
-        "flux-krea/gguf.json",
-        "flux-krea/dev.json",
-        "flux-krea/img2img.json",
-        "flux-krea/depth.json",
-        "flux-krea/openpose.json",
-        "flux-krea/normal.json"
-      ],
-      "custom_nodes": [
-        "comfy-image-saver",
-        "ComfyUI-GGUF",
-        "ComfyUI-KJNodes",
-        "ComfyUI-Lotus",
-        "ComfyUI-Studio-nodes",
-        "ComfyUI-Styles_CSV_Loader",
-        "ComfyUI_Comfyroll_CustomNodes",
-        "comfyui_controlnet_aux",
-        "rgthree-comfy",
-        "was-node-suite-comfyui"
-      ],
-      "models": [],
-      "notes": "FLUX.1 Krea, in six shapes: two builds of the base model and four ways of steering it."
-    },
-    {
-      "id": "ltx-23",
-      "label": "LTX 2.3 Video",
-      "pack": "booster",
-      "area": "video",
-      "enabled": true,
-      "tabs": [
-        "video",
-        "ltx-23-txt2vid",
-        "ltx-23-img2vid",
-        "ltx-23-image-audio2vid",
-        "ltx-23-flf",
-        "ltx-23-vid2vid-prompt",
-        "ltx-23-vid2vid-reference",
-        "ltx-23-outpaint",
-        "ltx-23-edit-anything",
-        "ltx-23-prompt-relay",
-        "ltx-23-first-frame-styler"
-      ],
-      "workflows": [
-        "ltx-23/txt2vid.json",
-        "ltx-23/img2vid.json",
-        "ltx-23/image-audio2vid.json",
-        "ltx-23/flf.json",
-        "ltx-23/vid2vid-prompt.json",
-        "ltx-23/vid2vid-reference.json",
-        "ltx-23/outpaint.json",
-        "ltx-23/edit-anything.json",
-        "ltx-23/prompt-relay.json",
-        "ltx-23/first-frame-styler.json"
-      ],
-      "custom_nodes": [
-        "ComfyMath",
-        "ComfyUI-Custom-Scripts",
-        "ComfyUI-Easy-Use",
-        "ComfyUI-Image-Selector",
-        "ComfyUI-KJNodes",
-        "ComfyUI-LTXVideo",
-        "ComfyUI-PromptRelay",
-        "ComfyUI-Studio-nodes",
-        "ComfyUI-Styles_CSV_Loader",
-        "ComfyUI-VideoHelperSuite",
-        "comfyui_controlnet_aux",
-        "ComfyUI_essentials",
-        "rgthree-comfy",
-        "was-node-suite-comfyui",
-        "WhatDreamsCost-ComfyUI"
-      ],
-      "notes": "Ten workflows on one model. About 52 GB for the core path - the 22B UNet and gemma are most of it - which makes this the heaviest module here. Picture and sound are rendered in one pass, so the audio VAE is not optional. First Frame Styler additionally wants FLUX 2 Klein."
-    }
-  ]
+ "version": 1,
+ "_note": "custom_nodes on every module is DERIVED by scripts/require_nodes.py --modules from that module's own workflows. Do not hand-edit it; the edit will be overwritten, and hand-keeping this list is exactly how v3 ended up installing sixty packs to use thirty-eight.",
+ "_workflows": "The `workflows` field holds graph FILES, relative to backend/workflows - require_nodes.py walks them to derive the packs above. Which workflow id belongs to which module is stated in config/workflow_api.json instead, by its `module` field.",
+ "modules": [
+  {
+   "id": "core-shell",
+   "label": "Core Shell",
+   "pack": "core",
+   "area": "core",
+   "enabled": true,
+   "tabs": [
+    "home",
+    "gallery",
+    "settings"
+   ],
+   "workflows": [],
+   "custom_nodes": [
+    "ComfyUI-Manager",
+    "ComfyUI-Studio-nodes"
+   ],
+   "models": [],
+   "notes": "The app itself: landing page, gallery, folders and keys. Ships no workflow, so it needs no node pack of its own beyond the two the app cannot work without."
+  },
+  {
+   "id": "z-image-core",
+   "label": "Z-Image Core",
+   "pack": "core",
+   "area": "image",
+   "enabled": true,
+   "tabs": [
+    "image",
+    "z-image-txt2img",
+    "z-image-img2img"
+   ],
+   "workflows": [
+    "z-image/txt2img.json",
+    "z-image/img2img.json"
+   ],
+   "custom_nodes": [
+    "comfy-image-saver",
+    "ComfyUI-Impact-Pack",
+    "ComfyUI-Impact-Subpack",
+    "ComfyUI-Manager",
+    "ComfyUI-Studio-nodes",
+    "rgthree-comfy"
+   ],
+   "models": [
+    "z_image_turbo_bf16.safetensors",
+    "z-image-vae.safetensors",
+    "qwen_3_4b.safetensors",
+    "bbox/face_yolov8m.pt",
+    "sam_vit_b_01ec64.pth"
+   ],
+   "notes": "Text to image and image to image on Z-Image Turbo, with LoRAs and a face pass. The smallest thing that generates a picture."
+  },
+  {
+   "id": "z-image-inpaint",
+   "label": "Z-Image Inpainting",
+   "pack": "booster",
+   "area": "image",
+   "enabled": true,
+   "tabs": [
+    "image",
+    "z-image-inpaint",
+    "z-image-inpaint-automask"
+   ],
+   "workflows": [
+    "z-image/inpaint.json",
+    "z-image/inpaint-automask.json"
+   ],
+   "custom_nodes": [
+    "comfy-image-saver",
+    "ComfyUI-Inpaint-CropAndStitch",
+    "ComfyUI_LayerStyle_Advance",
+    "rgthree-comfy"
+   ],
+   "models": [],
+   "notes": "Repaint part of an image, by hand mask or by automatic person masking."
+  },
+  {
+   "id": "z-image-control",
+   "label": "Z-Image ControlNet",
+   "pack": "booster",
+   "area": "image",
+   "enabled": true,
+   "tabs": [
+    "image",
+    "z-image-controlnet"
+   ],
+   "workflows": [
+    "z-image/controlnet.json"
+   ],
+   "custom_nodes": [
+    "comfy-image-saver",
+    "ComfyUI-Impact-Pack",
+    "ComfyUI-KJNodes",
+    "ComfyUI-Lotus",
+    "comfyui_controlnet_aux",
+    "rgthree-comfy"
+   ],
+   "models": [],
+   "notes": "Follow the shape of a reference image - pose, edges or depth - through the Z-Image ControlNet Union patch."
+  },
+  {
+   "id": "z-image-detailed",
+   "label": "Z-Image Detailed",
+   "pack": "booster",
+   "area": "image",
+   "enabled": true,
+   "tabs": [
+    "image",
+    "z-image-detailed"
+   ],
+   "workflows": [
+    "z-image/detailed.json"
+   ],
+   "custom_nodes": [
+    "comfy-image-saver",
+    "ComfyUI-Custom-Scripts",
+    "ComfyUI-DonutNodes",
+    "ComfyUI-Easy-Use",
+    "ComfyUI-Impact-Pack",
+    "ComfyUI-Impact-Subpack",
+    "ComfyUI-SeedVR2_VideoUpscaler",
+    "ComfyUI_essentials",
+    "ComfyUI_UltimateSDUpscale",
+    "Derfuu_ComfyUI_ModdedNodes",
+    "rgthree-comfy",
+    "was-node-suite-comfyui"
+   ],
+   "models": [],
+   "notes": "Text to image followed by a tiled UltimateSDUpscale pass."
+  },
+  {
+   "id": "minimax-h3",
+   "label": "MiniMax H3 Video",
+   "pack": "booster",
+   "area": "video",
+   "enabled": true,
+   "tabs": [
+    "video",
+    "minimax-h3-txt2vid",
+    "minimax-h3-img2vid",
+    "minimax-h3-video-edit",
+    "minimax-h3-ref-images",
+    "minimax-h3-first-frame",
+    "minimax-h3-fflf",
+    "minimax-h3-sing",
+    "minimax-h3-speak",
+    "minimax-h3-director"
+   ],
+   "workflows": [
+    "minimax-h3/txt2vid.json",
+    "minimax-h3/img2vid.json",
+    "minimax-h3/video-edit.json",
+    "minimax-h3/ref-images.json",
+    "minimax-h3/first-frame.json",
+    "minimax-h3/fflf.json",
+    "minimax-h3/sing.json",
+    "minimax-h3/speak.json",
+    "minimax-h3/director.json"
+   ],
+   "custom_nodes": [
+    "ComfyUI-MiniMaxH3-Director",
+    "ComfyUI-Pixaroma",
+    "ComfyUI-tbox",
+    "ComfyUI-VideoHelperSuite",
+    "rgthree-comfy"
+   ],
+   "models": [
+    "minimax_h3_ref2va_pruned_int8_convrot.safetensors",
+    "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+    "minimax_h3_video_vae_fp16.safetensors",
+    "minimax_h3_audio_vae_fp32.safetensors"
+   ],
+   "notes": "Text to video with joint stereo audio. About 40 GB of models - twice the Z-Image core pack - which is why it is a booster."
+  },
+  {
+   "id": "minimax-h3-gguf",
+   "label": "MiniMax H3 Video (GGUF)",
+   "pack": "booster",
+   "area": "video",
+   "enabled": true,
+   "tabs": [
+    "video",
+    "minimax-h3-txt2vid-gguf",
+    "minimax-h3-img2vid-gguf",
+    "minimax-h3-video-edit-gguf",
+    "minimax-h3-ref-images-gguf",
+    "minimax-h3-first-frame-gguf",
+    "minimax-h3-fflf-gguf",
+    "minimax-h3-sing-gguf",
+    "minimax-h3-speak-gguf",
+    "minimax-h3-director-gguf"
+   ],
+   "workflows": [
+    "minimax-h3-gguf/txt2vid.json",
+    "minimax-h3-gguf/img2vid.json",
+    "minimax-h3-gguf/video-edit.json",
+    "minimax-h3-gguf/ref-images.json",
+    "minimax-h3-gguf/first-frame.json",
+    "minimax-h3-gguf/fflf.json",
+    "minimax-h3-gguf/sing.json",
+    "minimax-h3-gguf/speak.json",
+    "minimax-h3-gguf/director.json"
+   ],
+   "custom_nodes": [
+    "ComfyUI-GGUF",
+    "ComfyUI-MiniMaxH3-Director",
+    "ComfyUI-Pixaroma",
+    "ComfyUI-tbox",
+    "ComfyUI-VideoHelperSuite",
+    "rgthree-comfy"
+   ],
+   "models": [
+    "MiniMax-H3-Ref2VA-Q3_K_M.gguf",
+    "MiniMax-H3-FL2VA-Q3_K_M.gguf",
+    "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+    "minimax_h3_video_vae_fp16.safetensors",
+    "minimax_h3_audio_vae_fp32.safetensors"
+   ],
+   "notes": "The same nine workflows on the Q3_K_M quant - 15.6 GB a UNet instead of 19.5 - which is the smallest published for this model. Shares the text encoder and both VAEs with the full build, so having both costs one extra file per UNet."
+  },
+  {
+   "id": "flux-krea",
+   "label": "FLUX Krea",
+   "pack": "booster",
+   "area": "image",
+   "enabled": true,
+   "tabs": [
+    "image",
+    "flux-krea-gguf",
+    "flux-krea-dev",
+    "flux-krea-img2img",
+    "flux-krea-depth",
+    "flux-krea-openpose",
+    "flux-krea-normal"
+   ],
+   "workflows": [
+    "flux-krea/gguf.json",
+    "flux-krea/dev.json",
+    "flux-krea/img2img.json",
+    "flux-krea/depth.json",
+    "flux-krea/openpose.json",
+    "flux-krea/normal.json"
+   ],
+   "custom_nodes": [
+    "comfy-image-saver",
+    "ComfyUI-GGUF",
+    "ComfyUI-KJNodes",
+    "ComfyUI-Lotus",
+    "ComfyUI-Studio-nodes",
+    "ComfyUI-Styles_CSV_Loader",
+    "ComfyUI_Comfyroll_CustomNodes",
+    "comfyui_controlnet_aux",
+    "rgthree-comfy",
+    "was-node-suite-comfyui"
+   ],
+   "models": [],
+   "notes": "FLUX.1 Krea, in six shapes: two builds of the base model and four ways of steering it."
+  },
+  {
+   "id": "ltx-23",
+   "label": "LTX 2.3 Video",
+   "pack": "booster",
+   "area": "video",
+   "enabled": true,
+   "tabs": [
+    "video",
+    "ltx-23-t2v",
+    "ltx-23-txt2vid",
+    "ltx-23-img2vid",
+    "ltx-23-image-audio2vid",
+    "ltx-23-flf",
+    "ltx-23-vid2vid-prompt",
+    "ltx-23-vid2vid-reference",
+    "ltx-23-outpaint",
+    "ltx-23-edit-anything",
+    "ltx-23-prompt-relay",
+    "ltx-23-first-frame-styler"
+   ],
+   "workflows": [
+    "ltx-23/txt2vid.json",
+    "ltx-23/img2vid.json",
+    "ltx-23/image-audio2vid.json",
+    "ltx-23/flf.json",
+    "ltx-23/vid2vid-prompt.json",
+    "ltx-23/vid2vid-reference.json",
+    "ltx-23/outpaint.json",
+    "ltx-23/edit-anything.json",
+    "ltx-23/prompt-relay.json",
+    "ltx-23/first-frame-styler.json"
+   ],
+   "custom_nodes": [
+    "ComfyMath",
+    "ComfyUI-Custom-Scripts",
+    "ComfyUI-Easy-Use",
+    "ComfyUI-Image-Selector",
+    "ComfyUI-KJNodes",
+    "ComfyUI-LTXVideo",
+    "ComfyUI-PromptRelay",
+    "ComfyUI-Studio-nodes",
+    "ComfyUI-Styles_CSV_Loader",
+    "ComfyUI-VideoHelperSuite",
+    "comfyui_controlnet_aux",
+    "ComfyUI_essentials",
+    "rgthree-comfy",
+    "was-node-suite-comfyui",
+    "WhatDreamsCost-ComfyUI"
+   ],
+   "notes": "Ten workflows on one model. About 52 GB for the core path - the 22B UNet and gemma are most of it - which makes this the heaviest module here. Picture and sound are rendered in one pass, so the audio VAE is not optional. First Frame Styler additionally wants FLUX 2 Klein."
+  }
+ ]
 }
