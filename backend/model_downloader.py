@@ -258,6 +258,30 @@ class ModelDownloader:
                 "url": "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/vae/ae.safetensors",
                 "min_bytes": 5 * 1024 * 1024,
             },
+            # Smaller builds of the two files above, from the same repository
+            # and offered as optional downloads rather than defaults.
+            #
+            # Z-Image needs 13.9 GB resident as shipped, and the UNet is what
+            # drives that - 11.5 of it. That puts the whole model family out of
+            # reach of an 8 GB card and of the 11 GB 2080 Ti, which stream from
+            # system RAM instead and crawl. int8 is 5.8 GB and the fp8 encoder
+            # 5.2, which brings the peak to roughly 8.2 GB: comfortable on 11 GB
+            # and borderline rather than hopeless on 8.
+            #
+            # NVFP4 builds exist too and are smaller still, but FP4 is Blackwell
+            # hardware - on anything older it has to be dequantised on the way
+            # through, so it would be offered as a saving and land as a
+            # slowdown. Left out until there is a card here to measure it on.
+            "z_image_turbo_int8_convrot.safetensors": {
+                "relative_dir": Path("unet"),
+                "url": "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/diffusion_models/z_image_turbo_int8_convrot.safetensors",
+                "min_bytes": 10 * 1024 * 1024,
+            },
+            "qwen_3_4b_fp8_mixed.safetensors": {
+                "relative_dir": Path("clip"),
+                "url": "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/text_encoders/qwen_3_4b_fp8_mixed.safetensors",
+                "min_bytes": 10 * 1024 * 1024,
+            },
             "Z-Image-Turbo-Fun-Controlnet-Union.safetensors": {
                 "relative_dir": Path("model_patches"),
                 "url": "https://huggingface.co/alibaba-pai/Z-Image-Turbo-Fun-Controlnet-Union/resolve/main/Z-Image-Turbo-Fun-Controlnet-Union.safetensors",

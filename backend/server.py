@@ -461,6 +461,16 @@ _SMALLER_BUILDS: Dict[str, List[str]] = {
         "minimax_h3_ref2va_pruned-UD-Q2_K_XL.gguf",
         "minimax_h3_ref2va_pruned-Q4_K.gguf",
     ],
+    # Z-Image ships bf16 and wants 13.9 GB resident, which no 2080 and no 8 GB
+    # card can hold. These two bring the peak to roughly 8.2 GB between them.
+    # Offered, never substituted: a 24 GB card should keep the full-precision
+    # build, and quantisation is a trade the owner of the card makes.
+    "z_image_turbo_bf16.safetensors": [
+        "z_image_turbo_int8_convrot.safetensors",
+    ],
+    "qwen_3_4b.safetensors": [
+        "qwen_3_4b_fp8_mixed.safetensors",
+    ],
 }
 
 

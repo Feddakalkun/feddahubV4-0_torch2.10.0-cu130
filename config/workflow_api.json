@@ -54,6 +54,21 @@
         "node_id": "126",
         "type": "loras",
         "label": "LoRAs"
+      },
+      "model_build": {
+        "node_id": "16",
+        "input_key": "unet_name",
+        "label": "Model build"
+      },
+      "encoder_build": {
+        "node_id": "18",
+        "input_key": "clip_name",
+        "label": "Text encoder build"
+      },
+      "encoder_device": {
+        "node_id": "18",
+        "input_key": "device",
+        "label": "Text encoder on"
       }
     },
     "example": {
@@ -105,6 +120,21 @@
         "node_id": "127",
         "type": "loras",
         "label": "LoRAs"
+      },
+      "model_build": {
+        "node_id": "48",
+        "input_key": "unet_name",
+        "label": "Model build"
+      },
+      "encoder_build": {
+        "node_id": "44",
+        "input_key": "clip_name",
+        "label": "Text encoder build"
+      },
+      "encoder_device": {
+        "node_id": "44",
+        "input_key": "device",
+        "label": "Text encoder on"
       }
     },
     "example": {
@@ -196,6 +226,21 @@
         "node_id": "129",
         "type": "loras",
         "label": "LoRAs"
+      },
+      "model_build": {
+        "node_id": "81",
+        "input_key": "unet_name",
+        "label": "Model build"
+      },
+      "encoder_build": {
+        "node_id": "79",
+        "input_key": "clip_name",
+        "label": "Text encoder build"
+      },
+      "encoder_device": {
+        "node_id": "79",
+        "input_key": "device",
+        "label": "Text encoder on"
       }
     },
     "example": {
@@ -244,6 +289,21 @@
         "node_id": "150",
         "type": "loras",
         "label": "LoRAs"
+      },
+      "model_build": {
+        "node_id": "149",
+        "input_key": "unet_name",
+        "label": "Model build"
+      },
+      "encoder_build": {
+        "node_id": "146",
+        "input_key": "clip_name",
+        "label": "Text encoder build"
+      },
+      "encoder_device": {
+        "node_id": "146",
+        "input_key": "device",
+        "label": "Text encoder on"
       }
     },
     "example": {
@@ -325,6 +385,21 @@
         "node_id": "170",
         "type": "loras",
         "label": "LoRAs"
+      },
+      "model_build": {
+        "node_id": "166",
+        "input_key": "unet_name",
+        "label": "Model build"
+      },
+      "encoder_build": {
+        "node_id": "167",
+        "input_key": "clip_name",
+        "label": "Text encoder build"
+      },
+      "encoder_device": {
+        "node_id": "167",
+        "input_key": "device",
+        "label": "Text encoder on"
       }
     },
     "example": {
@@ -392,6 +467,21 @@
         "node_id": "964",
         "type": "loras",
         "label": "LoRAs"
+      },
+      "model_build": {
+        "node_id": "957",
+        "input_key": "unet_name",
+        "label": "Model build"
+      },
+      "encoder_build": {
+        "node_id": "956",
+        "input_key": "clip_name",
+        "label": "Text encoder build"
+      },
+      "encoder_device": {
+        "node_id": "956",
+        "input_key": "device",
+        "label": "Text encoder on"
       }
     },
     "example": {
