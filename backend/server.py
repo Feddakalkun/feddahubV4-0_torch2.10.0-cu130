@@ -673,6 +673,28 @@ def _workflow_models(workflow_id: str) -> List[Dict[str, Any]]:
         elif not spec:
             note = ("Nothing knows where to download this - it has no entry "
                     "in the model list.")
+        elif spec.get("gated"):
+            note = ("This one needs its licence accepted on Hugging Face and a "
+                    "token saved in the top bar. Download says which page.")
+
+        # A part-finished download is not nothing, and it was invisible. The
+        # downloader resumes from .fedda_tmp with a Range request, so those
+        # bytes are a head start rather than waste - but an interrupted 24 GB
+        # model leaves nine gigabytes on the disk that the app never mentions,
+        # and the row looked exactly like one that had never been started.
+        partial_gb = 0.0
+        if found is None and spec:
+            try:
+                tmp = Path(str(model_downloader._dest_path_for_spec(spec, name))
+                           + ".fedda_tmp")
+                if tmp.is_file():
+                    partial_gb = round(tmp.stat().st_size / 1024 ** 3, 2)
+            except (OSError, AttributeError, KeyError):
+                partial_gb = 0.0
+        if partial_gb:
+            note = (("%s " % note if note else "")
+                    + "%.2f GB of this is already downloaded and will resume."
+                    % partial_gb).strip()
 
         files.append({
             "filename": name,
@@ -684,7 +706,7 @@ def _workflow_models(workflow_id: str) -> List[Dict[str, Any]]:
             "size_bytes": found.stat().st_size if found else 0,
             # Reported rather than dropped: a model the app will not fetch is
             # something the user has to know about, not something to hide.
-            **({"no_source": True, "note": note} if note else {}),
+            **({"no_source": True, "note": note, "partial_gb": partial_gb} if note else {}),
         })
 
     # Smaller builds of whatever this graph loads, offered rather than needed.
