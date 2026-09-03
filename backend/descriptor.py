@@ -335,6 +335,17 @@ def describe_input(key: str, spec: Dict[str, Any], graph: Dict[str, Any],
             values = [c.get("value") if isinstance(c, dict) else c
                       for c in override_choices]
             field["default"] = value if value in values else (values[0] if values else None)
+        elif override in ("select", "chips") and choices:
+            # A mapping that says "select" without listing choices means the
+            # node's own list, which is the whole point for a model picker -
+            # the files present change per machine and cannot be written down
+            # here. Without this the override returned before the code that
+            # reads them, and ten model builds across ten workflows drew as an
+            # empty dropdown: the picker that exists so a smaller card can
+            # choose a smaller build had nothing in it.
+            field["options"] = choices
+            field["default"] = value if value in choices else (
+                choices[0] if choices else None)
         else:
             field["default"] = value
         if override == "number":
