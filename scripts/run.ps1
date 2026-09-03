@@ -425,9 +425,38 @@ try {
     Write-Host "  Full logs in logs\*_live.log - press Ctrl+C to stop everything." -ForegroundColor DarkGray
     Write-Host ""
 
+    # Settings > Folders writes this when the user asks for a restart. Only
+    # this loop can honour it: it owns $ComfyProc, and ComfyUI has no shutdown
+    # route of its own for the backend to call.
+    $RestartFlag = Join-Path $RootPath "logsestart_comfy.flag"
+    if (Test-Path $RestartFlag) { Remove-Item $RestartFlag -Force -ErrorAction SilentlyContinue }
+
     # Pump service output until the frontend exits or Ctrl+C
     while ($true) {
         $gotOutput = Show-ServiceOutput
+
+        if (Test-Path $RestartFlag) {
+            # Cleared first. If the restart itself fails we must not sit in a
+            # loop retrying it forever on a flag nobody clears.
+            Remove-Item $RestartFlag -Force -ErrorAction SilentlyContinue
+            Write-Host ""
+            Write-Host "  Restarting ComfyUI at your request..." -ForegroundColor Cyan
+            if ($null -ne $ComfyProc -and -not $ComfyProc.HasExited) {
+                try { $ComfyProc.Kill() } catch { }
+                try { $ComfyProc.WaitForExit(20000) | Out-Null } catch { }
+            }
+            # Same call as the first launch, so it picks up whatever Settings
+            # last wrote - which is the entire point of the button.
+            $ComfyProc = & $StartComfy -RootPath $RootPath -Python $Python `
+                -ComfyMain $ComfyMain -OutLog $Services[0].Out -ErrLog $Services[0].Err
+            if (Wait-Port -Port 8199 -Name "ComfyUI" -Proc $ComfyProc) {
+                Write-Host "  ComfyUI is back." -ForegroundColor Green
+            } else {
+                Write-Host "  ComfyUI did not come back - see logs\comfyui_live.err.log" -ForegroundColor Red
+            }
+            continue
+        }
+
         if ($ViteProc.HasExited) {
             Write-Host "  Frontend exited (code $($ViteProc.ExitCode)) - shutting down." -ForegroundColor Yellow
             break

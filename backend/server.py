@@ -1153,22 +1153,63 @@ async def files_delete(req: DeleteRequest) -> Dict[str, Any]:
 
 # ------------------------------------------------------------------ ComfyUI
 
+# run.ps1 owns the ComfyUI process, so it is the only thing that can stop and
+# start it. A file is how this asks: the launcher's output loop is already
+# running and checks for it between reads.
+RESTART_FLAG = ROOT_DIR / "logs" / "restart_comfy.flag"
+
+
 @app.post("/api/comfy/restart")
-async def comfy_restart() -> Dict[str, Any]:
-    """Ask ComfyUI to shut down; `run.ps1` brings it back up."""
+def comfy_restart() -> Dict[str, Any]:
+    """Stop ComfyUI and start it again, and report what actually happened.
+
+    The previous version posted to ComfyUI's /shutdown, which does not exist -
+    ComfyUI has no such route. A 404 is not an exception for requests.post, so
+    nothing was caught, nothing stopped, and the poll that followed reached a
+    ComfyUI that had never gone away. The button reported a successful restart
+    every time while doing nothing at all, which is worse than not having it.
+
+    Nor could it have worked: run.ps1 had no way to bring ComfyUI back, so a
+    shutdown that succeeded would have left it down until the whole app was
+    restarted by hand.
+
+    Sync rather than async - it waits the better part of a minute, and as a
+    coroutine that would freeze every other request in the app.
+    """
     try:
-        requests.post(f"{COMFY_URL}/shutdown", timeout=5)
-    except requests.RequestException:
-        pass  # a shutdown that closes the socket looks like a failed request
-    for _ in range(20):
-        time.sleep(0.5)
+        RESTART_FLAG.parent.mkdir(parents=True, exist_ok=True)
+        RESTART_FLAG.write_text("restart", encoding="utf-8")
+    except OSError as exc:
+        raise HTTPException(status_code=500,
+                            detail=f"Could not ask the launcher to restart: {exc}")
+
+    # Down first, then up. Waiting only for "up" would see the old process
+    # still answering and call it done before anything had happened.
+    def answering() -> bool:
         try:
             requests.get(f"{COMFY_URL}/system_stats", timeout=1)
-            return {"success": True, "restarted": True}
+            return True
         except requests.RequestException:
-            continue
+            return False
+
+    went_down = False
+    for _ in range(40):                       # 20s to notice and stop
+        if not answering():
+            went_down = True
+            break
+        time.sleep(0.5)
+    if not went_down:
+        # The flag is left in place: the launcher may still be between reads,
+        # and deleting it here would cancel a restart that is about to happen.
+        return {"success": False, "restarted": False,
+                "detail": "The launcher did not pick this up. Restart FEDDA to apply the change."}
+
+    for _ in range(160):                      # 80s to come back; it loads models
+        time.sleep(0.5)
+        if answering():
+            return {"success": True, "restarted": True}
     return {"success": True, "restarted": False,
-            "detail": "ComfyUI stopped; it may still be starting"}
+            "detail": "ComfyUI stopped and is still starting."}
 
 
 @app.post("/api/comfy/refresh-models")
