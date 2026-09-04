@@ -480,45 +480,20 @@ async def set_civitai_key(req: SecretRequest) -> Dict[str, Any]:
 @app.get("/api/modules/install-state")
 async def modules_install_state() -> Dict[str, Any]:
     """What this install actually has, which is what the UI degrades against."""
+    # Pack modules are merged inside module_service, so they are in "modules",
+    # in "enabled_module_ids" and in the counts already - and, more to the
+    # point, in workflow_index(), which is what decides whether a workflow is
+    # allowed to run. Merging them a second time here is how those two answers
+    # drifted apart in the first place.
     state = module_service.get_install_state()
-    roots = packs.pack_roots(_runtime_settings())
 
-    # get_install_state() already carries a "modules" key, and it is the richer
-    # one - built with include_validation. The separate list_modules() call that
-    # used to sit here was dead: it was spread over by **state on the very next
-    # line, so whatever it produced never reached the response. That went
-    # unnoticed while both lists held the same thing, and stopped being harmless
-    # the moment packs started adding to one of them.
-    listed = state.get("modules") or []
-
-    # Modules from folders outside the repository. Appended rather than merged
-    # over: a pack adds cards and cannot alter one the app ships, so installing
-    # something unrelated can never change a page that was already working.
-    known = {m.get("id") for m in listed if isinstance(m, dict)}
-    enabled_ids = list(state.get("enabled_module_ids") or [])
-    added = 0
-    for extra in packs.modules(roots):
-        if extra.get("id") in known:
-            continue
-        listed.append(extra)
-        # And into the enabled list, which is a separate key and was the reason
-        # a pack card counted its workflow on the home page and then opened on
-        # "Module Not Installed". That list is built from the manifest, which no
-        # pack is in and none should be: the manifest is what the app ships.
-        if extra.get("enabled", True):
-            enabled_ids.append(str(extra.get("id")))
-            added += 1
-
-    # "modules" after the spread, not before it. One key, one answer.
     return {
         "version": 1,
         **state,
-        "modules": listed,
-        "enabled_module_ids": sorted(enabled_ids),
-        "enabled_count": (state.get("enabled_count") or 0) + added,
-        # Top-level cards a pack brings. Empty for an install with no packs,
-        # which is every install that has not been given one.
-        "areas": packs.areas(roots),
+        # Top-level cards a pack brings, which are not modules and so have
+        # nowhere else to come from. Empty for an install with no packs, which
+        # is every install that has not been given one.
+        "areas": packs.areas(packs.pack_roots(_runtime_settings())),
     }
 
 

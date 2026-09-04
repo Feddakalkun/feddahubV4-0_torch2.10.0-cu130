@@ -184,6 +184,15 @@ export interface FeddaModule {
   workflows?: string[];
   defaultTab: string;
   Icon: LucideIcon;
+  /**
+   * What the family card above this workflow is called, for a family the
+   * compiled registry does not declare. Several pack workflows sit under one
+   * family, and without this the card takes the label of whichever of them
+   * happened to be listed first - so a pack of three would be named after one
+   * of its workflows.
+   */
+  familyLabel?: string;
+  familyDescription?: string;
   requiresAnyOf?: SourceModuleId[];
   wip?: boolean;
   hidden?: boolean;

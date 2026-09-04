@@ -79,6 +79,9 @@ export function getExtraModules(
         ? row.area : 'image') as FeddaModule['area'],
       label: typeof row.label === 'string' ? row.label : id,
       description: typeof row.notes === 'string' ? row.notes : '',
+      familyLabel: typeof row.family_label === 'string' ? row.family_label : undefined,
+      familyDescription:
+        typeof row.family_description === 'string' ? row.family_description : undefined,
       pack: (row.pack === 'core' ? 'core' : 'booster') as FeddaModule['pack'],
       tabs,
       defaultTab: tabs.find((x) => x !== 'video' && x !== 'image') ?? tabs[0],
@@ -112,21 +115,34 @@ export function getExtraFamilies(
   // and synthesising one for each put four cards on "Choose a model" that
   // belong nowhere. The app's navigation is not this function's to change.
   const own = new Set(shipped.map((m) => m.id));
-  const out: FeddaFamily[] = [];
+
+  // Grouped rather than taken from the first row that claims the family. A
+  // pack card holds one workflow per module - that is the shape the whole
+  // registry uses - so a family of three was being named after whichever of
+  // the three came first, and gated on that one module alone: uninstall it and
+  // the card vanished with its two working siblings still installed.
+  const groups = new Map<string, FeddaModule[]>();
   for (const module of modules) {
     if (own.has(module.id)) continue;
     const family = module.family;
     if (!family || claimed.has(family)) continue;
-    claimed.add(family);
+    const rows = groups.get(family);
+    if (rows) rows.push(module);
+    else groups.set(family, [module]);
+  }
+
+  const out: FeddaFamily[] = [];
+  for (const [family, rows] of groups) {
+    const named = rows.find((m) => m.familyLabel) ?? rows[0];
     out.push({
       id: family,
-      area: module.area,
-      label: module.label,
-      description: module.description,
-      Icon: module.Icon ?? fallbackIcon,
-      // The family is offered when its own module is installed, which for a
-      // pack is the pack itself - nothing else gates it.
-      requiresAnyOf: [module.sourceModuleId],
+      area: named.area,
+      label: named.familyLabel ?? named.label,
+      description: named.familyDescription ?? named.description,
+      Icon: named.Icon ?? fallbackIcon,
+      // Offered while any one of its workflows is installed, which is what
+      // requiresAnyOf means everywhere else in this file.
+      requiresAnyOf: rows.map((m) => m.sourceModuleId),
     });
   }
   return out;

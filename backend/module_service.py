@@ -2,6 +2,8 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
+import packs
+
 
 class ModuleService:
     """Read the module manifest (core + boosters) and resolve workflow/module ownership."""
@@ -12,6 +14,15 @@ class ModuleService:
         self.profiles_file = self.config_dir / "install_profiles.json"
         self.workflow_file = self.config_dir / "workflow_api.json"
         self.nodes_file = self.config_dir / "nodes.json"
+        self.settings_file = self.config_dir / "runtime_settings.json"
+
+    def pack_roots(self) -> List[Path]:
+        """The pack folders this install is pointed at, or none."""
+        try:
+            with self.settings_file.open("r", encoding="utf-8-sig") as f:
+                return packs.pack_roots(json.load(f))
+        except (OSError, ValueError):
+            return []
 
     def load_manifest(self) -> Dict[str, Any]:
         if not self.manifest_file.exists():
@@ -30,10 +41,22 @@ class ModuleService:
         return data
 
     def load_workflow_mapping(self) -> Dict[str, Any]:
-        if not self.workflow_file.exists():
-            return {}
-        with self.workflow_file.open("r", encoding="utf-8-sig") as f:
-            return json.load(f)
+        """The app's mapping, then any a pack adds.
+
+        Pack entries are merged here rather than only in workflow_service,
+        which is where they used to stop. The two loaders then disagreed:
+        /api/workflow/list found a pack workflow through workflow_service and
+        reported it, while workflow_index() looked it up here, did not find it,
+        and answered "unowned" - so the page listed the workflow and refused to
+        run it. One question, one answer.
+        """
+        mapping: Dict[str, Any] = {}
+        if self.workflow_file.exists():
+            with self.workflow_file.open("r", encoding="utf-8-sig") as f:
+                mapping = json.load(f)
+        for key, spec in packs.mapping(self.pack_roots()).items():
+            mapping.setdefault(key, spec)
+        return mapping
 
     def load_node_configs(self) -> Dict[str, Dict[str, Any]]:
         if not self.nodes_file.exists():
@@ -47,19 +70,35 @@ class ModuleService:
         }
 
     def enabled_module_ids(self) -> Set[str]:
+        # list_modules, not load_manifest: a pack module is installed too, and
+        # this set is what the UI checks before it will open a page.
         return {
             str(module.get("id"))
-            for module in self.load_manifest().get("modules", [])
-            if isinstance(module, dict) and module.get("enabled", True) and module.get("id")
+            for module in self.list_modules(enabled_only=False, include_validation=False)
+            if module.get("enabled", True) and module.get("id")
         }
 
     def list_modules(self, enabled_only: bool = False, include_validation: bool = True) -> List[Dict[str, Any]]:
+        """Every module this install has: the manifest, then the packs.
+
+        Merged here and not in load_manifest(), which apply_profile() writes
+        back to config/modules.json - a pack module reaching that file would
+        put a folder somebody else does not have into the shipped manifest.
+        Reading sees packs; writing sees only what the app ships.
+        """
         manifest = self.load_manifest()
         modules = [
             dict(module)
             for module in manifest.get("modules", [])
             if isinstance(module, dict) and (not enabled_only or module.get("enabled", True))
         ]
+        known = {str(m.get("id")) for m in modules}
+        for extra in packs.modules(self.pack_roots()):
+            if str(extra.get("id")) in known:
+                continue
+            if enabled_only and not extra.get("enabled", True):
+                continue
+            modules.append(dict(extra))
         if not include_validation:
             return modules
 
@@ -176,16 +215,25 @@ class ModuleService:
         # `workflows` holds graph files. A module is valid when each one exists
         # on disk - not when it happens to be named in the mapping, which is a
         # separate question about whether the UI can drive it.
-        graphs_dir = self.config_dir.parent / "backend" / "workflows"
+        # A pack's graphs sit in its own folder, so both places are searched.
+        # Without this every pack module was invalid on a technicality - its
+        # files were all present, just not where the app keeps its own - and
+        # the page refused to open with "Module manifest is incomplete".
+        graphs_dirs = [self.config_dir.parent / "backend" / "workflows"]
+        graphs_dirs.extend(packs.workflow_dirs(self.pack_roots()))
         missing_workflows = [
             str(entry)
             for entry in module.get("workflows", []) or []
-            if not (graphs_dir / str(entry)).exists()
+            if not any((d / str(entry)).exists() for d in graphs_dirs)
         ]
+        # A string names a pack pinned in config/nodes.json and has to be found
+        # there. A full entry carries its own url and pin - it is the
+        # declaration, so there is nothing to look up. Same rule sync_nodes.ps1
+        # applies when it decides what it can install.
         missing_node_configs = [
             node_name
             for node_name in module.get("custom_nodes", []) or []
-            if str(node_name) not in node_map
+            if isinstance(node_name, str) and node_name not in node_map
         ]
         return {
             "ok": not missing_workflows and not missing_node_configs,
