@@ -445,7 +445,7 @@ if not defined LATEST_REV (
     echo [ OK ]  rev !INSTALLER_REV! - up to date
 ) else (
     echo [WARN]  rev !INSTALLER_REV!, but !LATEST_REV! is out
-    echo                                 Download this installer again from feddakalkun.com.
+    echo                                 Get the current installer from the Discord.
     echo                                 Nothing updates the installer itself - run.bat
     echo                                 only updates what it installed.
 )
