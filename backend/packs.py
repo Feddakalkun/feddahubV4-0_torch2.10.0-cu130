@@ -102,8 +102,8 @@ def areas(roots: List[Path]) -> List[Dict[str, Any]]:
 
     Declared in the pack's modules.json beside the modules:
 
-        {"areas": [{"id": "nsfw", "label": "NSFW", "description": "..."}],
-         "modules": [{"id": "...", "area": "nsfw", ...}]}
+        {"areas": [{"id": "studio", "label": "Studio", "description": "..."}],
+         "modules": [{"id": "...", "area": "studio", ...}]}
 
     Optional. A pack whose modules sit under image or video declares none and
     its cards appear beside the app's own.
