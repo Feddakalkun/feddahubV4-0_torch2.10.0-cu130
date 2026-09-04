@@ -1,4 +1,4 @@
-import type { FeddaModule } from './registry';
+import type { FeddaFamily, FeddaModule } from './registry';
 
 export type BackendModule = {
   id: string;
@@ -72,6 +72,43 @@ export function getExtraModules(
       tabs,
       defaultTab: tabs.find((x) => x !== 'video' && x !== 'image') ?? tabs[0],
       Icon: fallbackIcon,
+    });
+  }
+  return out;
+}
+
+/**
+ * Families for modules the compiled registry has no family for.
+ *
+ * Navigation is home -> area -> family -> workflow, and a family card only
+ * appears when FEDDA_FAMILIES declares one. A pack module therefore reached
+ * availableModules, was counted in its area, and then had nothing to sit
+ * under - present in every list and visible on no page.
+ *
+ * One family per unclaimed module, taking its label and description from the
+ * module itself. A pack that wants several workflows under one card sets the
+ * same `family` on each; nothing else has to be declared.
+ */
+export function getExtraFamilies(
+  known: FeddaFamily[],
+  modules: FeddaModule[],
+  fallbackIcon: FeddaFamily['Icon'],
+): FeddaFamily[] {
+  const claimed = new Set(known.map((f) => f.id));
+  const out: FeddaFamily[] = [];
+  for (const module of modules) {
+    const family = module.family;
+    if (!family || claimed.has(family)) continue;
+    claimed.add(family);
+    out.push({
+      id: family,
+      area: module.area,
+      label: module.label,
+      description: module.description,
+      Icon: module.Icon ?? fallbackIcon,
+      // The family is offered when its own module is installed, which for a
+      // pack is the pack itself - nothing else gates it.
+      requiresAnyOf: [module.sourceModuleId],
     });
   }
   return out;

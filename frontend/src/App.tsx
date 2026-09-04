@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, Home, Sparkles } from 'lucide-react';
+import { ArrowLeft, Home, Package, Sparkles } from 'lucide-react';
 import { CardGrid, type CardItem } from './components/layout/CardGrid';
 import { HFTokenReminder } from './components/ui/HFTokenReminder';
 import { TopSystemStrip } from './components/ui/TopSystemStrip';
@@ -21,7 +21,7 @@ import {
   FEDDA_MODULES,
   type ModuleArea,
 } from './modules/registry';
-import { findModuleForTab } from './modules/moduleSelectors';
+import { findModuleForTab, getExtraFamilies } from './modules/moduleSelectors';
 
 /*
  * Home -> area -> family -> workflow.
@@ -141,8 +141,16 @@ function FeddaApp() {
   // A family is offered only where something under it is installed, so a
   // core-only machine sees Z-Image with two workflows rather than six, and an
   // area with nothing installed does not pretend otherwise.
+  // The compiled families, plus one for every module that claims a family
+  // nothing declares - which is how a pack installed from a folder gets a card
+  // to sit under instead of being counted in an area and shown on no page.
+  const allFamilies = useMemo(
+    () => [...FEDDA_FAMILIES, ...getExtraFamilies(FEDDA_FAMILIES, availableModules, Package)],
+    [availableModules],
+  );
+
   const familiesIn = (id: ModuleArea) =>
-    FEDDA_FAMILIES.filter(
+    allFamilies.filter(
       (f) => f.area === id
         && availableModules.some((m) => m.family === f.id && !m.hidden),
     );
