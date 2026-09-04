@@ -489,4 +489,9 @@ def describe_workflow(workflow_id: str, spec: Dict[str, Any],
         # timestamped shots, LTX one flowing paragraph. An example that
         # ignores that teaches the wrong habit on 39 of the 40 pages.
         "example": spec.get("example") or {},
+        # Named sets of values the page applies in one click. Carried whole
+        # rather than interpreted here: this module describes what a control
+        # is, and a preset is a statement about which values belong together -
+        # which only whoever wired the workflow knows.
+        "presets": [p for p in (spec.get("presets") or []) if isinstance(p, dict)],
     }

@@ -333,6 +333,37 @@ export const WorkflowPage = ({
       <div className="workflow-cockpit workflow-cockpit-stack">
         {extraTop}
 
+        {/* Quality in one click. The values behind each of these are ordinary
+            fields and stay visible below, so a preset is a starting point that
+            can be argued with rather than a mode that hides things. */}
+        {(schema.presets?.length ?? 0) > 0 && (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/30">
+              Quality
+            </span>
+            {schema.presets!.map((preset) => {
+              const active = Object.entries(preset.values)
+                .every(([k, v]) => values[k] === v);
+              return (
+                <button
+                  key={preset.label}
+                  type="button"
+                  onClick={() => setValues((current) => ({ ...current, ...preset.values }))}
+                  disabled={busy}
+                  title={preset.note || ''}
+                  className={`rounded-lg border px-3 py-1.5 text-[12px] font-semibold transition disabled:opacity-40 ${
+                    active
+                      ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-200'
+                      : 'border-white/10 text-white/60 hover:border-white/25 hover:text-white'
+                  }`}
+                >
+                  {preset.label}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
         {prose.map((field) => (
           <FieldControl
             key={field.key}

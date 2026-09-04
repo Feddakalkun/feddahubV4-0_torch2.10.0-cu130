@@ -2749,11 +2749,43 @@
         "node_id": "5789",
         "input_key": "steps",
         "label": "Steps"
+      },
+      "resize_width": {
+        "node_id": "4994",
+        "input_key": "resize_type.width",
+        "label": "Render width",
+        "_why": "The input picture is scaled to this before anything is generated, so it decides the resolution the model works at. Height follows the picture's own aspect."
       }
     },
     "example": {
       "prompt": "The young woman with long rabbit ears from the reference image stands where she is. A medium close-up holds her at eye level. The scene keeps its own light and colour, warm and slightly hazy, with fine fur texture along her jaw. She breathes, blinks, and turns her face toward the light; her ears lift and rotate a beat after her head. The camera holds still with a faint handheld drift."
-    }
+    },
+    "presets": [
+      {
+        "label": "Fast",
+        "note": "For trying a prompt out.",
+        "values": {
+          "steps": 4,
+          "resize_width": 704
+        }
+      },
+      {
+        "label": "Balanced",
+        "note": "The one to keep.",
+        "values": {
+          "steps": 6,
+          "resize_width": 960
+        }
+      },
+      {
+        "label": "High",
+        "note": "Slower, and worth it for a keeper.",
+        "values": {
+          "steps": 8,
+          "resize_width": 1280
+        }
+      }
+    ]
   },
   "ltx-23-image-audio2vid": {
     "name": "LTX 2.3 Image + Audio to Video",

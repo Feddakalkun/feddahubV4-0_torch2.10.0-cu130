@@ -90,6 +90,21 @@ export interface WorkflowSchema {
   fields: WorkflowField[];
   /** A worked prompt for this model, keyed by field. Empty when none. */
   example?: Record<string, FieldValue>;
+  /**
+   * Named sets of values applied together.
+   *
+   * Quality is rarely one slider. On LTX it is steps and render width moving
+   * as a pair - raising either alone buys little - and knowing that is knowing
+   * the model. A preset is somebody who does know saying which values belong
+   * together, so the choice is "how good" rather than two numbers.
+   */
+  presets?: WorkflowPreset[];
+}
+
+export interface WorkflowPreset {
+  label: string;
+  note?: string;
+  values: Record<string, FieldValue>;
 }
 
 export type FieldValue = string | number | boolean | AudioValue | null;
