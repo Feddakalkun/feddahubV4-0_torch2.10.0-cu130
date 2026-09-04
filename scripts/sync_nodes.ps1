@@ -33,7 +33,43 @@ if (-not $NodesJson) { $NodesJson = Join-Path $RepoRoot "config\nodes.json" }
 $CustomNodes = Join-Path $ComfyDir "custom_nodes"
 if (-not (Test-Path $CustomNodes)) { New-Item -ItemType Directory -Force $CustomNodes | Out-Null }
 
-$Nodes = Get-Content $NodesJson -Raw -Encoding UTF8 | ConvertFrom-Json
+$Nodes = @(Get-Content $NodesJson -Raw -Encoding UTF8 | ConvertFrom-Json)
+
+# Node packs declared by a module pack, in the same shape as config/nodes.json.
+# A pack's workflows are no use without the nodes they are built from, and
+# asking the person who installs one to fetch those by hand is asking them to
+# read a graph and know what a node pack is.
+#
+# The pins come from the pack, not from here: it names the commit its workflows
+# were converted against, which is the whole reason a pin exists.
+$SettingsFile = Join-Path (Join-Path (Split-Path $ComfyDir -Parent) "config") "runtime_settings.json"
+if (Test-Path $SettingsFile) {
+    try {
+        $Settings = Get-Content $SettingsFile -Raw -Encoding UTF8 | ConvertFrom-Json
+        $PackPaths = @()
+        if ($Settings.PSObject.Properties.Name -contains "pack_paths") {
+            $PackPaths = @($Settings.pack_paths)
+        }
+        foreach ($PackDir in $PackPaths) {
+            $ModFile = Join-Path "$PackDir" "modules.json"
+            if (-not (Test-Path $ModFile)) { continue }
+            $PackMods = Get-Content $ModFile -Raw -Encoding UTF8 | ConvertFrom-Json
+            foreach ($m in @($PackMods.modules)) {
+                foreach ($n in @($m.custom_nodes)) {
+                    # A string here is the app's own shorthand for "already
+                    # pinned in nodes.json"; only a full entry can be installed.
+                    if ($n -isnot [string] -and $n.url -and $n.folder) {
+                        if (-not ($Nodes | Where-Object { $_.folder -eq $n.folder })) {
+                            $Nodes += $n
+                        }
+                    }
+                }
+            }
+        }
+    } catch {
+        Write-Host "   !  could not read pack node lists - $($_.Exception.Message)" -ForegroundColor Yellow
+    }
+}
 $Installed = 0; $Updated = 0; $Current = 0; $Failed = 0; $Manual = 0; $SetUp = 0
 $Notes = @()
 
