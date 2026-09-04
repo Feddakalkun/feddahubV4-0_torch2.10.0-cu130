@@ -71,7 +71,12 @@ export function getExtraModules(
       id,
       sourceModuleId: id as FeddaModule['sourceModuleId'],
       family: typeof row.family === 'string' ? row.family : id,
-      area: (row.area === 'video' ? 'video' : 'image') as FeddaModule['area'],
+      // Whatever the module says. This used to collapse to 'image' unless it
+      // was exactly 'video', which was right while ModuleArea was a closed
+      // union and wrong the moment a pack could name its own - a pack that
+      // asked for its own card was quietly filed under Image instead.
+      area: (typeof row.area === 'string' && row.area
+        ? row.area : 'image') as FeddaModule['area'],
       label: typeof row.label === 'string' ? row.label : id,
       description: typeof row.notes === 'string' ? row.notes : '',
       pack: (row.pack === 'core' ? 'core' : 'booster') as FeddaModule['pack'],
