@@ -34,6 +34,49 @@ export function getAvailableModules(
   return allModules.filter((module) => isUiModuleAvailable(module, enabledSourceIds));
 }
 
+/**
+ * Cards for modules the compiled registry has never heard of.
+ *
+ * FEDDA_MODULES is TypeScript, so the backend could only ever switch a card on
+ * or off - it could not add one. That made a module installed from a folder
+ * invisible no matter what the backend reported, because the card it needed
+ * did not exist to be enabled.
+ *
+ * A module the backend lists and the registry does not is turned into a card
+ * from its own fields. Only the icon has to be invented; everything else the
+ * declaration already says.
+ */
+export function getExtraModules(
+  known: FeddaModule[],
+  backendModules: Array<Record<string, unknown>>,
+  fallbackIcon: FeddaModule['Icon'],
+): FeddaModule[] {
+  const seen = new Set(known.map((m) => m.id));
+  const out: FeddaModule[] = [];
+  for (const row of backendModules) {
+    const id = typeof row.id === 'string' ? row.id : '';
+    if (!id || seen.has(id) || row.enabled === false) continue;
+    seen.add(id);
+    const tabs = Array.isArray(row.tabs) ? row.tabs.filter((x): x is string => typeof x === 'string') : [];
+    // A module with no tabs has no page to open, so a card for it would be a
+    // dead end. Nothing is drawn rather than something that goes nowhere.
+    if (tabs.length === 0) continue;
+    out.push({
+      id,
+      sourceModuleId: id as FeddaModule['sourceModuleId'],
+      family: typeof row.family === 'string' ? row.family : id,
+      area: (row.area === 'video' ? 'video' : 'image') as FeddaModule['area'],
+      label: typeof row.label === 'string' ? row.label : id,
+      description: typeof row.notes === 'string' ? row.notes : '',
+      pack: (row.pack === 'core' ? 'core' : 'booster') as FeddaModule['pack'],
+      tabs,
+      defaultTab: tabs.find((x) => x !== 'video' && x !== 'image') ?? tabs[0],
+      Icon: fallbackIcon,
+    });
+  }
+  return out;
+}
+
 export function getValidTabs(modules: FeddaModule[]): Set<string> {
   return new Set(modules.flatMap((module) => module.tabs));
 }

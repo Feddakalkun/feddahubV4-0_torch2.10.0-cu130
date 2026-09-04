@@ -5,6 +5,7 @@ import sys
 import uuid
 from typing import Any, Dict, Optional
 
+import packs  # module and workflow folders outside the repository
 from lora_service import _normalize_lora_path  # robust path normalization for LoRA prefix checks (Windows \ vs /)
 
 if sys.platform == "win32":
@@ -109,10 +110,23 @@ class WorkflowService:
         self.mapping_file = os.path.join(os.path.dirname(__file__), "..", "config", "workflow_api.json")
 
     def load_mapping(self) -> Dict[str, Any]:
-        if not os.path.exists(self.mapping_file):
-            return {}
-        with open(self.mapping_file, "r", encoding="utf-8-sig") as f:
-            return json.load(f)
+        """Every workflow this machine knows about: the app's, then any packs'.
+
+        The app's own entries win a name collision. A pack can add workflows;
+        it cannot quietly replace one the app ships, because a page that
+        changed behaviour after installing something unrelated is the kind of
+        surprise nobody can debug.
+        """
+        own: Dict[str, Any] = {}
+        if os.path.exists(self.mapping_file):
+            with open(self.mapping_file, "r", encoding="utf-8-sig") as f:
+                own = json.load(f)
+        extra = packs.mapping(packs.pack_roots(self.load_runtime_settings()))
+        if not extra:
+            return own
+        merged = dict(extra)
+        merged.update(own)
+        return merged
 
     def load_runtime_settings(self) -> Dict[str, Any]:
         settings_path = os.path.join(os.path.dirname(__file__), "..", "config", "runtime_settings.json")
@@ -125,16 +139,25 @@ class WorkflowService:
             return {}
 
     def get_workflow_path(self, filename: str) -> str:
-        # 1. Try direct path from workflows_dir
-        direct_path = os.path.join(self.workflows_dir, filename)
-        if os.path.exists(direct_path):
-            return direct_path
-        
-        # 2. Recursive search for just the basename if direct fails
+        # The app's own tree first, then each pack's - so a pack graph is found
+        # by the same "family/name.json" its mapping entry writes, wherever the
+        # pack happens to be installed.
+        roots = [self.workflows_dir]
+        roots += [str(p) for p in
+                  packs.workflow_dirs(packs.pack_roots(self.load_runtime_settings()))]
+
+        for base in roots:
+            direct_path = os.path.join(base, filename)
+            if os.path.exists(direct_path):
+                return direct_path
+
+        # Falling back to the bare name, for a mapping that names a file
+        # without its folder.
         basename = os.path.basename(filename)
-        for root, _, files in os.walk(self.workflows_dir):
-            if basename in files:
-                return os.path.join(root, basename)
+        for base in roots:
+            for root, _, files in os.walk(base):
+                if basename in files:
+                    return os.path.join(root, basename)
         return ""
 
     def is_api_format(self, data: dict) -> bool:

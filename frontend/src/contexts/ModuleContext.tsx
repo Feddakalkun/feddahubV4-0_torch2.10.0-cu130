@@ -1,8 +1,11 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+// The card a pack gets when it brings no icon of its own.
+import { Package } from 'lucide-react';
 import { FEDDA_MODULES, type FeddaModule } from '../modules/registry';
 import {
   buildEnabledSourceIds,
   getAvailableModules,
+  getExtraModules,
   getDefaultTab,
   getPageMeta,
   getValidTabs,
@@ -83,8 +86,17 @@ export function ModuleProvider({ children }: { children: ReactNode }) {
 
   const enabledSourceIds = useMemo(() => buildEnabledSourceIds(backendModules), [backendModules]);
   const availableModules = useMemo(
-    () => getAvailableModules(FEDDA_MODULES, enabledSourceIds),
-    [enabledSourceIds],
+    () => [
+      ...getAvailableModules(FEDDA_MODULES, enabledSourceIds),
+      // Cards the compiled registry does not know about, from modules
+      // the backend found in a folder outside the repository.
+      ...getExtraModules(FEDDA_MODULES, backendModules as never[], Package),
+    ],
+    // backendModules too, not just what is derived from it: a pack's module
+    // adds a card without necessarily changing which sources are enabled, so
+    // depending on enabledSourceIds alone would leave the new card unrendered
+    // until something else happened to move.
+    [enabledSourceIds, backendModules],
   );
   const validTabs = useMemo(() => getValidTabs(availableModules), [availableModules]);
   const pageMeta = useMemo(() => getPageMeta(availableModules), [availableModules]);

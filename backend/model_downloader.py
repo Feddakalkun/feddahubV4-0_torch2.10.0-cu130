@@ -10,6 +10,7 @@ from typing import Optional, Dict, List, Any
 # For extra_paths() only - the one place that decides what the extra
 # models setting means, so the downloader and the search agree.
 import model_links
+import packs
 
 class ModelDownloader:
     def __init__(self, root_dir: Path):
@@ -479,8 +480,28 @@ class ModelDownloader:
             self.all_specs.update(table)
 
     def spec_for(self, filename: str) -> Optional[Dict[str, Any]]:
-        """Where this model comes from, across every table."""
-        return self.all_specs.get(filename)
+        """Where this model comes from, across every table and every pack.
+
+        The app's own tables win: a pack may add a source, never redirect one
+        the app already ships.
+
+        Read per call rather than cached, because a pack can be installed while
+        the app is running and the alternative is a model list that stays wrong
+        until the next restart with nothing saying why.
+        """
+        own = self.all_specs.get(filename)
+        if own is not None:
+            return own
+        return self._pack_specs().get(filename)
+
+    def _pack_specs(self) -> Dict[str, Dict[str, Any]]:
+        try:
+            settings = json.loads(
+                (self.root_dir / "config" / "runtime_settings.json")
+                .read_text(encoding="utf-8-sig"))
+        except (OSError, ValueError):
+            return {}
+        return packs.model_specs(packs.pack_roots(settings))
 
     def get_progress(self, filename: str) -> dict:
         with self.lock:

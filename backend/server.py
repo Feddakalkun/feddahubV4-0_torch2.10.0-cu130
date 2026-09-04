@@ -46,6 +46,7 @@ if _backend_dir not in sys.path:
 import descriptor
 import encoders
 import model_links
+import packs
 from logging_setup import setup_logging
 from lora_service import LoRAService
 from model_downloader import ModelDownloader
@@ -480,9 +481,19 @@ async def set_civitai_key(req: SecretRequest) -> Dict[str, Any]:
 async def modules_install_state() -> Dict[str, Any]:
     """What this install actually has, which is what the UI degrades against."""
     state = module_service.get_install_state()
+    listed = module_service.list_modules()
+
+    # Modules from folders outside the repository. Appended rather than merged
+    # over: a pack adds cards and cannot alter one the app ships, so installing
+    # something unrelated can never change a page that was already working.
+    known = {m.get("id") for m in listed if isinstance(m, dict)}
+    for extra in packs.modules(packs.pack_roots(_runtime_settings())):
+        if extra.get("id") not in known:
+            listed.append(extra)
+
     return {
         "version": 1,
-        "modules": module_service.list_modules(),
+        "modules": listed,
         **state,
     }
 
