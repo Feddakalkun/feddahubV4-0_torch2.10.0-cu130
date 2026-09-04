@@ -481,6 +481,7 @@ async def set_civitai_key(req: SecretRequest) -> Dict[str, Any]:
 async def modules_install_state() -> Dict[str, Any]:
     """What this install actually has, which is what the UI degrades against."""
     state = module_service.get_install_state()
+    roots = packs.pack_roots(_runtime_settings())
 
     # get_install_state() already carries a "modules" key, and it is the richer
     # one - built with include_validation. The separate list_modules() call that
@@ -494,18 +495,30 @@ async def modules_install_state() -> Dict[str, Any]:
     # over: a pack adds cards and cannot alter one the app ships, so installing
     # something unrelated can never change a page that was already working.
     known = {m.get("id") for m in listed if isinstance(m, dict)}
-    for extra in packs.modules(packs.pack_roots(_runtime_settings())):
-        if extra.get("id") not in known:
-            listed.append(extra)
+    enabled_ids = list(state.get("enabled_module_ids") or [])
+    added = 0
+    for extra in packs.modules(roots):
+        if extra.get("id") in known:
+            continue
+        listed.append(extra)
+        # And into the enabled list, which is a separate key and was the reason
+        # a pack card counted its workflow on the home page and then opened on
+        # "Module Not Installed". That list is built from the manifest, which no
+        # pack is in and none should be: the manifest is what the app ships.
+        if extra.get("enabled", True):
+            enabled_ids.append(str(extra.get("id")))
+            added += 1
 
     # "modules" after the spread, not before it. One key, one answer.
     return {
         "version": 1,
         **state,
         "modules": listed,
+        "enabled_module_ids": sorted(enabled_ids),
+        "enabled_count": (state.get("enabled_count") or 0) + added,
         # Top-level cards a pack brings. Empty for an install with no packs,
         # which is every install that has not been given one.
-        "areas": packs.areas(packs.pack_roots(_runtime_settings())),
+        "areas": packs.areas(roots),
     }
 
 
