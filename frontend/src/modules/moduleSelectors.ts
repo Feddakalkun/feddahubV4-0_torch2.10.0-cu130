@@ -51,7 +51,13 @@ export function getExtraModules(
   backendModules: Array<Record<string, unknown>>,
   fallbackIcon: FeddaModule['Icon'],
 ): FeddaModule[] {
-  const seen = new Set(known.map((m) => m.id));
+  // Two id spaces, and comparing across them was the whole fault. A backend
+  // module is named in config/modules.json - "z-image-core", "flux-krea" - and
+  // a UI module is named for its tab: "z-image-txt2img". They are joined by
+  // sourceModuleId, not by id. Matching row.id against m.id therefore never
+  // matched anything the app ships, so every backend module became a card and
+  // "Choose a model" grew Core Shell, Z-Image Core, FLUX Krea and the rest.
+  const seen = new Set(known.map((m) => m.sourceModuleId as string));
   const out: FeddaModule[] = [];
   for (const row of backendModules) {
     const id = typeof row.id === 'string' ? row.id : '';
