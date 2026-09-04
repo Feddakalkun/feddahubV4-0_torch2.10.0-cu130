@@ -33,7 +33,15 @@ if (-not $NodesJson) { $NodesJson = Join-Path $RepoRoot "config\nodes.json" }
 $CustomNodes = Join-Path $ComfyDir "custom_nodes"
 if (-not (Test-Path $CustomNodes)) { New-Item -ItemType Directory -Force $CustomNodes | Out-Null }
 
-$Nodes = @(Get-Content $NodesJson -Raw -Encoding UTF8 | ConvertFrom-Json)
+# Built by hand rather than with @(). ConvertFrom-Json hands a JSON array to
+# the pipeline as a single object in Windows PowerShell, so @() around it wraps
+# instead of unrolling: the 31 entries become one element holding all of them,
+# $node.folder then returns 31 strings, and Join-Path is handed an array. An
+# ArrayList also lets a pack append below without rebuilding the array.
+$Nodes = New-Object System.Collections.ArrayList
+foreach ($entry in (Get-Content $NodesJson -Raw -Encoding UTF8 | ConvertFrom-Json)) {
+    [void]$Nodes.Add($entry)
+}
 
 # Node packs declared by a module pack, in the same shape as config/nodes.json.
 # A pack's workflows are no use without the nodes they are built from, and
@@ -60,7 +68,7 @@ if (Test-Path $SettingsFile) {
                     # pinned in nodes.json"; only a full entry can be installed.
                     if ($n -isnot [string] -and $n.url -and $n.folder) {
                         if (-not ($Nodes | Where-Object { $_.folder -eq $n.folder })) {
-                            $Nodes += $n
+                            [void]$Nodes.Add($n)
                         }
                     }
                 }
