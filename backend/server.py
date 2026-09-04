@@ -503,6 +503,9 @@ async def modules_install_state() -> Dict[str, Any]:
         "version": 1,
         **state,
         "modules": listed,
+        # Top-level cards a pack brings. Empty for an install with no packs,
+        # which is every install that has not been given one.
+        "areas": packs.areas(packs.pack_roots(_runtime_settings())),
     }
 
 

@@ -23,6 +23,7 @@ type ModuleContextValue = {
   loading: boolean;
   error: string | null;
   backendModules: BackendModule[];
+  packAreas: Array<Record<string, unknown>>;
   enabledSourceIds: Set<string>;
   availableModules: FeddaModule[];
   validTabs: Set<string>;
@@ -37,6 +38,7 @@ const ModuleContext = createContext<ModuleContextValue | null>(null);
 
 async function fetchInstallState(): Promise<{
   modules: BackendModule[];
+  areas: Array<Record<string, unknown>>;
   installState: ModuleInstallState;
 }> {
   const response = await fetch('/api/modules/install-state');
@@ -52,6 +54,7 @@ async function fetchInstallState(): Promise<{
   const data = await response.json();
   return {
     modules: Array.isArray(data.modules) ? data.modules : [],
+    areas: Array.isArray(data.areas) ? data.areas : [],
     installState: {
       version: data.version ?? 0,
       active_profile: data.active_profile,
@@ -66,11 +69,14 @@ export function ModuleProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [backendModules, setBackendModules] = useState<BackendModule[]>([]);
   const [installState, setInstallState] = useState<ModuleInstallState | null>(null);
+  // Top-level cards a pack declares. Empty on an install with no packs.
+  const [packAreas, setPackAreas] = useState<Array<Record<string, unknown>>>([]);
 
   const refreshModules = async () => {
     try {
       const next = await fetchInstallState();
       setBackendModules(next.modules);
+      setPackAreas(next.areas);
       setInstallState(next.installState);
       setError(null);
     } catch (err) {
@@ -107,6 +113,7 @@ export function ModuleProvider({ children }: { children: ReactNode }) {
       loading,
       error,
       backendModules,
+      packAreas,
       enabledSourceIds,
       availableModules,
       validTabs,
@@ -120,6 +127,7 @@ export function ModuleProvider({ children }: { children: ReactNode }) {
       loading,
       error,
       backendModules,
+      packAreas,
       enabledSourceIds,
       availableModules,
       validTabs,

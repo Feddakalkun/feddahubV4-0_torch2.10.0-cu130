@@ -97,6 +97,31 @@ def modules(roots: List[Path]) -> List[Dict[str, Any]]:
     return out
 
 
+def areas(roots: List[Path]) -> List[Dict[str, Any]]:
+    """Top-level cards a pack brings with it.
+
+    Declared in the pack's modules.json beside the modules:
+
+        {"areas": [{"id": "nsfw", "label": "NSFW", "description": "..."}],
+         "modules": [{"id": "...", "area": "nsfw", ...}]}
+
+    Optional. A pack whose modules sit under image or video declares none and
+    its cards appear beside the app's own.
+    """
+    out: List[Dict[str, Any]] = []
+    seen = set()
+    for root in roots:
+        data = _read_json(root / "modules.json")
+        rows = (data or {}).get("areas") if isinstance(data, dict) else None
+        if not isinstance(rows, list):
+            continue
+        for row in rows:
+            if isinstance(row, dict) and row.get("id") and row["id"] not in seen:
+                seen.add(row["id"])
+                out.append(row)
+    return out
+
+
 def mapping(roots: List[Path]) -> Dict[str, Any]:
     """Workflow mapping entries from every pack.
 

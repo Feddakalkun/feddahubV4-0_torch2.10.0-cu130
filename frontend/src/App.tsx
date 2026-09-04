@@ -48,7 +48,7 @@ type AppLocation = {
 };
 
 function FeddaApp() {
-  const { loading, availableModules, validTabs, pageMeta, defaultTab, isTabAvailable } =
+  const { loading, availableModules, packAreas, validTabs, pageMeta, defaultTab, isTabAvailable } =
     useModules();
 
   const resolveTab = (tab: string | null | undefined): string =>
@@ -145,7 +145,7 @@ function FeddaApp() {
   // nothing declares - which is how a pack installed from a folder gets a card
   // to sit under instead of being counted in an area and shown on no page.
   const allFamilies = useMemo(
-    () => [...FEDDA_FAMILIES, ...getExtraFamilies(FEDDA_FAMILIES, availableModules, Package)],
+    () => [...FEDDA_FAMILIES, ...getExtraFamilies(FEDDA_FAMILIES, availableModules, Package, FEDDA_MODULES)],
     [availableModules],
   );
 
@@ -155,8 +155,24 @@ function FeddaApp() {
         && availableModules.some((m) => m.family === f.id && !m.hidden),
     );
 
+  // The app's own top-level cards, then any a pack declares. A pack that puts
+  // its modules under image or video declares none and appears inside those;
+  // one that wants a card of its own on the front page says so and gets it.
+  const allAreas = useMemo(() => {
+    const known = new Set(FEDDA_AREAS.map((a) => a.id));
+    const extra = packAreas
+      .filter((a) => typeof a.id === 'string' && !known.has(a.id as string))
+      .map((a) => ({
+        id: a.id as ModuleArea,
+        label: typeof a.label === 'string' ? a.label : (a.id as string),
+        description: typeof a.description === 'string' ? a.description : '',
+        Icon: Package,
+      }));
+    return [...FEDDA_AREAS, ...extra];
+  }, [packAreas]);
+
   const areaCards: CardItem[] = useMemo(
-    () => FEDDA_AREAS.map((a) => {
+    () => allAreas.map((a) => {
       const families = familiesIn(a.id);
       const count = availableModules.filter((m) => m.area === a.id && !m.hidden).length;
       return {
@@ -168,7 +184,7 @@ function FeddaApp() {
         wip: families.length === 0,
       };
     }),
-    [availableModules],
+    [availableModules, allAreas],
   );
 
   const familyCards: CardItem[] = useMemo(() => {

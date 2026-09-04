@@ -23,7 +23,11 @@ import { Clapperboard, Images, Sparkles, Video, Wand2, type LucideIcon } from 'l
  */
 
 export type ModulePack = 'core' | 'booster';
-export type ModuleArea = 'image' | 'video' | 'system';
+// The three the app ships, plus whatever a pack declares. `(string & {})`
+// keeps autocomplete on the known ones while allowing an id nothing here has
+// heard of - a pack that brings its own top-level card needs a name for it,
+// and this file cannot know that name in advance.
+export type ModuleArea = 'image' | 'video' | 'system' | (string & {});
 
 /** Ids in `config/modules.json`. */
 export type SourceModuleId =

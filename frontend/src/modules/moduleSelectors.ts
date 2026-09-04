@@ -93,10 +93,17 @@ export function getExtraFamilies(
   known: FeddaFamily[],
   modules: FeddaModule[],
   fallbackIcon: FeddaFamily['Icon'],
+  shipped: FeddaModule[] = [],
 ): FeddaFamily[] {
   const claimed = new Set(known.map((f) => f.id));
+  // Only modules that did not come with the app. Several of its own sit under
+  // a family whose id is not their own - Core Shell, Z-Image Core, FLUX Krea -
+  // and synthesising one for each put four cards on "Choose a model" that
+  // belong nowhere. The app's navigation is not this function's to change.
+  const own = new Set(shipped.map((m) => m.id));
   const out: FeddaFamily[] = [];
   for (const module of modules) {
+    if (own.has(module.id)) continue;
     const family = module.family;
     if (!family || claimed.has(family)) continue;
     claimed.add(family);
