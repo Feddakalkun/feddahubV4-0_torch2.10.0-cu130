@@ -481,7 +481,14 @@ async def set_civitai_key(req: SecretRequest) -> Dict[str, Any]:
 async def modules_install_state() -> Dict[str, Any]:
     """What this install actually has, which is what the UI degrades against."""
     state = module_service.get_install_state()
-    listed = module_service.list_modules()
+
+    # get_install_state() already carries a "modules" key, and it is the richer
+    # one - built with include_validation. The separate list_modules() call that
+    # used to sit here was dead: it was spread over by **state on the very next
+    # line, so whatever it produced never reached the response. That went
+    # unnoticed while both lists held the same thing, and stopped being harmless
+    # the moment packs started adding to one of them.
+    listed = state.get("modules") or []
 
     # Modules from folders outside the repository. Appended rather than merged
     # over: a pack adds cards and cannot alter one the app ships, so installing
@@ -491,10 +498,11 @@ async def modules_install_state() -> Dict[str, Any]:
         if extra.get("id") not in known:
             listed.append(extra)
 
+    # "modules" after the spread, not before it. One key, one answer.
     return {
         "version": 1,
-        "modules": listed,
         **state,
+        "modules": listed,
     }
 
 
