@@ -1217,10 +1217,21 @@ body {
   color: rgba(244,244,245,0.50);
 }
 
+/* One definition of what a chosen chip looks like, and every chip row is in
+   it. .cockpit-preset-chips was not, and it is the row every toggle and every
+   short combo draws into - so the mask toggles on the auto-mask page, the
+   text-encoder placement, every one of them changed state on click and looked
+   identical before and after. The click worked; nothing said so, which reads
+   as a button that does nothing.
+
+   Equal specificity to `.cockpit-preset-chips button:hover` above and later in
+   the file, so an active chip stays looking active while the pointer is on
+   it. */
 .cockpit-aspect-grid button:hover,
 .cockpit-seed-row button:hover,
 .cockpit-aspect-grid button.is-active,
-.cockpit-seed-row button.is-active {
+.cockpit-seed-row button.is-active,
+.cockpit-preset-chips button.is-active {
   border-color: rgba(255,255,255,0.22);
   background: rgba(244,244,245,0.88);
   color: #050506;
