@@ -279,6 +279,50 @@ const FieldBody = ({ field, value, onChange, disabled }: Props) => {
       );
     }
 
+    // ---------------------------------------------------------------- multi
+    // A latching chip row. `chips` picks one of a list; this picks any number,
+    // which is what a menu of scene LoRAs needs - the value is the set that is
+    // switched on, and the backend flips exactly those.
+    case 'multi': {
+      const options = choices(field.options);
+      const picked = new Set(
+        (Array.isArray(value)
+          ? value
+          : Array.isArray(field.default)
+            ? field.default
+            : []
+        ).map(String),
+      );
+      const flip = (option: string) => {
+        const next = new Set(picked);
+        if (next.has(option)) next.delete(option);
+        else next.add(option);
+        onChange([...next] as FieldValue);
+      };
+      return (
+        <div className="cockpit-panel">
+          <Head label={field.label} hint={`${picked.size} of ${options.length}`} />
+          <div className="cockpit-preset-chips">
+            {options.map((option) => {
+              const on = picked.has(String(option.value));
+              return (
+                <button
+                  key={String(option.value)}
+                  type="button"
+                  disabled={disabled}
+                  aria-pressed={on}
+                  className={cn(on && 'is-active')}
+                  onClick={() => flip(String(option.value))}
+                >
+                  {option.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
     // --------------------------------------------------------------- toggle
     case 'toggle': {
       const on = Boolean(value ?? field.default);

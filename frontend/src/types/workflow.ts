@@ -13,6 +13,8 @@ export type FieldControl =
   | 'select'
   | 'chips'
   | 'toggle'
+  /** Several of a list at once, as a row of chips that latch. */
+  | 'multi'
   | 'file'
   | 'audio'
   | 'lora';
@@ -62,7 +64,7 @@ export interface WorkflowField {
    */
   mask?: boolean;
 
-  default?: string | number | boolean | null;
+  default?: string | number | boolean | string[] | null;
 
   /**
    * Every node this one control drives. Plural because a seed has to reach the
@@ -107,4 +109,4 @@ export interface WorkflowPreset {
   values: Record<string, FieldValue>;
 }
 
-export type FieldValue = string | number | boolean | AudioValue | null;
+export type FieldValue = string | number | boolean | string[] | AudioValue | null;

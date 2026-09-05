@@ -298,6 +298,33 @@ class WorkflowService:
 
                 logger.debug("  Injecting %r -> nodes %s", param_key, target_node_ids)
 
+                # Flips `on`; never rebuilds the list. That is the whole
+                # difference from `loras` below, and the reason it exists: the
+                # Wan graphs ship a filled menu whose first entry is the
+                # four-step distill LoRA, and rebuilding the list drops it -
+                # after which four steps render fog rather than a picture.
+                #
+                # Every slot the node has is set, not only the ones named, so
+                # unchecking really does switch a scene off. A workflow whose
+                # page never sends this key is left exactly as its author saved
+                # it, which is why nothing seeds it to [] the way `loras` is.
+                if input_info.get("type") == "lora_slots" and isinstance(param_value, list):
+                    wanted = {str(x) for x in param_value}
+                    for node_id in target_node_ids:
+                        node = workflow.get(node_id)
+                        if not isinstance(node, dict):
+                            logger.warning("lora_slots: node %s is not in this workflow",
+                                           node_id)
+                            continue
+                        on = 0
+                        for slot_key, slot in (node.get("inputs") or {}).items():
+                            if not slot_key.startswith("lora_") or not isinstance(slot, dict):
+                                continue
+                            slot["on"] = slot_key in wanted
+                            on += 1 if slot["on"] else 0
+                        logger.info("lora_slots: node %s now has %d slot(s) on", node_id, on)
+                    continue
+
                 if input_info.get("type") == "loras" and isinstance(param_value, list):
                     # Safety filter for FLUX2-Klein: only allow LoRAs trained for this specific model
                     # FLUX.1-dev LoRAs have different dimensions and cause matmul errors.

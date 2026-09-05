@@ -1988,6 +1988,12 @@ body {
   grid-column: span 2;
 }
 
+/* A menu of scene LoRAs is a long row of chips. Two cells is not enough and
+   the count is not known here, so it takes the row. */
+.workflow-control-grid > .is-full {
+  grid-column: 1 / -1;
+}
+
 @media (max-width: 640px) {
   .workflow-control-grid > .is-wide { grid-column: span 1; }
 }

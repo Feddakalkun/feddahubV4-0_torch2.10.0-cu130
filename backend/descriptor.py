@@ -255,6 +255,44 @@ def _number_bounds(kind: str, opts: Dict[str, Any],
     return out
 
 
+def _lora_slots(graph: Dict[str, Any], node_id: Any) -> List[Tuple[str, Dict[str, Any]]]:
+    """Every filled `lora_N` on this node, in slot order.
+
+    Sorted numerically rather than by string, or lora_10 would sit between
+    lora_1 and lora_2 and the two loaders would stop lining up.
+    """
+    node = graph.get(str(node_id)) or {}
+    out: List[Tuple[str, Dict[str, Any]]] = []
+    for name, slot in (node.get("inputs") or {}).items():
+        if name.startswith("lora_") and isinstance(slot, dict) and slot.get("lora"):
+            out.append((name, slot))
+
+    def order(item: Tuple[str, Dict[str, Any]]) -> int:
+        tail = item[0].split("_", 1)[1]
+        return int(tail) if tail.isdigit() else 0
+
+    out.sort(key=order)
+    return out
+
+
+def _lora_slot_label(slot: Dict[str, Any]) -> str:
+    """The file name, without the parts that say nothing to a person.
+
+    A scene is the same LoRA trained twice, once per noise level, and only one
+    of the pair is ever offered - so the noise suffix is dropped rather than
+    labelling everything "... High". ntpath.basename because these names carry
+    a folder and the separator depends on who saved the graph.
+    """
+    import ntpath
+    name = ntpath.basename(str(slot.get("lora") or ""))
+    for ext in (".safetensors", ".pt", ".ckpt"):
+        if name.lower().endswith(ext):
+            name = name[: -len(ext)]
+            break
+    trimmed = re.sub(r"[-_ ]?(high|low)[-_ ]?(noise)?$", "", name, flags=re.I)
+    return (trimmed or name).replace("_", " ").strip()
+
+
 # ------------------------------------------------------------- the descriptor
 
 def describe_input(key: str, spec: Dict[str, Any], graph: Dict[str, Any],
@@ -270,6 +308,33 @@ def describe_input(key: str, spec: Dict[str, Any], graph: Dict[str, Any],
     # here would imply an ordering nothing guarantees.
     if declared == "loras":
         return {"key": key, "label": label, "control": "lora", "required": False}
+
+    # A curated menu rather than an empty stack.
+    #
+    # The Wan video graphs ship a Power Lora Loader already filled in: the
+    # four-step distill LoRA and a couple of quality ones switched on, and a
+    # long list of scene LoRAs switched off, to be turned on one at a time. The
+    # `loras` control above *replaces* those slots, so registering it here would
+    # take the distill LoRA out the moment anybody added anything, and four-step
+    # sampling without it returns fog. This one only flips `on`, so what the
+    # graph author put there survives being used.
+    #
+    # Slots are read off the first node and applied to every node the mapping
+    # names: the high-noise and low-noise loaders carry the same list in the
+    # same order, so one scene is slot N in both.
+    if declared == "lora_slots":
+        ids = spec.get("node_ids") or ([spec["node_id"]] if spec.get("node_id") else [])
+        slots = _lora_slots(graph, ids[0] if ids else None)
+        if not slots:
+            return None
+        return {
+            "key": key,
+            "label": label,
+            "control": "multi",
+            "required": False,
+            "options": [{"value": k, "label": _lora_slot_label(v)} for k, v in slots],
+            "default": [k for k, v in slots if v.get("on")],
+        }
 
     # The mapping may override the control outright, and sometimes must. An
     # ImpactSwitch's `select` is an INT to object_info, so the three-source rule
