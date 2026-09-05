@@ -13,6 +13,7 @@ endpoints that use it stay short.
 
 import json
 import logging
+import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -338,14 +339,39 @@ def find_anywhere(filename: str, root_dir: Path,
     and only reached for those, so the walk is worth what it buys: reporting
     a model as missing when the user already has it is how a 12 GB download
     gets started for nothing.
+
+    Walked by hand rather than with rglob, for the same reason lora_service
+    walks by hand. rglob raises on the first directory it cannot enter, and
+    the "except OSError" around it then abandoned the entire root - so one
+    broken junction inside the loras folder hid every sibling folder sorting
+    after it. On a real install that was text_encoders, vae and ultralytics,
+    on a machine that had all of them: the app reported models missing that
+    were sitting on disk, and a model picker quietly opened on a different
+    file. Not an error anywhere, which is why it went unseen.
+
+    os.walk skips what it cannot read and carries on, and pruning on realpath
+    stops a linked stash from walking into itself.
     """
     for root in model_search_roots(root_dir, extra_models_path):
-        try:
-            for candidate in root.rglob(filename):
+        seen_real = set()
+        for dirpath, dirs, files in os.walk(root):
+            try:
+                real = os.path.realpath(dirpath)
+            except OSError:
+                dirs[:] = []
+                continue
+            if real in seen_real:
+                dirs[:] = []  # loop detected - do not descend
+                continue
+            seen_real.add(real)
+            if filename not in files:
+                continue
+            candidate = Path(dirpath) / filename
+            try:
                 if candidate.is_file() and candidate.stat().st_size > _MIN_MODEL_BYTES:
                     return candidate
-        except OSError:
-            continue
+            except OSError:
+                continue
     return None
 
 
