@@ -272,24 +272,6 @@ class WorkflowService:
             if param_key in mapping["inputs"]:
                 input_info = mapping["inputs"][param_key]
 
-                # nsfw_toggle has no node_id — handle it before computing target_node_ids
-                if input_info.get("type") == "nsfw_toggle":
-                    # When NSFW is disabled, turn off all non-base LoRA slots in every
-                    # Power Lora Loader node (lora_1 is always the base WAN model LoRA).
-                    if not param_value:
-                        for wf_node in workflow.values():
-                            if not isinstance(wf_node, dict):
-                                continue
-                            if wf_node.get("class_type") != "Power Lora Loader (rgthree)":
-                                continue
-                            for slot_key, slot_val in wf_node.get("inputs", {}).items():
-                                if slot_key.startswith("lora_") and slot_key != "lora_1" and isinstance(slot_val, dict):
-                                    slot_val["on"] = False
-                        logger.debug("NSFW disabled -- all non-base LoRA slots turned off")
-                    else:
-                        logger.debug("NSFW enabled -- workflow LoRA slots unchanged")
-                    continue
-
                 node_ids_raw = input_info.get("node_ids")
                 if isinstance(node_ids_raw, list) and node_ids_raw:
                     target_node_ids = [str(n) for n in node_ids_raw]
@@ -472,7 +454,7 @@ class WorkflowService:
                     isinstance(param_value, list)
                     and len(target_node_ids) > 1
                     and len(param_value) == len(target_node_ids)
-                    and input_info.get("type") not in ("loras", "nsfw_toggle")
+                    and input_info.get("type") not in ("loras", "lora_slots")
                 ):
                     per_node_values = param_value
 

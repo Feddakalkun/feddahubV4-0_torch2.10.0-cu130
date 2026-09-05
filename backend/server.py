@@ -1446,7 +1446,7 @@ async def comfy_refresh_models() -> Dict[str, Any]:
 # box grows a button, and if it does not, the app is unchanged.
 #
 # v3 grew seven endpoints here, including a prompt enhancer with per-model
-# recipes, an influencer brief generator and NSFW temperature tuning. Two are
+# recipes, a brief generator and per-model sampling tweaks. Two are
 # carried: which models exist, and turn this prompt into a better one.
 
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://127.0.0.1:11434")

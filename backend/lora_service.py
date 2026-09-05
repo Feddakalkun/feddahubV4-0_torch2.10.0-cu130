@@ -59,16 +59,6 @@ PACKS: Dict[str, Dict[str, str]] = {
         "dest":           "zimage_turbo",
         "img_subfolder":  "ZIT_Images",
     },
-    "zimage_nsfw": {
-        "hf_repo":       "qqnyanddld/nsfw-z-image-lora",
-        "hf_type":       "model",
-        "dest":          "zimage_turbo",
-    },
-    "wan22_nsfw": {
-        "hf_repo":       "lkzd7/WAN2.2_LoraSet_NSFW",
-        "hf_type":       "model",
-        "dest":          "wan22",
-    },
     "flux2klein": {
         "hf_repo":       "pmczip/FLUX.2-klein-9B_Models",
         "hf_type":       "model",
@@ -191,7 +181,6 @@ class LoRAService:
             "flux2klein": "flux2klein",
             "sd15": "sd15",
             "sdxl": "sdxl",
-            "wan": "wan22_nsfw",
         }
 
         pack_key = family_to_pack.get(family, family)
