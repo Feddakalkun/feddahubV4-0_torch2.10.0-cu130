@@ -74,8 +74,15 @@ function FeddaApp() {
       return { view: 'area', area: rest as ModuleArea, activeTab: fallback };
     }
     if (head === 'family' && rest) {
-      const family = FEDDA_FAMILIES.find((f) => f.id === decodeURIComponent(rest));
-      return { view: 'family', family: family?.id, area: family?.area, activeTab: fallback };
+      // The id is carried through as written rather than resolved here. A
+      // pack's family is not in the compiled list - it arrives from the
+      // backend, after this runs - so resolving against that list dropped it
+      // and a reload on a pack family page came back "Nothing installed here
+      // yet." for ever. What renders filters on the id itself, and an id that
+      // matches nothing draws the same empty state it would have anyway.
+      const id = decodeURIComponent(rest);
+      const known = FEDDA_FAMILIES.find((f) => f.id === id);
+      return { view: 'family', family: id, area: known?.area, activeTab: fallback };
     }
     if (head === 'model' && rest) {
       const group = FEDDA_MODEL_GROUPS.find((g) => g.id === decodeURIComponent(rest));
@@ -248,7 +255,10 @@ function FeddaApp() {
   // --- chrome ----------------------------------------------------------------
 
   const areaDef = FEDDA_AREAS.find((a) => a.id === area);
-  const familyDef = FEDDA_FAMILIES.find((f) => f.id === family);
+  // allFamilies, not FEDDA_FAMILIES: this is the title, the icon, and the area
+  // Back returns to. On a pack family all three fell back - "Workflows", a
+  // generic icon, and Back landing in Image.
+  const familyDef = allFamilies.find((f) => f.id === family);
   const modelDef = FEDDA_MODEL_GROUPS.find((g) => g.id === model);
   const meta = pageMeta[resolveTab(activeTab)] ?? { label: APP_VERSION_LABEL, Icon: Sparkles };
 
@@ -266,7 +276,10 @@ function FeddaApp() {
   const goHome = () => navigate({ view: 'home', activeTab });
   const goBack = () => {
     if (view === 'workspace') {
-      const owner = FEDDA_MODULES.find((m) => m.id === activeTab);
+      // availableModules covers a pack's workflows too; FEDDA_MODULES is only
+      // what the app ships, so Back from a pack page found no owner and went
+      // all the way home instead of up one level.
+      const owner = availableModules.find((m) => m.id === activeTab);
       // Back goes to whichever level actually opened this, so a workflow
       // under a model returns to its model rather than skipping past it.
       if (owner?.group) {
