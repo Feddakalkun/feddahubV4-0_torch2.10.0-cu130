@@ -1994,6 +1994,45 @@ body {
   grid-column: 1 / -1;
 }
 
+/* One strength per entry that is switched on. Two columns on a wide window,
+   one on a narrow one; the name is allowed to run out of room rather than
+   push the slider off the end. */
+.cockpit-slot-strengths {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 6px 12px;
+}
+
+.cockpit-slot-strength {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 110px 58px;
+  align-items: center;
+  gap: 8px;
+}
+
+.cockpit-slot-strength > span {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(212,212,216,0.62);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cockpit-slot-strength input[type="number"] {
+  min-height: 24px;
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 7px;
+  background: rgba(255,255,255,0.035);
+  padding: 0 6px;
+  font-size: 11px;
+  text-align: right;
+  color: rgba(244,244,245,0.9);
+}
+
 @media (max-width: 640px) {
   .workflow-control-grid > .is-wide { grid-column: span 1; }
 }

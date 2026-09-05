@@ -13,8 +13,11 @@ export type FieldControl =
   | 'select'
   | 'chips'
   | 'toggle'
-  /** Several of a list at once, as a row of chips that latch. */
-  | 'multi'
+  /**
+   * A menu the graph already holds: chips switch an entry on or off, and each
+   * one that is on carries its own strength. The value is slot -> strength.
+   */
+  | 'slots'
   | 'file'
   | 'audio'
   | 'lora';
@@ -40,7 +43,8 @@ export interface WorkflowField {
    * label when the value means nothing on its own - a switch index, say, where
    * 2 is "Pose" and the node has no way to know that.
    */
-  options?: (string | number | { value: string | number; label: string })[];
+  options?: (string | number
+    | { value: string | number; label: string; strength?: number })[];
 
   /** number - the node's own bounds, not a guess */
   min?: number;
@@ -64,7 +68,7 @@ export interface WorkflowField {
    */
   mask?: boolean;
 
-  default?: string | number | boolean | string[] | null;
+  default?: string | number | boolean | string[] | Record<string, number> | null;
 
   /**
    * Every node this one control drives. Plural because a seed has to reach the
@@ -109,4 +113,5 @@ export interface WorkflowPreset {
   values: Record<string, FieldValue>;
 }
 
-export type FieldValue = string | number | boolean | string[] | AudioValue | null;
+export type FieldValue =
+  string | number | boolean | string[] | Record<string, number> | AudioValue | null;

@@ -279,46 +279,75 @@ const FieldBody = ({ field, value, onChange, disabled }: Props) => {
       );
     }
 
-    // ---------------------------------------------------------------- multi
-    // A latching chip row. `chips` picks one of a list; this picks any number,
-    // which is what a menu of scene LoRAs needs - the value is the set that is
-    // switched on, and the backend flips exactly those.
-    case 'multi': {
-      const options = choices(field.options);
-      const picked = new Set(
-        (Array.isArray(value)
-          ? value
-          : Array.isArray(field.default)
-            ? field.default
-            : []
-        ).map(String),
+    // ---------------------------------------------------------------- slots
+    // A menu the graph author already filled in. Chips switch an entry on or
+    // off; each one that is on carries its own strength, because several of
+    // these are tuned to 0.3 or 0.5 on purpose and a flat 1.0 is not the same
+    // workflow. The value is slot -> strength, so switching one off forgets
+    // nothing: the chip remembers what the graph saved.
+    case 'slots': {
+      const opts = (field.options ?? []).map((o) => (
+        typeof o === 'object' && o !== null
+          ? {
+              value: String(o.value),
+              label: String(o.label),
+              strength: typeof o.strength === 'number' ? o.strength : 1,
+            }
+          : { value: String(o), label: String(o), strength: 1 }
+      ));
+      const from = (v: unknown): Record<string, number> => (
+        v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, number> : {}
       );
-      const flip = (option: string) => {
-        const next = new Set(picked);
-        if (next.has(option)) next.delete(option);
-        else next.add(option);
-        onChange([...next] as FieldValue);
+      const picked = value === null || value === undefined
+        ? from(field.default) : from(value);
+      const emit = (next: Record<string, number>) => onChange(next as FieldValue);
+      const flip = (slot: string, saved: number) => {
+        const next = { ...picked };
+        if (slot in next) delete next[slot];
+        else next[slot] = saved;
+        emit(next);
       };
+      const on = opts.filter((o) => o.value in picked);
       return (
         <div className="cockpit-panel">
-          <Head label={field.label} hint={`${picked.size} of ${options.length}`} />
+          <Head label={field.label} hint={`${on.length} of ${opts.length}`} />
           <div className="cockpit-preset-chips">
-            {options.map((option) => {
-              const on = picked.has(String(option.value));
-              return (
-                <button
-                  key={String(option.value)}
-                  type="button"
-                  disabled={disabled}
-                  aria-pressed={on}
-                  className={cn(on && 'is-active')}
-                  onClick={() => flip(String(option.value))}
-                >
-                  {option.label}
-                </button>
-              );
-            })}
+            {opts.map((o) => (
+              <button
+                key={o.value}
+                type="button"
+                disabled={disabled}
+                aria-pressed={o.value in picked}
+                className={cn(o.value in picked && 'is-active')}
+                onClick={() => flip(o.value, o.strength)}
+              >
+                {o.label}
+              </button>
+            ))}
           </div>
+          {on.length > 0 && (
+            <div className="cockpit-slot-strengths">
+              {on.map((o) => (
+                <div key={o.value} className="cockpit-slot-strength">
+                  <span title={o.label}>{o.label}</span>
+                  <input
+                    type="range"
+                    min={-1} max={2} step={0.05}
+                    value={picked[o.value]}
+                    disabled={disabled}
+                    onChange={(e) => emit({ ...picked, [o.value]: Number(e.target.value) })}
+                  />
+                  <input
+                    type="number"
+                    min={-1} max={2} step={0.05}
+                    value={picked[o.value]}
+                    disabled={disabled}
+                    onChange={(e) => emit({ ...picked, [o.value]: Number(e.target.value) })}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       );
     }

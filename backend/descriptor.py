@@ -275,6 +275,14 @@ def _lora_slots(graph: Dict[str, Any], node_id: Any) -> List[Tuple[str, Dict[str
     return out
 
 
+def _lora_slot_strength(slot: Dict[str, Any]) -> float:
+    """What this slot is set to, or 1.0 when it says nothing useful."""
+    try:
+        return float(slot.get("strength", 1.0))
+    except (TypeError, ValueError):
+        return 1.0
+
+
 def _lora_slot_label(slot: Dict[str, Any]) -> str:
     """The file name, without the parts that say nothing to a person.
 
@@ -330,10 +338,15 @@ def describe_input(key: str, spec: Dict[str, Any], graph: Dict[str, Any],
         return {
             "key": key,
             "label": label,
-            "control": "multi",
+            "control": "slots",
             "required": False,
-            "options": [{"value": k, "label": _lora_slot_label(v)} for k, v in slots],
-            "default": [k for k, v in slots if v.get("on")],
+            # Each option carries the strength the graph saved, so switching one
+            # on starts where its author left it rather than at a flat 1.0 -
+            # several of these are tuned to 0.3 or 0.5 on purpose.
+            "options": [{"value": k,
+                         "label": _lora_slot_label(v),
+                         "strength": _lora_slot_strength(v)} for k, v in slots],
+            "default": {k: _lora_slot_strength(v) for k, v in slots if v.get("on")},
         }
 
     # The mapping may override the control outright, and sometimes must. An

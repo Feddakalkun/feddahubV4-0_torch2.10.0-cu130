@@ -290,8 +290,14 @@ class WorkflowService:
                 # unchecking really does switch a scene off. A workflow whose
                 # page never sends this key is left exactly as its author saved
                 # it, which is why nothing seeds it to [] the way `loras` is.
-                if input_info.get("type") == "lora_slots" and isinstance(param_value, list):
-                    wanted = {str(x) for x in param_value}
+                if (input_info.get("type") == "lora_slots"
+                        and isinstance(param_value, (dict, list))):
+                    # A dict is slot -> strength; a bare list is the older
+                    # shape, on/off with whatever strength the graph holds.
+                    wanted = (
+                        {str(k): v for k, v in param_value.items()}
+                        if isinstance(param_value, dict)
+                        else {str(x): None for x in param_value})
                     for node_id in target_node_ids:
                         node = workflow.get(node_id)
                         if not isinstance(node, dict):
@@ -303,6 +309,12 @@ class WorkflowService:
                             if not slot_key.startswith("lora_") or not isinstance(slot, dict):
                                 continue
                             slot["on"] = slot_key in wanted
+                            strength = wanted.get(slot_key)
+                            if slot["on"] and strength is not None:
+                                try:
+                                    slot["strength"] = float(strength)
+                                except (TypeError, ValueError):
+                                    pass
                             on += 1 if slot["on"] else 0
                         logger.info("lora_slots: node %s now has %d slot(s) on", node_id, on)
                     continue

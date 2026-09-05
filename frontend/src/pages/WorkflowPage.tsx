@@ -379,10 +379,10 @@ export const WorkflowPage = ({
             <div
               key={field.key}
               // A seed and a file picker need the room; everything else reads
-              // fine in one cell. A latching chip row is the exception - a
-              // scene menu is fifteen chips, and wrapping them inside one
-              // 212px cell makes a column of single words.
-              className={field.control === 'multi' ? 'is-full'
+              // fine in one cell. A slot menu is the exception - fifteen
+              // chips and a strength each, which inside one 212px cell is a
+              // column of single words.
+              className={field.control === 'slots' ? 'is-full'
                 : field.role === 'seed' || field.control === 'file'
                   || field.control === 'audio' ? 'is-wide' : undefined}
             >
