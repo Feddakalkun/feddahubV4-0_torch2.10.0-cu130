@@ -169,7 +169,7 @@
       "cfg": 1,
       "sampler_name": "euler",
       "scheduler": "simple",
-      "denoise": 0.77,
+      "denoise": 1.0,
       "model": [
         "170",
         0
@@ -240,8 +240,12 @@
     }
   },
   "173": {
-    "class_type": "LayerMask: PersonMaskUltra",
+    "class_type": "LayerMask: PersonMaskUltra V2",
     "inputs": {
+      "images": [
+        "164",
+        0
+      ],
       "face": true,
       "hair": true,
       "body": false,
@@ -249,17 +253,17 @@
       "accessories": false,
       "background": false,
       "confidence": 0.4,
-      "detail_range": 16,
+      "detail_method": "GuidedFilter",
+      "detail_erode": 6,
+      "detail_dilate": 6,
       "black_point": 0.01,
       "white_point": 0.99,
-      "process_detail": false,
-      "images": [
-        "164",
-        0
-      ]
+      "process_detail": true,
+      "device": "cuda",
+      "max_megapixels": 2.0
     },
     "_meta": {
-      "title": "LayerMask: PersonMaskUltra"
+      "title": "LayerMask: PersonMaskUltra V2"
     }
   }
 }
