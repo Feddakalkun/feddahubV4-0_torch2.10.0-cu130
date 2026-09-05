@@ -100,38 +100,66 @@ _OBJECT_INFO_PATH = CONFIG_DIR / "object_info.cache.json"
 _object_info_cache: Dict[str, Any] = descriptor.load_object_info(str(_OBJECT_INFO_PATH))
 _object_info_lock = threading.Lock()
 _object_info_next_try = 0.0
+# Never fetched in this process yet: what is in memory came off disk and its
+# model lists are as old as the file.
+_object_info_fresh_at = 0.0
+
+# How long a fetched snapshot is trusted. It holds two different kinds of
+# fact - node signatures, which change only when a node pack is installed, and
+# the contents of the model folders, which change whenever anything downloads
+# one. The second is why this expires at all.
+_OBJECT_INFO_TTL = 60.0
 
 
 def object_info() -> Dict[str, Any]:
-    """Node signatures, fetched from ComfyUI the first time they are wanted."""
-    global _object_info_cache, _object_info_next_try
-    if _object_info_cache:
+    """Node signatures and model lists, kept current with the running ComfyUI.
+
+    The disk copy exists so a workflow can be described while ComfyUI is still
+    booting, and it used to be the end of it: seeded at import, returned
+    whenever it was non-empty, never replaced. So the model pickers showed
+    whatever was on the machine the day the file was written. One install had
+    a cache from a week earlier offering three diffusion models out of the
+    eighty ComfyUI actually had - including every model the app's own
+    downloader had fetched in between, none of which could be selected.
+
+    Now the disk copy is a cold start only, and a fetched one expires: a model
+    that finishes downloading is in the picker a minute later without a
+    restart. A fetch that fails leaves what is already here, because a stale
+    list is worth more than an empty one.
+    """
+    global _object_info_cache, _object_info_next_try, _object_info_fresh_at
+    now = time.monotonic()
+    if _object_info_cache and now - _object_info_fresh_at < _OBJECT_INFO_TTL:
         return _object_info_cache
     with _object_info_lock:
-        if _object_info_cache:
+        now = time.monotonic()
+        if _object_info_cache and now - _object_info_fresh_at < _OBJECT_INFO_TTL:
             return _object_info_cache
         # A ComfyUI that is still starting must not cost a 10-second timeout on
         # every request; try again in a moment instead.
-        if time.monotonic() < _object_info_next_try:
-            return {}
-        _object_info_next_try = time.monotonic() + 5.0
+        if now < _object_info_next_try:
+            return _object_info_cache
+        _object_info_next_try = now + 5.0
         try:
             response = requests.get(f"{COMFY_URL}/object_info", timeout=30)
             response.raise_for_status()
             info = response.json()
         except (requests.RequestException, ValueError) as exc:
             logger.debug("object_info not available yet (%s)", exc)
-            return {}
+            return _object_info_cache
         if not isinstance(info, dict) or not info:
-            return {}
+            return _object_info_cache
+        changed = info != _object_info_cache
         _object_info_cache = info
-        logger.info("object_info: %d node types from ComfyUI", len(info))
-        try:
-            _OBJECT_INFO_PATH.parent.mkdir(parents=True, exist_ok=True)
-            _OBJECT_INFO_PATH.write_text(json.dumps(info), encoding="utf-8")
-        except OSError as exc:
-            # Not being able to cache it is a slow next start, not a failure.
-            logger.debug("could not write %s (%s)", _OBJECT_INFO_PATH, exc)
+        _object_info_fresh_at = time.monotonic()
+        if changed:
+            logger.info("object_info: %d node types from ComfyUI", len(info))
+            try:
+                _OBJECT_INFO_PATH.parent.mkdir(parents=True, exist_ok=True)
+                _OBJECT_INFO_PATH.write_text(json.dumps(info), encoding="utf-8")
+            except OSError as exc:
+                # Not being able to cache it is a slow next start, not a failure.
+                logger.debug("could not write %s (%s)", _OBJECT_INFO_PATH, exc)
         return _object_info_cache
 
 
