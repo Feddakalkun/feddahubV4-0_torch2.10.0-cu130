@@ -782,9 +782,15 @@ def _workflow_models(workflow_id: str) -> List[Dict[str, Any]]:
         # size and a Download button that started nothing - and only one of
         # them was actually wrong.
         note = ""
+        self_fetched = False
         if spec and spec.get("fetched_by"):
             note = ("%s downloads this itself the first time it runs."
                     % spec["fetched_by"])
+            # Absent is the normal state for this one, not a problem to solve,
+            # so it stays off the missing count. Not `optional`: that word is
+            # taken by the smaller-build alternatives, and the dialog files
+            # those under a heading this does not belong to.
+            self_fetched = True
         elif not spec:
             note = ("Nothing knows where to download this - it has no entry "
                     "in the model list.")
@@ -835,6 +841,7 @@ def _workflow_models(workflow_id: str) -> List[Dict[str, Any]]:
             # Reported rather than dropped: a model the app will not fetch is
             # something the user has to know about, not something to hide.
             **({"no_source": True, "note": note, "partial_gb": partial_gb, "licence_url": licence_url} if note else {}),
+            **({"self_fetched": True} if self_fetched else {}),
         })
 
     # Smaller builds of whatever this graph loads, offered rather than needed.

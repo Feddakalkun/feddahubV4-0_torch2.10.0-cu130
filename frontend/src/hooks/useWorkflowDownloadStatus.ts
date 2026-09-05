@@ -20,6 +20,12 @@ export interface PreflightFileStatus {
   size_bytes: number;
   /** An alternative to another model rather than a requirement of its own. */
   optional?: boolean;
+  /**
+   * A node fetches this one itself on first run. Listed so it is not a
+   * surprise, but not counted: missing is its normal state before the first
+   * generate, and there is no button that would change that.
+   */
+  self_fetched?: boolean;
   /** Set when pressing Download will not fetch this one, and why. */
   note?: string;
 }
@@ -189,7 +195,8 @@ export function useWorkflowDownloadStatus(workflowId: string): WorkflowDownloadS
     };
   }, [pollingActive, manualDownloading, workflowId, fetchPreflight, track]);
 
-  const missingCount = preflight.filter((f) => !f.exists && !f.optional).length;
+  const missingCount = preflight.filter(
+    (f) => !f.exists && !f.optional && !f.self_fetched).length;
   // A file a node pack brings, or one with no source at all, is missing but
   // not fetchable. Offering Download for those is offering a button that
   // cannot do anything.
