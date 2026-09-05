@@ -359,13 +359,25 @@ class WorkflowService:
                             logger.debug("No LoRAs picked - leaving rgthree node %s untouched", node_id)
                             continue
                         inputs = placeholder.setdefault("inputs", {})
-                        # Remove any pre-existing lora_N slots
-                        for k in list(inputs.keys()):
-                            if k.startswith("lora_"):
-                                del inputs[k]
+                        # Appended after what the graph holds, not written over
+                        # it. Clearing on empty was fixed above; clearing on a
+                        # pick was not, and it is the same failure one step
+                        # later - adding a single LoRA from the page deleted
+                        # the baked distill LoRA with it, and eight-step
+                        # sampling without that returns fog. 19 shipped
+                        # workflows carry a baked slot and offer this control:
+                        # sixteen MiniMax and three LTX.
+                        #
+                        # A baked slot in these graphs is infrastructure - a
+                        # distill or a quality LoRA - not a creative choice, so
+                        # keeping it is right. Switching one off is a different
+                        # question, and lora_slots is the control for that.
+                        used = [int(k.split("_", 1)[1]) for k in inputs
+                                if k.startswith("lora_") and k.split("_", 1)[1].isdigit()]
+                        first = (max(used) + 1) if used else 1
                         if active_loras:
                             for i, lora_data in enumerate(active_loras[:10]):
-                                slot = f"lora_{i + 1}"
+                                slot = f"lora_{first + i}"
                                 # rgthree serializes nested LoRA names with platform-style
                                 # separators. On Windows, matching native ComfyUI exports
                                 # avoids silent dropdown mismatch with some custom loaders.
@@ -383,9 +395,10 @@ class WorkflowService:
                                 inputs[slot] = slot_data
                                 if workflow_id == "flux2klein-txt2img":
                                     logger.debug("Writing %s: %s", slot, slot_data)
-                            logger.info("Injected %d LoRA(s) into rgthree Power Lora Loader %s: %s", len(active_loras), node_id, [l['name'] for l in active_loras])
-                        else:
-                            logger.debug("No LoRAs sent -- cleared lora slots on rgthree node %s", node_id)
+                            logger.info("Added %d LoRA(s) to rgthree Power Lora Loader %s at slot %d, "
+                                        "keeping %d the graph already held: %s",
+                                        len(active_loras), node_id, first, first - 1,
+                                        [l['name'] for l in active_loras])
                         continue
 
                     # Classic path: Dynamic LoRA chain for standard LoraLoader / LoraLoaderModelOnly
