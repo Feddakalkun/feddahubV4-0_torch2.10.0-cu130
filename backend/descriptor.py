@@ -297,7 +297,18 @@ def _lora_slot_label(slot: Dict[str, Any]) -> str:
         if name.lower().endswith(ext):
             name = name[: -len(ext)]
             break
-    trimmed = re.sub(r"[-_ ]?(high|low)[-_ ]?(noise)?$", "", name, flags=re.I)
+    # Anywhere, not only at the end: these names put the noise level in the
+    # middle as often as last - Wan2.2-I2V-High-MysticXXX against its Low twin.
+    # Only ever one of a pair is offered, so the token that tells them apart is
+    # the one thing the label does not need. Delimited on both sides, or it
+    # would eat the "low" in a word that happens to contain it.
+    trimmed = re.sub(r"(?<=[-_. ])(high|low)([-_. ]?noise)?(?=[-_. ]|$)", "",
+                     name, flags=re.I)
+    # KISSHIGH, V3TWERKLOW: no delimiter at all. Only stripped when what comes
+    # before it is upper case or a digit, so it is part of an all-caps name and
+    # not the tail of an ordinary word - "Yellow" keeps its low.
+    trimmed = re.sub(r"(?<=[A-Z0-9])(HIGH|LOW)$", "", trimmed)
+    trimmed = re.sub(r"[-_. ]{2,}", "-", trimmed).strip("-_. ")
     return (trimmed or name).replace("_", " ").strip()
 
 
@@ -335,6 +346,25 @@ def describe_input(key: str, spec: Dict[str, Any], graph: Dict[str, Any],
         slots = _lora_slots(graph, ids[0] if ids else None)
         if not slots:
             return None
+        # Only what this machine has.
+        #
+        # A graph's menu is written on the machine it was built on, and every
+        # entry names a file by path. On anybody else's install most of those
+        # are absent, and a chip that cannot be switched on without failing the
+        # run is worse than no chip. ComfyUI already reports what is installed -
+        # LoraLoader's own combo is that list - so no new plumbing is needed to
+        # ask.
+        _, _, installed = input_signature(object_info, "LoraLoader", "lora_name")
+        have = {str(x).replace("\\", "/").lower() for x in (installed or [])}
+        if have:
+            kept = [(k, v) for k, v in slots
+                    if str(v.get("lora") or "").replace("\\", "/").lower() in have]
+            dropped = len(slots) - len(kept)
+            slots = kept
+            if not slots:
+                return None
+        else:
+            dropped = 0
         return {
             "key": key,
             "label": label,
@@ -347,6 +377,8 @@ def describe_input(key: str, spec: Dict[str, Any], graph: Dict[str, Any],
                          "label": _lora_slot_label(v),
                          "strength": _lora_slot_strength(v)} for k, v in slots],
             "default": {k: _lora_slot_strength(v) for k, v in slots if v.get("on")},
+            **({"note": "%d more in this workflow are not installed here."
+                % dropped} if dropped else {}),
         }
 
     # The mapping may override the control outright, and sometimes must. An
